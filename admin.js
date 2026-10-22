@@ -370,8 +370,8 @@ modalOverlay.addEventListener("click", (e) => {
   if (e.target === modalOverlay) closeModal();
 });
 
-// Image Upload with Compression & Drag-and-Drop
-function compressImage(dataUrl, maxWidth = 320, maxHeight = 320, quality = 0.8) {
+// Image Upload with Compression & Drag-and-Drop (HD 800x450 for wide card banners)
+function compressImage(dataUrl, maxWidth = 800, maxHeight = 450, quality = 0.82) {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {

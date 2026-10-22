@@ -78,18 +78,35 @@ function createCard(file, delay = 0) {
   const downloadLink = file.link || "#";
   const isDirectFile = file.downloadType === "file";
 
-  // Build image HTML: show uploaded image or icon fallback
-  let imageHTML;
-  if (file.image) {
-    imageHTML = `<img src="${file.image}" alt="${file.name}" class="card-image">`;
-  } else {
-    imageHTML = `<div class="card-icon">${icon}</div>`;
-  }
-
   // Source tag
   const sourceTagHTML = isDirectFile
     ? `<span class="card-source-tag tag-direct">💾 Direct File${file.fileMeta?.size ? ` (${file.fileMeta.size})` : ''}</span>`
     : `<span class="card-source-tag tag-mediafire">🔥 MediaFire</span>`;
+
+  // Top Section: Large banner if image exists, or compact icon header
+  let topSectionHTML;
+  if (file.image) {
+    topSectionHTML = `
+      <div class="card-banner">
+        <img src="${file.image}" alt="${file.name}" class="card-banner-img">
+        <div class="card-banner-overlay"></div>
+        <div class="card-banner-badges">
+          <span class="card-badge-fps fps-${file.fps}">${file.fps} FPS</span>
+          ${sourceTagHTML}
+        </div>
+      </div>
+    `;
+  } else {
+    topSectionHTML = `
+      <div class="card-header">
+        <div class="card-icon">${icon}</div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <span class="card-badge-fps fps-${file.fps}">${file.fps} FPS</span>
+          ${sourceTagHTML}
+        </div>
+      </div>
+    `;
+  }
 
   // Action Button
   let actionButtonHTML;
@@ -110,13 +127,7 @@ function createCard(file, delay = 0) {
   }
 
   card.innerHTML = `
-    <div class="card-header">
-      ${imageHTML}
-      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-        <span class="card-badge-fps fps-${file.fps}">${file.fps} FPS</span>
-        ${sourceTagHTML}
-      </div>
-    </div>
+    ${topSectionHTML}
     <h3 class="card-name">${file.name}</h3>
     <div class="card-meta">
       <span class="meta-item">
