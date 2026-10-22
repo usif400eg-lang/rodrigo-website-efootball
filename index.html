@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Download RODRIGO optimization and configuration files organized by RAM size and FPS. Premium gaming performance files for every device.">
+  <title>RODRIGO Files — Download Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background effects -->
+  <div class="bg-effects">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">RODRIGO</span>
+      </a>
+      <div class="nav-links">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#downloads" class="nav-link">Downloads</a>
+        <a href="#footer" class="nav-link">Contact</a>
+        <a href="admin.html" class="nav-admin-link">
+          <span>لوحة التحكم</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu-content">
+      <a href="#home" class="mobile-link">Home</a>
+      <a href="#downloads" class="mobile-link">Downloads</a>
+      <a href="#footer" class="mobile-link">Contact</a>
+      <a href="admin.html" class="mobile-link mobile-admin-link">⚡ لوحة التحكم (Admin)</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Optimized for Performance</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="title-line">RODRIGO</span>
+        <span class="title-line gradient-text">Files</span>
+      </h1>
+      <p class="hero-description">
+        Download premium optimization &amp; configuration files tailored for your device. 
+        Choose your RAM range and target FPS for the ultimate gaming experience.
+      </p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number" data-count="25">0</span>
+          <span class="stat-label">Config Files</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="5">0</span>
+          <span class="stat-label">RAM Ranges</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="50000">0</span>
+          <span class="stat-label">Downloads</span>
+        </div>
+      </div>
+      <a href="#downloads" class="hero-cta">
+        <span>Browse Files</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+      </a>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-card card-1">
+        <div class="fc-icon">🎮</div>
+        <div class="fc-text">120 FPS</div>
+      </div>
+      <div class="floating-card card-2">
+        <div class="fc-icon">💾</div>
+        <div class="fc-text">8-12 RAM</div>
+      </div>
+      <div class="floating-card card-3">
+        <div class="fc-icon">⚡</div>
+        <div class="fc-text">Optimized</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Downloads Section -->
+  <section class="downloads-section" id="downloads">
+    <div class="section-header">
+      <h2 class="section-title">Download Center</h2>
+      <p class="section-subtitle">Select your RAM range and desired FPS to find the perfect configuration file</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <div class="search-wrapper">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search files by name, RAM, or FPS...">
+        <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+      </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="filters-container">
+      <div class="filter-group">
+        <span class="filter-label">RAM Range</span>
+        <div class="filter-buttons" id="ramFilters">
+          <button class="filter-btn active" data-ram="all">All</button>
+          <button class="filter-btn" data-ram="2-3">2-3 GB</button>
+          <button class="filter-btn" data-ram="4-6">4-6 GB</button>
+          <button class="filter-btn" data-ram="6-8">6-8 GB</button>
+          <button class="filter-btn" data-ram="8-12">8-12 GB</button>
+          <button class="filter-btn" data-ram="12-24">12-24 GB</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Target FPS</span>
+        <div class="filter-buttons" id="fpsFilters">
+          <button class="filter-btn active" data-fps="all">All</button>
+          <button class="filter-btn" data-fps="30">30 FPS</button>
+          <button class="filter-btn" data-fps="60">60 FPS</button>
+          <button class="filter-btn" data-fps="90">90 FPS</button>
+          <button class="filter-btn" data-fps="120">120 FPS</button>
+          <button class="filter-btn" data-fps="240">240 FPS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-bar">
+      <span class="results-count" id="resultsCount">Showing 25 files</span>
+      <button class="reset-filters" id="resetFilters">Reset Filters</button>
+    </div>
+
+    <!-- Download Cards Grid -->
+    <div class="cards-grid" id="cardsGrid">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" id="noResults">
+      <div class="no-results-icon">🔍</div>
+      <h3>No files found</h3>
+      <p>Try adjusting your filters or search query</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">RODRIGO</span>
+          </div>
+          <p class="footer-description">
+            Premium optimization files for the ultimate gaming performance. 
+            Trusted by thousands of players worldwide.
+          </p>
+        </div>
+        <div class="footer-links-group">
+          <h4>Quick Links</h4>
+          <a href="#home">Home</a>
+          <a href="#downloads">Downloads</a>
+          <a href="admin.html">لوحة التحكم (Admin)</a>
+          <a href="#">FAQ</a>
+          <a href="#">Support</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>Social</h4>
+          <a href="#" target="_blank" rel="noopener">YouTube</a>
+          <a href="#" target="_blank" rel="noopener">Discord</a>
+          <a href="#" target="_blank" rel="noopener">Telegram</a>
+          <a href="#" target="_blank" rel="noopener">Instagram</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>Legal</h4>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">DMCA</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 RODRIGO. All rights reserved.</p>
+        <p class="footer-credit">Built with ⚡ for performance</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top -->
+  <button class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>

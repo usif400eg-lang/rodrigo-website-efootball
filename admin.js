@@ -1,0 +1,527 @@
+/* ═══════════════════════════════════════════════
+   RODRIGO Admin Dashboard — JavaScript
+   ═══════════════════════════════════════════════ */
+
+// ── Config ──
+const ADMIN_PASSWORD = "Usif2007";
+const STORAGE_KEY = "rodrigo_files";
+const AUTH_KEY = "rodrigo_admin_auth";
+
+// ── Default Files ──
+const DEFAULT_FILES = [
+  { id: 1,  name: "RODRIGO 2-3 RAM — 30 FPS",   ram: "2-3",   fps: 30,  downloads: 4821,  image: "", link: "#" },
+  { id: 2,  name: "RODRIGO 2-3 RAM — 60 FPS",   ram: "2-3",   fps: 60,  downloads: 6234,  image: "", link: "#" },
+  { id: 3,  name: "RODRIGO 4-6 RAM — 30 FPS",   ram: "4-6",   fps: 30,  downloads: 3912,  image: "", link: "#" },
+  { id: 4,  name: "RODRIGO 4-6 RAM — 60 FPS",   ram: "4-6",   fps: 60,  downloads: 7543,  image: "", link: "#" },
+  { id: 5,  name: "RODRIGO 6-8 RAM — 30 FPS",   ram: "6-8",   fps: 30,  downloads: 2876,  image: "", link: "#" },
+  { id: 6,  name: "RODRIGO 6-8 RAM — 60 FPS",   ram: "6-8",   fps: 60,  downloads: 8190,  image: "", link: "#" },
+  { id: 7,  name: "RODRIGO 6-8 RAM — 90 FPS",   ram: "6-8",   fps: 90,  downloads: 5421,  image: "", link: "#" },
+  { id: 8,  name: "RODRIGO 6-8 RAM — 120 FPS",  ram: "6-8",   fps: 120, downloads: 3245,  image: "", link: "#" },
+  { id: 9,  name: "RODRIGO 8-12 RAM — 30 FPS",  ram: "8-12",  fps: 30,  downloads: 2134,  image: "", link: "#" },
+  { id: 10, name: "RODRIGO 8-12 RAM — 60 FPS",  ram: "8-12",  fps: 60,  downloads: 9876,  image: "", link: "#" },
+  { id: 11, name: "RODRIGO 8-12 RAM — 90 FPS",  ram: "8-12",  fps: 90,  downloads: 6543,  image: "", link: "#" },
+  { id: 12, name: "RODRIGO 8-12 RAM — 120 FPS", ram: "8-12",  fps: 120, downloads: 4312,  image: "", link: "#" },
+  { id: 13, name: "RODRIGO 12-24 RAM — 30 FPS", ram: "12-24", fps: 30,  downloads: 1567,  image: "", link: "#" },
+  { id: 14, name: "RODRIGO 12-24 RAM — 60 FPS", ram: "12-24", fps: 60,  downloads: 8321,  image: "", link: "#" },
+  { id: 15, name: "RODRIGO 12-24 RAM — 90 FPS", ram: "12-24", fps: 90,  downloads: 7198,  image: "", link: "#" },
+  { id: 16, name: "RODRIGO 12-24 RAM — 120 FPS",ram: "12-24", fps: 120, downloads: 5432,  image: "", link: "#" },
+  { id: 17, name: "RODRIGO 12-24 RAM — 240 FPS",ram: "12-24", fps: 240, downloads: 2109,  image: "", link: "#" },
+];
+
+// ── State ──
+let files = [];
+let editingId = null;
+let deletingId = null;
+let currentImageBase64 = "";
+
+// ── DOM ──
+const loginScreen = document.getElementById("loginScreen");
+const loginForm = document.getElementById("loginForm");
+const loginPassword = document.getElementById("loginPassword");
+const loginError = document.getElementById("loginError");
+const dashboard = document.getElementById("dashboard");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const totalFilesEl = document.getElementById("totalFiles");
+const totalDownloadsEl = document.getElementById("totalDownloads");
+const totalRamCategoriesEl = document.getElementById("totalRamCategories");
+
+const filesTableBody = document.getElementById("filesTableBody");
+const tableEmpty = document.getElementById("tableEmpty");
+const filesTable = document.getElementById("filesTable");
+const adminSearchInput = document.getElementById("adminSearch");
+
+const addFileBtn = document.getElementById("addFileBtn");
+const modalOverlay = document.getElementById("modalOverlay");
+const fileModal = document.getElementById("fileModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalClose = document.getElementById("modalClose");
+const modalCancelBtn = document.getElementById("modalCancelBtn");
+const modalSaveBtn = document.getElementById("modalSaveBtn");
+const fileForm = document.getElementById("fileForm");
+
+const fileNameInput = document.getElementById("fileName");
+const fileRamInput = document.getElementById("fileRam");
+const fileFpsInput = document.getElementById("fileFps");
+const fileDownloadsInput = document.getElementById("fileDownloads");
+const fileLinkInput = document.getElementById("fileLink");
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
+const previewImg = document.getElementById("previewImg");
+const removeImgBtn = document.getElementById("removeImgBtn");
+const imageUploadArea = document.getElementById("imageUploadArea");
+
+const deleteModalOverlay = document.getElementById("deleteModalOverlay");
+const deleteFileName = document.getElementById("deleteFileName");
+const deleteCancelBtn = document.getElementById("deleteCancelBtn");
+const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
+
+const toastContainer = document.getElementById("toastContainer");
+
+// ═══════════════════════════
+// DATA MANAGEMENT
+// ═══════════════════════════
+
+function loadFiles() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try {
+      files = JSON.parse(stored);
+    } catch {
+      files = [...DEFAULT_FILES];
+      saveFiles();
+    }
+  } else {
+    files = [...DEFAULT_FILES];
+    saveFiles();
+  }
+}
+
+function saveFiles() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+}
+
+function getNextId() {
+  if (files.length === 0) return 1;
+  return Math.max(...files.map(f => f.id)) + 1;
+}
+
+// ═══════════════════════════
+// AUTH
+// ═══════════════════════════
+
+function checkAuth() {
+  const auth = sessionStorage.getItem(AUTH_KEY);
+  if (auth === "true") {
+    showDashboard();
+  }
+}
+
+function showDashboard() {
+  loginScreen.style.display = "none";
+  dashboard.style.display = "block";
+  loadFiles();
+  renderTable();
+  updateStats();
+}
+
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const pw = loginPassword.value.trim();
+  if (pw === ADMIN_PASSWORD) {
+    sessionStorage.setItem(AUTH_KEY, "true");
+    loginError.textContent = "";
+    showDashboard();
+    showToast("تم تسجيل الدخول بنجاح ✓", "success");
+  } else {
+    loginError.textContent = "❌ كلمة المرور غير صحيحة";
+    loginPassword.value = "";
+    loginPassword.focus();
+  }
+});
+
+logoutBtn.addEventListener("click", () => {
+  sessionStorage.removeItem(AUTH_KEY);
+  location.reload();
+});
+
+// ═══════════════════════════
+// RENDER TABLE
+// ═══════════════════════════
+
+function renderTable(search = "") {
+  const filtered = files.filter(f =>
+    f.name.toLowerCase().includes(search.toLowerCase()) ||
+    f.ram.includes(search) ||
+    f.fps.toString().includes(search)
+  );
+
+  filesTableBody.innerHTML = "";
+
+  if (filtered.length === 0) {
+    filesTable.style.display = "none";
+    tableEmpty.style.display = "block";
+  } else {
+    filesTable.style.display = "table";
+    tableEmpty.style.display = "none";
+
+    filtered.forEach(file => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>
+          ${file.image
+            ? `<img src="${file.image}" class="table-img" alt="${file.name}">`
+            : `<div class="table-img-placeholder">${getIconForRam(file.ram)}</div>`
+          }
+        </td>
+        <td><strong>${escapeHtml(file.name)}</strong></td>
+        <td><span class="ram-badge">${file.ram} GB</span></td>
+        <td><span class="fps-badge fps-${file.fps}">${file.fps} FPS</span></td>
+        <td>${formatNumber(file.downloads)}</td>
+        <td>
+          <div class="actions-cell">
+            <button class="btn-icon edit" onclick="openEditModal(${file.id})" title="تعديل">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="btn-icon delete" onclick="openDeleteModal(${file.id})" title="حذف">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </td>
+      `;
+      filesTableBody.appendChild(tr);
+    });
+  }
+}
+
+function getIconForRam(ram) {
+  const icons = { "2-3": "📁", "4-6": "📂", "6-8": "📦", "8-12": "🗃️", "12-24": "💎" };
+  return icons[ram] || "📁";
+}
+
+function formatNumber(num) {
+  return num.toLocaleString("en-US");
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ═══════════════════════════
+// STATS
+// ═══════════════════════════
+
+function updateStats() {
+  totalFilesEl.textContent = files.length;
+  totalDownloadsEl.textContent = formatNumber(files.reduce((sum, f) => sum + (f.downloads || 0), 0));
+  const uniqueRam = new Set(files.map(f => f.ram));
+  totalRamCategoriesEl.textContent = uniqueRam.size;
+}
+
+// ═══════════════════════════
+// SEARCH
+// ═══════════════════════════
+
+let searchTimeout;
+adminSearchInput.addEventListener("input", (e) => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    renderTable(e.target.value.trim());
+  }, 200);
+});
+
+// ═══════════════════════════
+// MODAL (ADD / EDIT)
+// ═══════════════════════════
+
+function openModal() {
+  modalOverlay.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal() {
+  modalOverlay.classList.remove("active");
+  document.body.style.overflow = "";
+  resetForm();
+}
+
+function resetForm() {
+  fileForm.reset();
+  editingId = null;
+  currentImageBase64 = "";
+  previewImg.src = "";
+  previewImg.classList.remove("visible");
+  imagePreview.classList.remove("has-image");
+  removeImgBtn.style.display = "none";
+  modalTitle.textContent = "إضافة ملف جديد";
+}
+
+addFileBtn.addEventListener("click", () => {
+  resetForm();
+  openModal();
+});
+
+modalClose.addEventListener("click", closeModal);
+modalCancelBtn.addEventListener("click", closeModal);
+
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) closeModal();
+});
+
+// Image Upload with Compression & Drag-and-Drop
+function compressImage(dataUrl, maxWidth = 320, maxHeight = 320, quality = 0.8) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > maxWidth || height > maxHeight) {
+        if (width / maxWidth > height / maxHeight) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/webp", quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+function processImageFile(file) {
+  if (!file || !file.type.startsWith("image/")) {
+    showToast("يرجى اختيار ملف صورة صالح", "error");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast("حجم الصورة أكبر من 5MB", "error");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (ev) => {
+    try {
+      const compressed = await compressImage(ev.target.result);
+      currentImageBase64 = compressed;
+      previewImg.src = compressed;
+      previewImg.classList.add("visible");
+      imagePreview.classList.add("has-image");
+      removeImgBtn.style.display = "flex";
+      showToast("تم رفع الصورة بنجاح ✓", "success");
+    } catch {
+      currentImageBase64 = ev.target.result;
+      previewImg.src = currentImageBase64;
+      previewImg.classList.add("visible");
+      imagePreview.classList.add("has-image");
+      removeImgBtn.style.display = "flex";
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+imagePreview.addEventListener("click", () => imageInput.click());
+
+imageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) processImageFile(file);
+});
+
+// Drag and drop
+imageUploadArea.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  imageUploadArea.classList.add("dragover");
+});
+
+imageUploadArea.addEventListener("dragleave", () => {
+  imageUploadArea.classList.remove("dragover");
+});
+
+imageUploadArea.addEventListener("drop", (e) => {
+  e.preventDefault();
+  imageUploadArea.classList.remove("dragover");
+  const file = e.dataTransfer.files[0];
+  if (file) processImageFile(file);
+});
+
+removeImgBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  currentImageBase64 = "";
+  previewImg.src = "";
+  previewImg.classList.remove("visible");
+  imagePreview.classList.remove("has-image");
+  removeImgBtn.style.display = "none";
+  imageInput.value = "";
+});
+
+// Save
+fileForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const name = fileNameInput.value.trim();
+  const ram = fileRamInput.value;
+  const fps = parseInt(fileFpsInput.value);
+  const downloads = parseInt(fileDownloadsInput.value) || 0;
+  const link = fileLinkInput.value.trim() || "#";
+
+  if (!name || !ram || !fps) {
+    showToast("يرجى ملء جميع الحقول المطلوبة", "error");
+    return;
+  }
+
+  if (editingId) {
+    // Edit existing
+    const idx = files.findIndex(f => f.id === editingId);
+    if (idx !== -1) {
+      files[idx].name = name;
+      files[idx].ram = ram;
+      files[idx].fps = fps;
+      files[idx].downloads = downloads;
+      files[idx].link = link;
+      if (currentImageBase64) {
+        files[idx].image = currentImageBase64;
+      }
+      // If removeImgBtn is hidden and no new image, keep existing or clear
+      if (!currentImageBase64 && removeImgBtn.style.display === "none") {
+        files[idx].image = "";
+      }
+    }
+    showToast("تم تعديل الملف بنجاح ✓", "success");
+  } else {
+    // Add new
+    const newFile = {
+      id: getNextId(),
+      name,
+      ram,
+      fps,
+      downloads,
+      image: currentImageBase64,
+      link
+    };
+    files.push(newFile);
+    showToast("تم إضافة الملف بنجاح ✓", "success");
+  }
+
+  saveFiles();
+  renderTable(adminSearchInput.value.trim());
+  updateStats();
+  closeModal();
+});
+
+// Edit
+window.openEditModal = function(id) {
+  const file = files.find(f => f.id === id);
+  if (!file) return;
+
+  editingId = id;
+  modalTitle.textContent = "تعديل الملف";
+
+  fileNameInput.value = file.name;
+  fileRamInput.value = file.ram;
+  fileFpsInput.value = file.fps;
+  fileDownloadsInput.value = file.downloads;
+  fileLinkInput.value = file.link || "";
+
+  if (file.image) {
+    currentImageBase64 = file.image;
+    previewImg.src = file.image;
+    previewImg.classList.add("visible");
+    imagePreview.classList.add("has-image");
+    removeImgBtn.style.display = "flex";
+  } else {
+    currentImageBase64 = "";
+    previewImg.src = "";
+    previewImg.classList.remove("visible");
+    imagePreview.classList.remove("has-image");
+    removeImgBtn.style.display = "none";
+  }
+
+  openModal();
+};
+
+// ═══════════════════════════
+// DELETE MODAL
+// ═══════════════════════════
+
+window.openDeleteModal = function(id) {
+  const file = files.find(f => f.id === id);
+  if (!file) return;
+
+  deletingId = id;
+  deleteFileName.textContent = file.name;
+  deleteModalOverlay.classList.add("active");
+  document.body.style.overflow = "hidden";
+};
+
+function closeDeleteModal() {
+  deleteModalOverlay.classList.remove("active");
+  document.body.style.overflow = "";
+  deletingId = null;
+}
+
+deleteCancelBtn.addEventListener("click", closeDeleteModal);
+
+deleteModalOverlay.addEventListener("click", (e) => {
+  if (e.target === deleteModalOverlay) closeDeleteModal();
+});
+
+deleteConfirmBtn.addEventListener("click", () => {
+  if (deletingId !== null) {
+    files = files.filter(f => f.id !== deletingId);
+    saveFiles();
+    renderTable(adminSearchInput.value.trim());
+    updateStats();
+    showToast("تم حذف الملف ✓", "success");
+    closeDeleteModal();
+  }
+});
+
+// ═══════════════════════════
+// TOAST NOTIFICATIONS
+// ═══════════════════════════
+
+function showToast(message, type = "info") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+
+  const icons = {
+    success: "✓",
+    error: "✕",
+    info: "ℹ"
+  };
+
+  toast.innerHTML = `<span>${icons[type] || ""}</span> ${message}`;
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("removing");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// ═══════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (modalOverlay.classList.contains("active")) closeModal();
+    if (deleteModalOverlay.classList.contains("active")) closeDeleteModal();
+  }
+});
+
+// ═══════════════════════════
+// INIT
+// ═══════════════════════════
+
+document.addEventListener("DOMContentLoaded", () => {
+  checkAuth();
+});
