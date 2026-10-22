@@ -688,7 +688,7 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
 .modal {
   width: 100%;
   max-width: 600px;
-  max-height: 90vh;
+  max-height: 88vh;
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
@@ -697,6 +697,14 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
   transition: transform var(--transition-normal);
   display: flex;
   flex-direction: column;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .modal-overlay.active .modal {
@@ -711,8 +719,9 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 28px;
+  padding: 18px 26px;
   border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -738,9 +747,31 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
 }
 
 .modal-body {
-  padding: 28px;
+  padding: 22px 26px;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  min-height: 0;
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar for Modal Body */
+.modal-body::-webkit-scrollbar {
+  width: 7px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: rgba(var(--accent-primary-rgb), 0.4);
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
 }
 
 .modal-footer {
@@ -748,8 +779,10 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
-  padding: 18px 28px;
+  padding: 16px 26px;
   border-top: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
 }
 
 /* Image Upload */
@@ -760,14 +793,14 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
 
 .image-preview {
   width: 100%;
-  height: 180px;
+  height: 140px;
   border: 2px dashed rgba(var(--accent-primary-rgb), 0.25);
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--text-tertiary);
   cursor: pointer;
   transition: var(--transition-fast);
@@ -802,8 +835,8 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
 
 .preview-img {
   width: 100%;
-  height: 200px;
-  object-fit: contain;
+  max-height: 170px;
+  object-fit: cover;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   background: var(--bg-glass);
