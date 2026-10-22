@@ -862,6 +862,28 @@ button {
 .fps-120 { background: rgba(var(--accent-tertiary-rgb), 0.12); color: var(--accent-tertiary); border: 1px solid rgba(var(--accent-tertiary-rgb), 0.2); }
 .fps-240 { background: rgba(255, 165, 0, 0.12); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.2); }
 
+.card-source-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.card-source-tag.tag-mediafire {
+  background: rgba(255, 115, 0, 0.12);
+  color: #ff8c00;
+  border: 1px solid rgba(255, 115, 0, 0.25);
+}
+
+.card-source-tag.tag-direct {
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--accent-secondary);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+}
+
 /* Card Body */
 .card-name {
   font-family: var(--font-display);

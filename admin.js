@@ -33,6 +33,10 @@ let files = [];
 let editingId = null;
 let deletingId = null;
 let currentImageBase64 = "";
+let currentDownloadType = "link"; // "link" | "file"
+let selectedFileBlob = null;
+let selectedFileName = "";
+let selectedFileSize = "";
 
 // ── DOM ──
 const loginScreen = document.getElementById("loginScreen");
@@ -65,6 +69,20 @@ const fileRamInput = document.getElementById("fileRam");
 const fileFpsInput = document.getElementById("fileFps");
 const fileDownloadsInput = document.getElementById("fileDownloads");
 const fileLinkInput = document.getElementById("fileLink");
+
+// Download Source Tabs & Dropzone DOM
+const tabSourceLink = document.getElementById("tabSourceLink");
+const tabSourceFile = document.getElementById("tabSourceFile");
+const panelSourceLink = document.getElementById("panelSourceLink");
+const panelSourceFile = document.getElementById("panelSourceFile");
+const fileDropzone = document.getElementById("fileDropzone");
+const actualFileInput = document.getElementById("actualFileInput");
+const dropzoneEmpty = document.getElementById("dropzoneEmpty");
+const dropzoneHasFile = document.getElementById("dropzoneHasFile");
+const fileChosenName = document.getElementById("fileChosenName");
+const fileChosenSize = document.getElementById("fileChosenSize");
+const btnClearFile = document.getElementById("btnClearFile");
+
 const imageInput = document.getElementById("imageInput");
 const imagePreview = document.getElementById("imagePreview");
 const previewImg = document.getElementById("previewImg");
@@ -174,7 +192,15 @@ function renderTable(search = "") {
             : `<div class="table-img-placeholder">${getIconForRam(file.ram)}</div>`
           }
         </td>
-        <td><strong>${escapeHtml(file.name)}</strong></td>
+        <td>
+          <strong>${escapeHtml(file.name)}</strong>
+          <div style="margin-top: 6px;">
+            ${file.downloadType === "file"
+              ? `<span class="source-badge badge-file" title="${escapeHtml(file.fileMeta?.name || 'ملف مباشر')}">💾 ملف: ${escapeHtml(file.fileMeta?.name || 'مباشر')} (${file.fileMeta?.size || ''})</span>`
+              : `<span class="source-badge badge-link" title="${escapeHtml(file.link || '')}">🔥 ميديا فاير / رابط</span>`
+            }
+          </div>
+        </td>
         <td><span class="ram-badge">${file.ram} GB</span></td>
         <td><span class="fps-badge fps-${file.fps}">${file.fps} FPS</span></td>
         <td>${formatNumber(file.downloads)}</td>
@@ -247,6 +273,78 @@ function closeModal() {
   resetForm();
 }
 
+function switchDownloadSource(type) {
+  currentDownloadType = type;
+  if (type === "link") {
+    tabSourceLink.classList.add("active");
+    tabSourceFile.classList.remove("active");
+    panelSourceLink.style.display = "block";
+    panelSourceFile.style.display = "none";
+  } else {
+    tabSourceFile.classList.add("active");
+    tabSourceLink.classList.remove("active");
+    panelSourceFile.style.display = "block";
+    panelSourceLink.style.display = "none";
+  }
+}
+
+tabSourceLink.addEventListener("click", () => switchDownloadSource("link"));
+tabSourceFile.addEventListener("click", () => switchDownloadSource("file"));
+
+function handleActualFile(file) {
+  if (!file) return;
+  selectedFileBlob = file;
+  selectedFileName = file.name;
+  selectedFileSize = formatBytes(file.size);
+
+  fileChosenName.textContent = selectedFileName;
+  fileChosenSize.textContent = selectedFileSize;
+
+  dropzoneEmpty.style.display = "none";
+  dropzoneHasFile.style.display = "block";
+  showToast(`تم اختيار الملف: ${selectedFileName} (${selectedFileSize})`, "success");
+}
+
+function clearActualFile() {
+  selectedFileBlob = null;
+  selectedFileName = "";
+  selectedFileSize = "";
+  actualFileInput.value = "";
+  dropzoneEmpty.style.display = "flex";
+  dropzoneHasFile.style.display = "none";
+}
+
+fileDropzone.addEventListener("click", (e) => {
+  if (e.target.closest("#btnClearFile")) return;
+  actualFileInput.click();
+});
+
+actualFileInput.addEventListener("change", (e) => {
+  const f = e.target.files[0];
+  if (f) handleActualFile(f);
+});
+
+fileDropzone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  fileDropzone.classList.add("dragover");
+});
+
+fileDropzone.addEventListener("dragleave", () => {
+  fileDropzone.classList.remove("dragover");
+});
+
+fileDropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  fileDropzone.classList.remove("dragover");
+  const f = e.dataTransfer.files[0];
+  if (f) handleActualFile(f);
+});
+
+btnClearFile.addEventListener("click", (e) => {
+  e.stopPropagation();
+  clearActualFile();
+});
+
 function resetForm() {
   fileForm.reset();
   editingId = null;
@@ -255,6 +353,8 @@ function resetForm() {
   previewImg.classList.remove("visible");
   imagePreview.classList.remove("has-image");
   removeImgBtn.style.display = "none";
+  clearActualFile();
+  switchDownloadSource("link");
   modalTitle.textContent = "إضافة ملف جديد";
 }
 
@@ -335,7 +435,7 @@ imageInput.addEventListener("change", (e) => {
   if (file) processImageFile(file);
 });
 
-// Drag and drop
+// Drag and drop image
 imageUploadArea.addEventListener("dragover", (e) => {
   e.preventDefault();
   imageUploadArea.classList.add("dragover");
@@ -362,61 +462,107 @@ removeImgBtn.addEventListener("click", (e) => {
   imageInput.value = "";
 });
 
-// Save
-fileForm.addEventListener("submit", (e) => {
+// Save (Add or Edit)
+fileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const name = fileNameInput.value.trim();
   const ram = fileRamInput.value;
   const fps = parseInt(fileFpsInput.value);
   const downloads = parseInt(fileDownloadsInput.value) || 0;
-  const link = fileLinkInput.value.trim() || "#";
 
   if (!name || !ram || !fps) {
     showToast("يرجى ملء جميع الحقول المطلوبة", "error");
     return;
   }
 
-  if (editingId) {
-    // Edit existing
-    const idx = files.findIndex(f => f.id === editingId);
-    if (idx !== -1) {
-      files[idx].name = name;
-      files[idx].ram = ram;
-      files[idx].fps = fps;
-      files[idx].downloads = downloads;
-      files[idx].link = link;
-      if (currentImageBase64) {
-        files[idx].image = currentImageBase64;
-      }
-      // If removeImgBtn is hidden and no new image, keep existing or clear
-      if (!currentImageBase64 && removeImgBtn.style.display === "none") {
-        files[idx].image = "";
-      }
+  let downloadType = currentDownloadType;
+  let link = "#";
+  let fileMeta = null;
+
+  if (downloadType === "file") {
+    if (!selectedFileName) {
+      showToast("يرجى اختيار ملف التحميل من الجهاز", "error");
+      return;
     }
-    showToast("تم تعديل الملف بنجاح ✓", "success");
-  } else {
-    // Add new
-    const newFile = {
-      id: getNextId(),
-      name,
-      ram,
-      fps,
-      downloads,
-      image: currentImageBase64,
-      link
+    fileMeta = {
+      name: selectedFileName,
+      size: selectedFileSize
     };
-    files.push(newFile);
-    showToast("تم إضافة الملف بنجاح ✓", "success");
+  } else {
+    link = fileLinkInput.value.trim() || "#";
+    if (!link || link === "#") {
+      showToast("يرجى وضع رابط ميديا فاير أو الرابط المباشر", "warning");
+    }
   }
 
-  saveFiles();
-  renderTable(adminSearchInput.value.trim());
-  updateStats();
-  closeModal();
+  modalSaveBtn.disabled = true;
+  modalSaveBtn.style.opacity = "0.7";
+
+  try {
+    if (editingId) {
+      // Edit existing
+      const idx = files.findIndex(f => f.id === editingId);
+      if (idx !== -1) {
+        files[idx].name = name;
+        files[idx].ram = ram;
+        files[idx].fps = fps;
+        files[idx].downloads = downloads;
+        files[idx].downloadType = downloadType;
+        files[idx].link = link;
+        files[idx].fileMeta = fileMeta;
+
+        if (currentImageBase64) {
+          files[idx].image = currentImageBase64;
+        } else if (removeImgBtn.style.display === "none") {
+          files[idx].image = "";
+        }
+
+        // Save blob if newly uploaded
+        if (downloadType === "file" && selectedFileBlob) {
+          await saveDownloadBlob(editingId, selectedFileBlob, selectedFileName, selectedFileSize);
+        } else if (downloadType === "link") {
+          await deleteDownloadBlob(editingId);
+        }
+      }
+      showToast("تم تعديل الملف بنجاح ✓", "success");
+    } else {
+      // Add new
+      const newId = getNextId();
+      const newFile = {
+        id: newId,
+        name,
+        ram,
+        fps,
+        downloads,
+        image: currentImageBase64,
+        downloadType,
+        link,
+        fileMeta
+      };
+
+      if (downloadType === "file" && selectedFileBlob) {
+        await saveDownloadBlob(newId, selectedFileBlob, selectedFileName, selectedFileSize);
+      }
+
+      files.push(newFile);
+      showToast("تم إضافة الملف بنجاح ✓", "success");
+    }
+
+    saveFiles();
+    renderTable(adminSearchInput.value.trim());
+    updateStats();
+    closeModal();
+  } catch (err) {
+    console.error(err);
+    showToast("حدث خطأ أثناء حفظ الملف", "error");
+  } finally {
+    modalSaveBtn.disabled = false;
+    modalSaveBtn.style.opacity = "1";
+  }
 });
 
-// Edit
+// Edit Modal
 window.openEditModal = function(id) {
   const file = files.find(f => f.id === id);
   if (!file) return;
@@ -428,8 +574,24 @@ window.openEditModal = function(id) {
   fileRamInput.value = file.ram;
   fileFpsInput.value = file.fps;
   fileDownloadsInput.value = file.downloads;
-  fileLinkInput.value = file.link || "";
 
+  // Set download source
+  if (file.downloadType === "file") {
+    switchDownloadSource("file");
+    selectedFileName = file.fileMeta?.name || "ملف مرفوع";
+    selectedFileSize = file.fileMeta?.size || "";
+    fileChosenName.textContent = selectedFileName;
+    fileChosenSize.textContent = selectedFileSize;
+    dropzoneEmpty.style.display = "none";
+    dropzoneHasFile.style.display = "block";
+    fileLinkInput.value = "";
+  } else {
+    switchDownloadSource("link");
+    fileLinkInput.value = file.link && file.link !== "#" ? file.link : "";
+    clearActualFile();
+  }
+
+  // Set image
   if (file.image) {
     currentImageBase64 = file.image;
     previewImg.src = file.image;
@@ -473,8 +635,9 @@ deleteModalOverlay.addEventListener("click", (e) => {
   if (e.target === deleteModalOverlay) closeDeleteModal();
 });
 
-deleteConfirmBtn.addEventListener("click", () => {
+deleteConfirmBtn.addEventListener("click", async () => {
   if (deletingId !== null) {
+    await deleteDownloadBlob(deletingId);
     files = files.filter(f => f.id !== deletingId);
     saveFiles();
     renderTable(adminSearchInput.value.trim());

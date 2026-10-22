@@ -70,11 +70,13 @@ function createCard(file, delay = 0) {
   const card = document.createElement("div");
   card.className = "download-card";
   card.style.animationDelay = `${delay * 0.06}s`;
+  card.dataset.id = file.id;
   card.dataset.ram = file.ram;
   card.dataset.fps = file.fps;
 
   const icon = file.icon || getIconForRam(file.ram);
   const downloadLink = file.link || "#";
+  const isDirectFile = file.downloadType === "file";
 
   // Build image HTML: show uploaded image or icon fallback
   let imageHTML;
@@ -84,10 +86,36 @@ function createCard(file, delay = 0) {
     imageHTML = `<div class="card-icon">${icon}</div>`;
   }
 
+  // Source tag
+  const sourceTagHTML = isDirectFile
+    ? `<span class="card-source-tag tag-direct">💾 Direct File${file.fileMeta?.size ? ` (${file.fileMeta.size})` : ''}</span>`
+    : `<span class="card-source-tag tag-mediafire">🔥 MediaFire</span>`;
+
+  // Action Button
+  let actionButtonHTML;
+  if (isDirectFile) {
+    actionButtonHTML = `
+      <button type="button" class="download-btn" onclick="executeFileDownload(event, ${file.id})">
+        <span>Download</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    `;
+  } else {
+    actionButtonHTML = `
+      <a href="${downloadLink}" class="download-btn" ${downloadLink !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} onclick="handleLinkDownload(event, ${file.id})">
+        <span>Download</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </a>
+    `;
+  }
+
   card.innerHTML = `
     <div class="card-header">
       ${imageHTML}
-      <span class="card-badge-fps fps-${file.fps}">${file.fps} FPS</span>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+        <span class="card-badge-fps fps-${file.fps}">${file.fps} FPS</span>
+        ${sourceTagHTML}
+      </div>
     </div>
     <h3 class="card-name">${file.name}</h3>
     <div class="card-meta">
@@ -100,19 +128,16 @@ function createCard(file, delay = 0) {
         ${file.fps} FPS
       </span>
       <span class="meta-item">
-        <span class="meta-icon">📄</span>
-        Config File
+        <span class="meta-icon">${isDirectFile ? '📦' : '🔗'}</span>
+        ${isDirectFile ? (file.fileMeta?.name || 'Config File') : 'MediaFire'}
       </span>
     </div>
     <div class="card-footer">
       <div class="download-count">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        ${formatNumber(file.downloads)} downloads
+        <span class="download-count-num">${formatNumber(file.downloads)} downloads</span>
       </div>
-      <a href="${downloadLink}" class="download-btn" ${downloadLink !== '#' ? '' : `onclick="handleDownload(event, '${file.name.replace(/'/g, "\\'")}')"`}>
-        <span>Download</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </a>
+      ${actionButtonHTML}
     </div>
   `;
 
@@ -123,7 +148,80 @@ function formatNumber(num) {
   if (num >= 1000) {
     return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
   }
-  return num.toString();
+  return (num || 0).toString();
+}
+
+// ── Direct File Download Handler (IndexedDB) ──
+async function executeFileDownload(e, fileId) {
+  e.preventDefault();
+  const btn = e.currentTarget;
+  const originalHTML = btn.innerHTML;
+
+  btn.innerHTML = `
+    <span>Fetching...</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+  `;
+  btn.style.pointerEvents = "none";
+
+  try {
+    const item = await getDownloadBlob(fileId);
+    if (item && item.blob) {
+      triggerBlobDownload(item.blob, item.name || "rodrigo_config.zip");
+      btn.innerHTML = `<span>Downloaded ✓</span>`;
+      incrementDownloadCount(fileId);
+    } else {
+      // Fallback generator for demo if not in DB yet
+      const sampleBlob = new Blob([
+        `RODRIGO Config File — eFootball Optimization\nFile ID: ${fileId}\nTarget Device: High Performance\nStatus: Verified ✓`
+      ], { type: "text/plain" });
+      triggerBlobDownload(sampleBlob, `RODRIGO_Config_${fileId}.txt`);
+      btn.innerHTML = `<span>Downloaded ✓</span>`;
+      incrementDownloadCount(fileId);
+    }
+  } catch (err) {
+    console.error("Download Error:", err);
+    btn.innerHTML = `<span>Error!</span>`;
+  }
+
+  setTimeout(() => {
+    btn.innerHTML = originalHTML;
+    btn.style.pointerEvents = "";
+  }, 1800);
+}
+
+// ── Link / MediaFire Download Handler ──
+function handleLinkDownload(e, fileId) {
+  const file = FILES.find(f => f.id === fileId);
+  incrementDownloadCount(fileId);
+
+  if (!file || !file.link || file.link === "#") {
+    e.preventDefault();
+    const btn = e.currentTarget;
+    const originalHTML = btn.innerHTML;
+
+    btn.innerHTML = `<span>Downloading...</span>`;
+    btn.style.pointerEvents = "none";
+
+    setTimeout(() => {
+      btn.innerHTML = `<span>Downloaded ✓</span>`;
+      setTimeout(() => {
+        btn.innerHTML = originalHTML;
+        btn.style.pointerEvents = "";
+      }, 1500);
+    }, 1200);
+  }
+}
+
+function incrementDownloadCount(fileId) {
+  const file = FILES.find(f => f.id === fileId);
+  if (file) {
+    file.downloads = (file.downloads || 0) + 1;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(FILES));
+    const countEl = document.querySelector(`.download-card[data-id="${fileId}"] .download-count-num`);
+    if (countEl) {
+      countEl.textContent = `${formatNumber(file.downloads)} downloads`;
+    }
+  }
 }
 
 function renderCards() {
@@ -153,29 +251,6 @@ function renderCards() {
 
   // Update count
   resultsCount.textContent = `Showing ${filtered.length} file${filtered.length !== 1 ? 's' : ''}`;
-}
-
-// ── Download Handler ──
-function handleDownload(e, fileName) {
-  e.preventDefault();
-  const btn = e.currentTarget;
-  const originalHTML = btn.innerHTML;
-
-  btn.innerHTML = `
-    <span>Downloading...</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-  `;
-  btn.style.pointerEvents = "none";
-
-  setTimeout(() => {
-    btn.innerHTML = `
-      <span>Downloaded ✓</span>
-    `;
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.style.pointerEvents = "";
-    }, 1500);
-  }, 1200);
 }
 
 // ── Filter Logic ──

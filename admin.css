@@ -846,6 +846,207 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
   grid-column: 1 / -1;
 }
 
+/* ── Download Source Tabs & Dropzone ── */
+.download-source-group {
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.source-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.source-tab {
+  flex: 1;
+  min-width: 170px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.source-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass-strong);
+  border-color: rgba(var(--accent-primary-rgb), 0.3);
+}
+
+.source-tab.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(var(--accent-primary-rgb), 0.3), rgba(var(--accent-secondary-rgb), 0.2));
+  border-color: var(--accent-secondary);
+  box-shadow: 0 2px 12px rgba(var(--accent-secondary-rgb), 0.2);
+}
+
+.source-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.link-prefix-icon {
+  position: absolute;
+  right: 14px;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.link-input-wrapper input {
+  padding-right: 44px !important;
+  direction: ltr;
+  text-align: left;
+}
+
+.source-helper-text {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* File Dropzone */
+.file-dropzone {
+  width: 100%;
+  border: 2px dashed rgba(var(--accent-secondary-rgb), 0.3);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  background: rgba(var(--accent-secondary-rgb), 0.03);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.file-dropzone:hover,
+.file-dropzone.dragover {
+  border-color: var(--accent-secondary);
+  background: rgba(var(--accent-secondary-rgb), 0.08);
+  transform: scale(1.005);
+}
+
+.dropzone-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-tertiary);
+}
+
+.dropzone-empty svg {
+  color: var(--accent-secondary);
+}
+
+.dropzone-prompt {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dropzone-formats {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
+.file-preview-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid rgba(var(--accent-secondary-rgb), 0.3);
+  border-radius: var(--radius-md);
+}
+
+.file-type-icon {
+  font-size: 1.8rem;
+}
+
+.file-text-details {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.file-chosen-name {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: ltr;
+  text-align: right;
+}
+
+.file-chosen-size {
+  font-size: 0.8rem;
+  color: var(--accent-secondary);
+  font-weight: 600;
+}
+
+.btn-clear-file {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(var(--danger-rgb), 0.15);
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-clear-file:hover {
+  background: var(--danger);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.source-badge.badge-link {
+  background: rgba(255, 107, 0, 0.12);
+  color: #ff8c00;
+  border: 1px solid rgba(255, 107, 0, 0.25);
+}
+
+.source-badge.badge-file {
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--accent-secondary);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+}
+
 /* Delete Modal */
 .delete-msg {
   font-size: 1rem;

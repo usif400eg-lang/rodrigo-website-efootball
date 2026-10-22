@@ -181,9 +181,56 @@
               <label for="fileDownloads">عدد التحميلات</label>
               <input type="number" id="fileDownloads" placeholder="0" min="0" value="0">
             </div>
-            <div class="input-group">
-              <label for="fileLink">رابط التحميل</label>
-              <input type="url" id="fileLink" placeholder="https://example.com/file.zip">
+
+            <!-- Download Source (MediaFire Link OR File Upload) -->
+            <div class="input-group full-width download-source-group">
+              <label>طريقة تنزيل الملف <span class="required">*</span></label>
+              <div class="source-tabs">
+                <button type="button" class="source-tab active" id="tabSourceLink" data-type="link">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  <span>رابط ميديا فاير / رابط خارجي</span>
+                </button>
+                <button type="button" class="source-tab" id="tabSourceFile" data-type="file">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span>رفع ملف من الجهاز</span>
+                </button>
+              </div>
+
+              <!-- Option 1: MediaFire / External URL -->
+              <div class="source-panel" id="panelSourceLink">
+                <div class="link-input-wrapper">
+                  <span class="link-prefix-icon">🔥</span>
+                  <input type="url" id="fileLink" placeholder="ضع رابط ميديا فاير: https://www.mediafire.com/file/...">
+                </div>
+                <p class="source-helper-text">
+                  💡 ضع رابط التحميل من <strong>MediaFire</strong> أو Google Drive أو Mega أو أي رابط تحميل مباشر.
+                </p>
+              </div>
+
+              <!-- Option 2: Upload File from Device -->
+              <div class="source-panel" id="panelSourceFile" style="display:none;">
+                <div class="file-dropzone" id="fileDropzone">
+                  <input type="file" id="actualFileInput" hidden>
+                  <div class="dropzone-empty" id="dropzoneEmpty">
+                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span class="dropzone-prompt">اضغط لاختيار ملف التحميل من جهازك أو اسحبه هنا</span>
+                    <span class="dropzone-formats">يدعم: ZIP, RAR, 7Z, INI, TXT, CFG, APK, وكل الملفات</span>
+                  </div>
+                  <div class="dropzone-has-file" id="dropzoneHasFile" style="display:none;">
+                    <div class="file-preview-card">
+                      <span class="file-type-icon">📦</span>
+                      <div class="file-text-details">
+                        <strong class="file-chosen-name" id="fileChosenName">filename.zip</strong>
+                        <span class="file-chosen-size" id="fileChosenSize">0 KB</span>
+                      </div>
+                      <button type="button" class="btn-clear-file" id="btnClearFile" title="حذف الملف">✕</button>
+                    </div>
+                  </div>
+                </div>
+                <p class="source-helper-text">
+                  ⚡ يتم حفظ الملف وسيتم تحميله تلقائياً بصيغته الأصلية للمستخدم عند الضغط على زر Download.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -222,6 +269,7 @@
   <!-- Toast Notification -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <script src="storage-db.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
