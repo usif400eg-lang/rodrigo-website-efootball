@@ -1004,6 +1004,32 @@ if (btnClearCloudConfig) {
   });
 }
 
+// Wipe / Reset Cloud Database
+const btnWipeCloudDatabase = document.getElementById("btnWipeCloudDatabase");
+if (btnWipeCloudDatabase) {
+  btnWipeCloudDatabase.addEventListener("click", async () => {
+    if (confirm("⚠️ هل أنت متأكد من مسح وتصفير كافة البيانات في قاعدة بيانات Firebase وإعادتها للملفات الافتراضية النظيفة؟")) {
+      try {
+        btnWipeCloudDatabase.disabled = true;
+        btnWipeCloudDatabase.style.opacity = "0.6";
+        showToast("جاري تصفير قاعدة البيانات...", "info");
+        await CloudDB.saveAllFiles(DEFAULT_FILES);
+        files = [...DEFAULT_FILES];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+        renderTable();
+        updateStats();
+        showToast("تم تصفير قاعدة البيانات وإعادتها نظيفة بنجاح ✓", "success");
+      } catch (e) {
+        console.error("Wipe DB error:", e);
+        showToast("حدث خطأ أثناء التصفير: " + (e.message || ""), "error");
+      } finally {
+        btnWipeCloudDatabase.disabled = false;
+        btnWipeCloudDatabase.style.opacity = "1";
+      }
+    }
+  });
+}
+
 // ═══════════════════════════
 // INIT
 // ═══════════════════════════

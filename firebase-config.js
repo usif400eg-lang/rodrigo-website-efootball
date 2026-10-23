@@ -98,11 +98,13 @@ const CloudDB = {
           let filesList = [];
           if (val) {
             if (Array.isArray(val)) {
-              filesList = val.filter(Boolean);
+              filesList = val.filter((f) => f && typeof f === "object" && f.name);
             } else if (typeof val === "object") {
-              filesList = Object.values(val);
+              filesList = Object.values(val).filter((f) => f && typeof f === "object" && f.name);
             }
           }
+          // Sort consistently by file ID
+          filesList.sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
           if (onDataChange) onDataChange(filesList);
         },
         (error) => {
@@ -111,56 +113,64 @@ const CloudDB = {
         }
       );
 
-
+      // Return unsubscribe function
       return () => ref.off("value");
     }
     return null;
   },
 
-
+  // Save full files array to Firebase with keyed objects f_{id}
   async saveAllFiles(filesArray) {
     if (!this.isReady()) {
       initFirebaseApp();
     }
     if (!this.isReady()) {
-      throw new Error("قاعدة بيانات Firebase غير مهيأة بعد. يرجى إدخال إعدادات Firebase.");
+      throw new Error("قاعدة بيانات Firebase غير متصلة.");
     }
-    await firebaseDb.ref(FIREBASE_FILES_PATH).set(filesArray);
+    const validFiles = (filesArray || []).filter((f) => f && typeof f === "object" && f.name);
+    const filesMap = {};
+    validFiles.forEach((f) => {
+      filesMap[`f_${f.id}`] = f;
+    });
+    await firebaseDb.ref(FIREBASE_FILES_PATH).set(filesMap);
     return true;
   },
 
-
+  // Update a single file
   async saveFile(file) {
+    if (!file || !file.id) return false;
     if (!this.isReady()) {
       initFirebaseApp();
     }
     if (!this.isReady()) {
       throw new Error("Firebase غير متصل");
     }
-    await firebaseDb.ref(`${FIREBASE_FILES_PATH}/${file.id}`).set(file);
+    await firebaseDb.ref(`${FIREBASE_FILES_PATH}/f_${file.id}`).set(file);
     return true;
   },
 
-
+  // Delete a single file
   async deleteFile(fileId) {
+    if (!fileId) return false;
     if (!this.isReady()) {
       initFirebaseApp();
     }
     if (!this.isReady()) {
       throw new Error("Firebase غير متصل");
     }
-    await firebaseDb.ref(`${FIREBASE_FILES_PATH}/${fileId}`).remove();
+    await firebaseDb.ref(`${FIREBASE_FILES_PATH}/f_${fileId}`).remove();
     return true;
   },
 
-
+  // Increment download count atomically on the exact file
   async incrementDownload(fileId) {
+    if (!fileId && fileId !== 0) return false;
     if (!this.isReady()) {
       initFirebaseApp();
     }
     if (this.isReady()) {
       try {
-        const fileRef = firebaseDb.ref(`${FIREBASE_FILES_PATH}/${fileId}/downloads`);
+        const fileRef = firebaseDb.ref(`${FIREBASE_FILES_PATH}/f_${fileId}/downloads`);
         await fileRef.transaction((currentCount) => (currentCount || 0) + 1);
         return true;
       } catch (e) {
