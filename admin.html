@@ -49,6 +49,10 @@
         <span class="topbar-title">RODRIGO — لوحة التحكم</span>
       </div>
       <div class="topbar-left">
+        <button class="btn-cloud-status" id="cloudStatusBtn" title="إعدادات التزامن السحابي (Firebase)">
+          <span class="status-indicator-dot" id="cloudStatusDot"></span>
+          <span id="cloudStatusText">جاري فحص السحابة...</span>
+        </button>
         <a href="index.html" class="btn-outline btn-sm" target="_blank">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           <span>عرض الموقع</span>
@@ -266,9 +270,125 @@
     </div>
   </div>
 
+  <!-- Cloud Sync / Firebase Settings Modal -->
+  <div class="modal-overlay" id="cloudModalOverlay">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-header-with-badge">
+          <span class="modal-header-badge">🌐 التزامن السحابي</span>
+          <h3 class="modal-title">إعدادات قاعدة بيانات Firebase</h3>
+        </div>
+        <button class="modal-close" id="cloudModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Live Connection Status Box -->
+        <div class="cloud-status-card" id="cloudStatusCard">
+          <div class="cloud-status-indicator">
+            <span class="status-indicator-dot" id="modalStatusDot"></span>
+            <div class="cloud-status-info">
+              <strong id="modalStatusTitle">جاري الفحص...</strong>
+              <p id="modalStatusDesc">يتم التحقق من الاتصال بقاعدة بيانات Firebase</p>
+            </div>
+          </div>
+          <button type="button" class="btn-outline btn-sm" id="btnTestCloudConnection">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>إعادة الفحص</span>
+          </button>
+        </div>
+
+        <p class="cloud-intro-text">
+          🚀 عند تفعيل Firebase، <strong>أي إضافة أو تعديل أو حذف للملفات أو الروابط يُطبق لحظياً عند جميع الزوار في العالم</strong> دون الحاجة لأي سيرفر مدفوع!
+        </p>
+
+        <!-- Tabs: Paste JSON or Form Fields -->
+        <div class="cloud-tabs">
+          <button type="button" class="cloud-tab active" id="tabPasteJson">📋 لصق كود Firebase (الأسرع)</button>
+          <button type="button" class="cloud-tab" id="tabManualConfig">✏️ إدخال يدوي</button>
+        </div>
+
+        <!-- Panel 1: Paste JSON / Config snippet -->
+        <div class="cloud-tab-panel" id="panelPasteJson">
+          <div class="input-group">
+            <label for="firebaseSnippetInput">الصق كود الـ firebaseConfig هنا:</label>
+            <textarea id="firebaseSnippetInput" class="code-textarea" rows="6" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "rodrigo-efootball.firebaseapp.com",
+  databaseURL: "https://rodrigo-efootball-default-rtdb.firebaseio.com",
+  projectId: "rodrigo-efootball",
+  ...
+};'></textarea>
+            <span class="input-hint">يمكنك نسخ ولصق الكود بالكامل كما هو من لوحة Firebase مباشرة وسيقوم النظام باستخراجه تلقائياً.</span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Manual fields -->
+        <div class="cloud-tab-panel" id="panelManualConfig" style="display: none;">
+          <div class="form-grid">
+            <div class="input-group full-width">
+              <label for="fbDatabaseUrl">رابط قاعدة البيانات (Database URL) *</label>
+              <input type="url" id="fbDatabaseUrl" placeholder="https://your-project-default-rtdb.firebaseio.com">
+            </div>
+            <div class="input-group">
+              <label for="fbApiKey">مفتاح API (apiKey) *</label>
+              <input type="text" id="fbApiKey" placeholder="AIzaSy...">
+            </div>
+            <div class="input-group">
+              <label for="fbProjectId">معرف المشروع (projectId) *</label>
+              <input type="text" id="fbProjectId" placeholder="rodrigo-efootball">
+            </div>
+          </div>
+        </div>
+
+        <!-- Sync Actions Box -->
+        <div class="cloud-sync-actions-box">
+          <div class="sync-actions-info">
+            <strong>نقل البيانات الحالية إلى السحابة:</strong>
+            <p>اضغط الزر لنقل جميع ملفاتك الموجودة حالياً دفعة واحدة إلى Firebase لتبدأ بالظهور فوراً لجميع الزوار.</p>
+          </div>
+          <button type="button" class="btn-accent" id="btnPushAllToCloud">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>مزامنة كافة الملفات للسحابة الآن ⚡</span>
+          </button>
+        </div>
+
+        <!-- How to get Firebase (collapsible guide) -->
+        <details class="cloud-guide-details">
+          <summary class="cloud-guide-summary">
+            <span>📖 شرح بالخطوات: كيف تنشئ مشروع Firebase مجاني في دقيقتين؟</span>
+            <span class="summary-arrow">▼</span>
+          </summary>
+          <div class="cloud-guide-content">
+            <ol class="guide-steps-list">
+              <li>افتح موقع <a href="https://console.firebase.google.com/" target="_blank" rel="noopener" class="guide-link">Firebase Console ↗</a> وسجل بحساب Google مجاناً.</li>
+              <li>اضغط على <strong>Create a project</strong> (أو إضافة مشروع) واكتب أي اسم مثلاً <code>rodrigo-efootball</code>.</li>
+              <li>من القائمة الجانبية اضغط على <strong>Build</strong> ثم اختر <strong>Realtime Database</strong>.</li>
+              <li>اضغط <strong>Create Database</strong>، ثم في خطوة الأمان (Security rules) اختر <strong>Start in test mode</strong> (وضع الاختبار) واضغط Enable.</li>
+              <li>من أعلى القائمة الجانبية اضغط على علامة الترس <strong>Project Settings ⚙️</strong>.</li>
+              <li>انزل لأسفل الصفحة عند قسم <em>Your apps</em> واضغط على أيقونة الويب <strong>&lt;/&gt;</strong>.</li>
+              <li>انسخ كود <code>firebaseConfig</code> والصقه هنا في هذه النافذة ثم اضغط <strong>حفظ الاتصال</strong>!</li>
+            </ol>
+          </div>
+        </details>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-ghost text-danger" id="btnClearCloudConfig">إلغاء الربط (محلي)</button>
+        <button type="button" class="btn-outline" id="cloudModalCancelBtn">إغلاق</button>
+        <button type="button" class="btn-primary" id="btnSaveCloudConfig">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>حفظ وتفعيل الاتصال</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- Firebase SDK (v10 compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="storage-db.js"></script>
   <script src="admin.js"></script>
 </body>

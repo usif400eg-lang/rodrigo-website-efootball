@@ -232,6 +232,11 @@ function incrementDownloadCount(fileId) {
     if (countEl) {
       countEl.textContent = `${formatNumber(file.downloads)} downloads`;
     }
+
+    // Atomically increment in Firebase Cloud Database
+    if (typeof CloudDB !== "undefined" && CloudDB.isReady()) {
+      CloudDB.incrementDownload(fileId);
+    }
   }
 }
 
@@ -444,10 +449,25 @@ window.addEventListener("storage", (e) => {
   }
 });
 
+// ── Realtime Cloud Sync (Firebase) ──
+function setupCloudLiveSync() {
+  if (typeof CloudDB !== "undefined") {
+    CloudDB.subscribeFiles((cloudFiles) => {
+      if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+        FILES = cloudFiles;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(FILES));
+        renderCards();
+        updateHeroStats();
+      }
+    });
+  }
+}
+
 // ── Initialize ──
 document.addEventListener("DOMContentLoaded", () => {
   updateHeroStats();
   renderCards();
   animateCounters();
   updateActiveNavLink();
+  setupCloudLiveSync();
 });

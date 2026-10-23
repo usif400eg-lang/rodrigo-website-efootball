@@ -1230,3 +1230,296 @@ button { border: none; background: none; cursor: pointer; font-family: inherit; 
     display: none;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   CLOUD SYNC & FIREBASE STYLES
+   ═══════════════════════════════════════════════ */
+
+/* Topbar Cloud Button */
+.btn-cloud-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-cloud-status:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(108, 99, 255, 0.5);
+  box-shadow: 0 0 16px rgba(108, 99, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.status-indicator-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--warning);
+  display: inline-block;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.status-indicator-dot.online {
+  background-color: var(--success);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+.status-indicator-dot.online::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(34, 197, 94, 0.5);
+  animation: dotPulse 1.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
+}
+
+.status-indicator-dot.offline {
+  background-color: #94a3b8;
+  box-shadow: none;
+}
+
+.status-indicator-dot.error {
+  background-color: var(--danger);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+}
+
+@keyframes dotPulse {
+  0% { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Cloud Status Card inside modal */
+.cloud-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.cloud-status-card.connected {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.04);
+}
+
+.cloud-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cloud-status-info strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.cloud-status-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.cloud-intro-text {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  background: rgba(108, 99, 255, 0.08);
+  border-right: 3px solid var(--accent-primary);
+  border-radius: var(--radius-sm);
+}
+
+.cloud-intro-text strong {
+  color: #fff;
+}
+
+/* Tabs */
+.cloud-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+}
+
+.cloud-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all var(--transition-fast);
+}
+
+.cloud-tab.active {
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--accent-secondary);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+}
+
+.code-textarea {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: #7dd3fc;
+  padding: 12px 14px;
+  resize: vertical;
+  width: 100%;
+}
+
+.code-textarea:focus {
+  border-color: var(--accent-secondary);
+  outline: none;
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.25);
+}
+
+/* Push to cloud box */
+.cloud-sync-actions-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.08), rgba(0, 212, 255, 0.05));
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.sync-actions-info strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.sync-actions-info p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.btn-accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.btn-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.45);
+}
+
+/* Guide Details */
+.cloud-guide-details {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.cloud-guide-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  user-select: none;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cloud-guide-summary:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.summary-arrow {
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+  color: var(--text-tertiary);
+}
+
+.cloud-guide-details[open] .summary-arrow {
+  transform: rotate(180deg);
+}
+
+.cloud-guide-content {
+  padding: 16px 20px 20px;
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.guide-steps-list {
+  padding-right: 20px;
+}
+
+.guide-steps-list li {
+  margin-bottom: 8px;
+}
+
+.guide-steps-list code {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent-secondary);
+  font-family: monospace;
+}
+
+.guide-link {
+  color: var(--accent-secondary);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.text-danger {
+  color: var(--danger) !important;
+}
+
+.modal-header-with-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-header-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-secondary);
+  letter-spacing: 0.5px;
+}
+

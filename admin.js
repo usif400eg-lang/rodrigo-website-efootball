@@ -97,8 +97,10 @@ const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
 const toastContainer = document.getElementById("toastContainer");
 
 // ═══════════════════════════
-// DATA MANAGEMENT
+// DATA MANAGEMENT (Local + Cloud Sync)
 // ═══════════════════════════
+
+let isSubscribedToCloud = false;
 
 function loadFiles() {
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -107,16 +109,49 @@ function loadFiles() {
       files = JSON.parse(stored);
     } catch {
       files = [...DEFAULT_FILES];
-      saveFiles();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
     }
   } else {
     files = [...DEFAULT_FILES];
-    saveFiles();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+  }
+
+  // Subscribe to real-time Cloud updates if Firebase is configured
+  if (typeof CloudDB !== "undefined" && CloudDB.isReady() && !isSubscribedToCloud) {
+    isSubscribedToCloud = true;
+    CloudDB.subscribeFiles(async (cloudFiles) => {
+      if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+        files = cloudFiles;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+        renderTable(adminSearchInput ? adminSearchInput.value.trim() : "");
+        updateStats();
+      } else if (!cloudFiles || cloudFiles.length === 0) {
+        // Firebase database is empty! Auto-seed with current files
+        console.log("⚡ Database is empty, auto-seeding files to Firebase...");
+        try {
+          await CloudDB.saveAllFiles(files);
+          showToast("تم مزامنة ورفع الملفات إلى Firebase تلقائياً ⚡", "success");
+        } catch (e) {
+          console.warn("Auto-seed error:", e);
+        }
+      }
+    });
   }
 }
 
-function saveFiles() {
+async function saveFiles() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+  if (typeof CloudDB !== "undefined" && CloudDB.isReady()) {
+    try {
+      await CloudDB.saveAllFiles(files);
+      return true;
+    } catch (e) {
+      console.error("Cloud save failed:", e);
+      showToast("⚠️ تم الحفظ محلياً لكن تعذر الرفع للسحابة: " + (e.message || ""), "warning");
+      return false;
+    }
+  }
+  return false;
 }
 
 function getNextId() {
@@ -546,13 +581,18 @@ fileForm.addEventListener("submit", async (e) => {
       }
 
       files.push(newFile);
-      showToast("تم إضافة الملف بنجاح ✓", "success");
     }
 
-    saveFiles();
+    await saveFiles();
     renderTable(adminSearchInput.value.trim());
     updateStats();
     closeModal();
+
+    if (typeof CloudDB !== "undefined" && CloudDB.isReady()) {
+      showToast("تم الحفظ والتطبيق عند جميع الزوار فوراً ⚡", "success");
+    } else {
+      showToast("تم الحفظ محلياً. لتعميمه للكل اضغط زر السحابة بالأعلى ☁️", "info");
+    }
   } catch (err) {
     console.error(err);
     showToast("حدث خطأ أثناء حفظ الملف", "error");
@@ -639,10 +679,14 @@ deleteConfirmBtn.addEventListener("click", async () => {
   if (deletingId !== null) {
     await deleteDownloadBlob(deletingId);
     files = files.filter(f => f.id !== deletingId);
-    saveFiles();
+    await saveFiles();
     renderTable(adminSearchInput.value.trim());
     updateStats();
-    showToast("تم حذف الملف ✓", "success");
+    if (typeof CloudDB !== "undefined" && CloudDB.isReady()) {
+      showToast("تم حذف الملف من السحابة عند الكل ✓", "success");
+    } else {
+      showToast("تم حذف الملف محلياً ✓", "success");
+    }
     closeDeleteModal();
   }
 });
@@ -682,9 +726,291 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ═══════════════════════════
+// CLOUD SYNC & FIREBASE LOGIC
+// ═══════════════════════════
+
+const cloudStatusBtn = document.getElementById("cloudStatusBtn");
+const cloudStatusDot = document.getElementById("cloudStatusDot");
+const cloudStatusText = document.getElementById("cloudStatusText");
+
+const cloudModalOverlay = document.getElementById("cloudModalOverlay");
+const cloudModalClose = document.getElementById("cloudModalClose");
+const cloudModalCancelBtn = document.getElementById("cloudModalCancelBtn");
+
+const cloudStatusCard = document.getElementById("cloudStatusCard");
+const modalStatusDot = document.getElementById("modalStatusDot");
+const modalStatusTitle = document.getElementById("modalStatusTitle");
+const modalStatusDesc = document.getElementById("modalStatusDesc");
+const btnTestCloudConnection = document.getElementById("btnTestCloudConnection");
+
+const tabPasteJson = document.getElementById("tabPasteJson");
+const tabManualConfig = document.getElementById("tabManualConfig");
+const panelPasteJson = document.getElementById("panelPasteJson");
+const panelManualConfig = document.getElementById("panelManualConfig");
+
+const firebaseSnippetInput = document.getElementById("firebaseSnippetInput");
+const fbDatabaseUrl = document.getElementById("fbDatabaseUrl");
+const fbApiKey = document.getElementById("fbApiKey");
+const fbProjectId = document.getElementById("fbProjectId");
+
+const btnSaveCloudConfig = document.getElementById("btnSaveCloudConfig");
+const btnClearCloudConfig = document.getElementById("btnClearCloudConfig");
+const btnPushAllToCloud = document.getElementById("btnPushAllToCloud");
+
+// Update Cloud UI status based on current Firebase state
+function updateCloudStatusUI() {
+  if (!cloudStatusBtn) return;
+
+  const isConfigured = isFirebaseConfigured();
+  const isReady = typeof CloudDB !== "undefined" && CloudDB.isReady();
+
+  if (isConfigured && isReady) {
+    cloudStatusDot.className = "status-indicator-dot online";
+    cloudStatusText.textContent = "متصل بالسحابة (مباشر ⚡)";
+    if (cloudStatusCard) cloudStatusCard.classList.add("connected");
+    if (modalStatusDot) modalStatusDot.className = "status-indicator-dot online";
+    if (modalStatusTitle) modalStatusTitle.textContent = "متصل بقاعدة بيانات Firebase ✓";
+    if (modalStatusDesc) modalStatusDesc.textContent = "أي تعديل تقوم به يُطبق فوراً عند جميع الزوار حول العالم.";
+  } else if (isConfigured) {
+    cloudStatusDot.className = "status-indicator-dot";
+    cloudStatusText.textContent = "جاري التحقق من السحابة...";
+    if (cloudStatusCard) cloudStatusCard.classList.remove("connected");
+    if (modalStatusDot) modalStatusDot.className = "status-indicator-dot";
+    if (modalStatusTitle) modalStatusTitle.textContent = "الإعدادات محفوظة (جاري الاتصال)";
+    if (modalStatusDesc) modalStatusDesc.textContent = "اضغط إعادة الفحص للتحقق من الاتصال";
+  } else {
+    cloudStatusDot.className = "status-indicator-dot offline";
+    cloudStatusText.textContent = "وضع محلي (اضغط للربط ☁️)";
+    if (cloudStatusCard) cloudStatusCard.classList.remove("connected");
+    if (modalStatusDot) modalStatusDot.className = "status-indicator-dot offline";
+    if (modalStatusTitle) modalStatusTitle.textContent = "غير متصل بالسحابة (وضع محلي)";
+    if (modalStatusDesc) modalStatusDesc.textContent = "التعديلات تُحفظ على جهازك فقط. اربط Firebase لتطبيقها عند الجميع.";
+  }
+}
+
+// Extract Firebase config from pasted text (JSON or JS snippet)
+function extractFirebaseConfig(input) {
+  if (!input || !input.trim()) return null;
+  const str = input.trim();
+
+  // Try pure JSON
+  try {
+    const json = JSON.parse(str);
+    if (json.apiKey) return json;
+  } catch {}
+
+  // Parse JS snippet e.g. apiKey: "...", databaseURL: "..."
+  const config = {};
+  const keys = ["apiKey", "authDomain", "databaseURL", "projectId", "storageBucket", "messagingSenderId", "appId"];
+  
+  keys.forEach((k) => {
+    const regex = new RegExp(`${k}\\s*:\\s*["'\`]([^"'\`]+)["'\`]`, "i");
+    const match = str.match(regex);
+    if (match && match[1]) {
+      config[k] = match[1].trim();
+    }
+  });
+
+  if (config.apiKey && (config.databaseURL || config.projectId)) {
+    return config;
+  }
+  return null;
+}
+
+// Populate inputs with current config
+function populateCloudInputs() {
+  const currentConfig = getActiveFirebaseConfig();
+  if (currentConfig && currentConfig.apiKey) {
+    fbDatabaseUrl.value = currentConfig.databaseURL || "";
+    fbApiKey.value = currentConfig.apiKey || "";
+    fbProjectId.value = currentConfig.projectId || "";
+    firebaseSnippetInput.value = JSON.stringify(currentConfig, null, 2);
+  }
+}
+
+function openCloudModal() {
+  populateCloudInputs();
+  updateCloudStatusUI();
+  cloudModalOverlay.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCloudModal() {
+  cloudModalOverlay.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+// Cloud Modal Event Listeners
+if (cloudStatusBtn) cloudStatusBtn.addEventListener("click", openCloudModal);
+if (cloudModalClose) cloudModalClose.addEventListener("click", closeCloudModal);
+if (cloudModalCancelBtn) cloudModalCancelBtn.addEventListener("click", closeCloudModal);
+
+if (cloudModalOverlay) {
+  cloudModalOverlay.addEventListener("click", (e) => {
+    if (e.target === cloudModalOverlay) closeCloudModal();
+  });
+}
+
+// Tabs switching
+if (tabPasteJson && tabManualConfig) {
+  tabPasteJson.addEventListener("click", () => {
+    tabPasteJson.classList.add("active");
+    tabManualConfig.classList.remove("active");
+    panelPasteJson.style.display = "block";
+    panelManualConfig.style.display = "none";
+  });
+
+  tabManualConfig.addEventListener("click", () => {
+    tabManualConfig.classList.add("active");
+    tabPasteJson.classList.remove("active");
+    panelManualConfig.style.display = "block";
+    panelPasteJson.style.display = "none";
+  });
+}
+
+// Save Cloud Config
+if (btnSaveCloudConfig) {
+  btnSaveCloudConfig.addEventListener("click", async () => {
+    btnSaveCloudConfig.disabled = true;
+    btnSaveCloudConfig.style.opacity = "0.7";
+
+    let configToSave = null;
+
+    if (tabPasteJson.classList.contains("active")) {
+      const rawText = firebaseSnippetInput.value.trim();
+      configToSave = extractFirebaseConfig(rawText);
+      if (!configToSave) {
+        showToast("يرجى لصق كود Firebase صالح يحتوي على apiKey", "error");
+        btnSaveCloudConfig.disabled = false;
+        btnSaveCloudConfig.style.opacity = "1";
+        return;
+      }
+    } else {
+      const dbUrl = fbDatabaseUrl.value.trim();
+      const apiKey = fbApiKey.value.trim();
+      const projId = fbProjectId.value.trim();
+
+      if (!apiKey || (!dbUrl && !projId)) {
+        showToast("يرجى إدخال مفتاح API ورابط قاعدة البيانات أو Project ID", "error");
+        btnSaveCloudConfig.disabled = false;
+        btnSaveCloudConfig.style.opacity = "1";
+        return;
+      }
+
+      configToSave = {
+        apiKey,
+        databaseURL: dbUrl || `https://${projId}-default-rtdb.firebaseio.com`,
+        projectId: projId
+      };
+    }
+
+    try {
+      showToast("جاري فحص الاتصال بقاعدة البيانات...", "info");
+      await CloudDB.testConnection(configToSave);
+
+      // Save to localStorage
+      localStorage.setItem(FIREBASE_CONFIG_STORAGE_KEY, JSON.stringify(configToSave));
+      
+      // Re-init Firebase
+      initFirebaseApp();
+
+      updateCloudStatusUI();
+      showToast("تم ربط قاعدة بيانات Firebase بنجاح! السحابة متصلة الآن ⚡", "success");
+
+      // Auto start cloud subscription
+      if (!isSubscribedToCloud) {
+        isSubscribedToCloud = true;
+        CloudDB.subscribeFiles((cloudFiles) => {
+          if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+            files = cloudFiles;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+            renderTable(adminSearchInput ? adminSearchInput.value.trim() : "");
+            updateStats();
+          }
+        });
+      }
+
+      setTimeout(closeCloudModal, 800);
+    } catch (err) {
+      console.error("Firebase Test Error:", err);
+      showToast("فشل الاتصال: تأكد من صحة المفاتيح وأن قواعد Realtime Database مفعلة (Test Mode)", "error");
+    } finally {
+      btnSaveCloudConfig.disabled = false;
+      btnSaveCloudConfig.style.opacity = "1";
+    }
+  });
+}
+
+// Test Cloud Connection button
+if (btnTestCloudConnection) {
+  btnTestCloudConnection.addEventListener("click", async () => {
+    btnTestCloudConnection.disabled = true;
+    showToast("جاري اختبار الاتصال...", "info");
+
+    const currentConfig = getActiveFirebaseConfig();
+    if (!currentConfig || !currentConfig.apiKey) {
+      showToast("لا توجد إعدادات Firebase محفوظة بعد", "warning");
+      btnTestCloudConnection.disabled = false;
+      return;
+    }
+
+    try {
+      await CloudDB.testConnection(currentConfig);
+      initFirebaseApp();
+      updateCloudStatusUI();
+      showToast("الاتصال بالسحابة يعمل بكفاءة تامة ✓", "success");
+    } catch (err) {
+      console.error(err);
+      updateCloudStatusUI();
+      showToast("تعذر الاتصال بالسحابة: " + (err.message || ""), "error");
+    } finally {
+      btnTestCloudConnection.disabled = false;
+    }
+  });
+}
+
+// Push all current files to Cloud
+if (btnPushAllToCloud) {
+  btnPushAllToCloud.addEventListener("click", async () => {
+    if (!CloudDB.isReady()) {
+      showToast("يرجى تفعيل وحفظ إعدادات Firebase أولاً للتمكن من الرفع", "warning");
+      return;
+    }
+
+    btnPushAllToCloud.disabled = true;
+    btnPushAllToCloud.style.opacity = "0.7";
+    showToast("جاري رفع جميع الملفات إلى السحابة...", "info");
+
+    try {
+      await CloudDB.saveAllFiles(files);
+      showToast(`تم رفع جميع الملفات (${files.length} ملف) إلى السحابة بنجاح! أصبحت تظهر للجميع الآن 🚀`, "success");
+    } catch (err) {
+      console.error("Push to cloud error:", err);
+      showToast("فشل رفع الملفات للسحابة: " + (err.message || ""), "error");
+    } finally {
+      btnPushAllToCloud.disabled = false;
+      btnPushAllToCloud.style.opacity = "1";
+    }
+  });
+}
+
+// Clear Cloud Config
+if (btnClearCloudConfig) {
+  btnClearCloudConfig.addEventListener("click", () => {
+    if (confirm("هل تريد إلغاء ربط Firebase والعودة للتخزين المحلي فقط؟")) {
+      localStorage.removeItem(FIREBASE_CONFIG_STORAGE_KEY);
+      location.reload();
+    }
+  });
+}
+
+// ═══════════════════════════
 // INIT
 // ═══════════════════════════
 
 document.addEventListener("DOMContentLoaded", () => {
   checkAuth();
+  setTimeout(() => {
+    updateCloudStatusUI();
+  }, 400);
 });
