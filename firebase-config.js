@@ -129,7 +129,7 @@ const CloudDB = {
     return true;
   },
 
-  // Update a single file
+
   async saveFile(file) {
     if (!this.isReady()) {
       initFirebaseApp();
@@ -141,7 +141,7 @@ const CloudDB = {
     return true;
   },
 
-  // Delete a single file
+
   async deleteFile(fileId) {
     if (!this.isReady()) {
       initFirebaseApp();
@@ -153,7 +153,7 @@ const CloudDB = {
     return true;
   },
 
-  // Increment download count atomically
+
   async incrementDownload(fileId) {
     if (!this.isReady()) {
       initFirebaseApp();
@@ -170,13 +170,13 @@ const CloudDB = {
     return false;
   },
 
-  // Test custom configuration
+
   async testConnection(config) {
     if (typeof firebase === "undefined") {
       throw new Error("Firebase SDK غير محمل في المتصفح");
     }
 
-    // Try temporary app
+
     const tempAppName = "testApp_" + Date.now();
     const tempConfig = { ...config };
     if (!tempConfig.databaseURL && tempConfig.projectId) {

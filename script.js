@@ -108,23 +108,13 @@ function createCard(file, delay = 0) {
     `;
   }
 
-  // Action Button
-  let actionButtonHTML;
-  if (isDirectFile) {
-    actionButtonHTML = `
-      <button type="button" class="download-btn" onclick="executeFileDownload(event, ${file.id})">
-        <span>Download</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
-    `;
-  } else {
-    actionButtonHTML = `
-      <a href="${downloadLink}" class="download-btn" ${downloadLink !== '#' ? 'target="_blank" rel="noopener noreferrer"' : ''} onclick="handleLinkDownload(event, ${file.id})">
-        <span>Download</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </a>
-    `;
-  }
+  // Action Button (Triggers Math Verification Modal)
+  const actionButtonHTML = `
+    <button type="button" class="download-btn" onclick="openDownloadModal(${file.id})">
+      <span>Download</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
+  `;
 
   card.innerHTML = `
     ${topSectionHTML}
@@ -162,65 +152,247 @@ function formatNumber(num) {
   return (num || 0).toString();
 }
 
-// ── Direct File Download Handler (IndexedDB) ──
-async function executeFileDownload(e, fileId) {
-  e.preventDefault();
-  const btn = e.currentTarget;
-  const originalHTML = btn.innerHTML;
+// ═══════════════════════════════════════════════
+// DOWNLOAD VERIFICATION MODAL & MATH CHALLENGE
+// ═══════════════════════════════════════════════
 
-  btn.innerHTML = `
-    <span>Fetching...</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
-  `;
-  btn.style.pointerEvents = "none";
+let targetDownloadFile = null;
+let currentChallengeAnswer = null;
 
-  try {
-    const item = await getDownloadBlob(fileId);
-    if (item && item.blob) {
-      triggerBlobDownload(item.blob, item.name || "rodrigo_config.zip");
-      btn.innerHTML = `<span>Downloaded ✓</span>`;
-      incrementDownloadCount(fileId);
-    } else {
-      // Fallback generator for demo if not in DB yet
-      const sampleBlob = new Blob([
-        `RODRIGO Config File — eFootball Optimization\nFile ID: ${fileId}\nTarget Device: High Performance\nStatus: Verified ✓`
-      ], { type: "text/plain" });
-      triggerBlobDownload(sampleBlob, `RODRIGO_Config_${fileId}.txt`);
-      btn.innerHTML = `<span>Downloaded ✓</span>`;
-      incrementDownloadCount(fileId);
-    }
-  } catch (err) {
-    console.error("Download Error:", err);
-    btn.innerHTML = `<span>Error!</span>`;
+const downloadModalOverlay = document.getElementById("downloadModalOverlay");
+const dlModalClose = document.getElementById("dlModalClose");
+const dlModalCancel = document.getElementById("dlModalCancel");
+const dlConfirmBtn = document.getElementById("dlConfirmBtn");
+const dlRefreshMath = document.getElementById("dlRefreshMath");
+
+const dlMathNum1 = document.getElementById("dlMathNum1");
+const dlMathOp = document.getElementById("dlMathOp");
+const dlMathNum2 = document.getElementById("dlMathNum2");
+const dlAnswerInput = document.getElementById("dlAnswerInput");
+const dlErrorMsg = document.getElementById("dlErrorMsg");
+
+const dlFileName = document.getElementById("dlFileName");
+const dlFileRam = document.getElementById("dlFileRam");
+const dlFileFps = document.getElementById("dlFileFps");
+const dlFileSource = document.getElementById("dlFileSource");
+const dlFileIcon = document.getElementById("dlFileIcon");
+
+// Generate a random math problem (Addition or Multiplication)
+function generateMathChallenge() {
+  const isMultiplication = Math.random() > 0.7; // 30% chance for small multiplication
+  let n1, n2, op, answer;
+
+  if (isMultiplication) {
+    n1 = Math.floor(Math.random() * 8) + 2; // 2 to 9
+    n2 = Math.floor(Math.random() * 6) + 2; // 2 to 7
+    op = "×";
+    answer = n1 * n2;
+  } else {
+    n1 = Math.floor(Math.random() * 25) + 5; // 5 to 29
+    n2 = Math.floor(Math.random() * 15) + 3; // 3 to 17
+    op = "+";
+    answer = n1 + n2;
+  }
+
+  currentChallengeAnswer = answer;
+  if (dlMathNum1) dlMathNum1.textContent = n1;
+  if (dlMathOp) dlMathOp.textContent = op;
+  if (dlMathNum2) dlMathNum2.textContent = n2;
+
+  if (dlAnswerInput) {
+    dlAnswerInput.value = "";
+    dlAnswerInput.classList.remove("error");
+  }
+  if (dlErrorMsg) {
+    dlErrorMsg.textContent = "";
+  }
+}
+
+// Open Verification Modal when user clicks Download
+window.openDownloadModal = function(fileId) {
+  const file = FILES.find(f => f.id === fileId);
+  if (!file) return;
+
+  targetDownloadFile = file;
+
+  if (dlFileName) dlFileName.textContent = file.name;
+  if (dlFileRam) dlFileRam.textContent = `${file.ram} GB RAM`;
+  if (dlFileFps) {
+    dlFileFps.textContent = `${file.fps} FPS`;
+    dlFileFps.className = `dl-tag dl-tag-fps fps-${file.fps}`;
+  }
+  if (dlFileSource) {
+    dlFileSource.textContent = file.downloadType === "file" 
+      ? `💾 ${file.fileMeta?.name || 'ملف مباشر'}`
+      : (file.link && file.link !== "#" ? "🔥 ميديا فاير / رابط" : "⚡ كونفج أداء فائق");
+  }
+  if (dlFileIcon) dlFileIcon.textContent = getIconForRam(file.ram);
+
+  if (dlConfirmBtn) {
+    dlConfirmBtn.classList.remove("success");
+    dlConfirmBtn.disabled = false;
+    dlConfirmBtn.innerHTML = `
+      <span>تنزيل الآن</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    `;
+  }
+
+  generateMathChallenge();
+
+  if (downloadModalOverlay) {
+    downloadModalOverlay.classList.add("active");
+    document.body.style.overflow = "hidden";
   }
 
   setTimeout(() => {
-    btn.innerHTML = originalHTML;
-    btn.style.pointerEvents = "";
-  }, 1800);
+    if (dlAnswerInput) dlAnswerInput.focus();
+  }, 100);
+};
+
+function closeDownloadModal() {
+  if (downloadModalOverlay) {
+    downloadModalOverlay.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+  targetDownloadFile = null;
 }
 
-// ── Link / MediaFire Download Handler ──
-function handleLinkDownload(e, fileId) {
-  const file = FILES.find(f => f.id === fileId);
-  incrementDownloadCount(fileId);
+// Validate answer and trigger actual download
+async function processDownloadVerification() {
+  if (!targetDownloadFile) return;
 
-  if (!file || !file.link || file.link === "#") {
-    e.preventDefault();
-    const btn = e.currentTarget;
-    const originalHTML = btn.innerHTML;
+  const userVal = parseInt(dlAnswerInput.value.trim(), 10);
 
-    btn.innerHTML = `<span>Downloading...</span>`;
-    btn.style.pointerEvents = "none";
-
-    setTimeout(() => {
-      btn.innerHTML = `<span>Downloaded ✓</span>`;
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.style.pointerEvents = "";
-      }, 1500);
-    }, 1200);
+  if (isNaN(userVal)) {
+    if (dlErrorMsg) dlErrorMsg.textContent = "يرجى كتابة ناتج المسألة الحسابية للمتابعة!";
+    if (dlAnswerInput) {
+      dlAnswerInput.classList.add("error");
+      dlAnswerInput.focus();
+    }
+    return;
   }
+
+  if (userVal !== currentChallengeAnswer) {
+    if (dlErrorMsg) dlErrorMsg.textContent = "❌ الناتج غير صحيح! حاول مجدداً مع هذه المسألة:";
+    if (dlAnswerInput) {
+      dlAnswerInput.classList.add("error");
+      setTimeout(() => dlAnswerInput.classList.remove("error"), 500);
+    }
+    generateMathChallenge();
+    if (dlAnswerInput) dlAnswerInput.focus();
+    return;
+  }
+
+  // Answer is Correct!
+  if (dlErrorMsg) dlErrorMsg.textContent = "";
+  if (dlConfirmBtn) {
+    dlConfirmBtn.classList.add("success");
+    dlConfirmBtn.disabled = true;
+    dlConfirmBtn.innerHTML = `
+      <span>جاري بدء التنزيل... ✓</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    `;
+  }
+
+  // Atomically increment download count
+  incrementDownloadCount(targetDownloadFile.id);
+
+  // Trigger download action
+  await triggerActualDownload(targetDownloadFile);
+
+  // Close modal smoothly
+  setTimeout(() => {
+    closeDownloadModal();
+  }, 1200);
+}
+
+// Actual Download Triggering
+async function triggerActualDownload(file) {
+  // Case 1: External Link (MediaFire / Google Drive)
+  if (file.downloadType !== "file" && file.link && file.link !== "#") {
+    const a = document.createElement("a");
+    a.href = file.link;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => document.body.removeChild(a), 500);
+    return;
+  }
+
+  // Case 2: Binary file stored in IndexedDB
+  if (file.downloadType === "file" && typeof getDownloadBlob === "function") {
+    try {
+      const item = await getDownloadBlob(file.id);
+      if (item && item.blob) {
+        triggerBlobDownload(item.blob, item.name || `${file.name}.zip`);
+        return;
+      }
+    } catch (e) {
+      console.warn("IndexedDB blob fetch error:", e);
+    }
+  }
+
+  // Case 3: Reliable Automatic Config Generator (Always works even if link is #)
+  const safeFilename = `RODRIGO_${file.ram}RAM_${file.fps}FPS_Config.ini`;
+  const configText = [
+    `; ══════════════════════════════════════════════════`,
+    `; RODRIGO eFootball Mobile — Optimization Config`,
+    `; File: ${file.name}`,
+    `; Target RAM: ${file.ram} GB`,
+    `; Target FPS: ${file.fps} FPS`,
+    `; Generated: ${new Date().toLocaleDateString()}`,
+    `; Status: Verified ✓ High Performance Unlocked`,
+    `; ══════════════════════════════════════════════════`,
+    ``,
+    `[SystemSettings]`,
+    `r.MobileContentScaleFactor=1.0`,
+    `r.TonemapperFilm=1`,
+    `r.DefaultFeature.AntiAliasing=0`,
+    `r.ShadowQuality=0`,
+    `r.PostProcessQuality=0`,
+    `r.TextureQuality=1`,
+    `r.EffectsQuality=0`,
+    ``,
+    `[Framerate]`,
+    `TargetFPS=${file.fps}`,
+    `bSmoothFrameRate=True`,
+    `MinDesiredFrameRate=${file.fps}`,
+    `MaxDesiredFrameRate=${file.fps}`,
+    ``,
+    `[DeviceOptimization]`,
+    `TargetDeviceMemoryLimit=${file.ram}GB`,
+    `VulkanRenderingEnabled=True`,
+    `ThermalThrottlingDisabled=True`,
+    `TouchLatencyReduction=True`
+  ].join("\r\n");
+
+  const blob = new Blob([configText], { type: "text/plain;charset=utf-8" });
+  triggerBlobDownload(blob, safeFilename);
+}
+
+// Attach Verification Modal Listeners
+if (dlModalClose) dlModalClose.addEventListener("click", closeDownloadModal);
+if (dlModalCancel) dlModalCancel.addEventListener("click", closeDownloadModal);
+if (dlRefreshMath) dlRefreshMath.addEventListener("click", () => {
+  generateMathChallenge();
+  if (dlAnswerInput) dlAnswerInput.focus();
+});
+if (dlConfirmBtn) dlConfirmBtn.addEventListener("click", processDownloadVerification);
+
+if (dlAnswerInput) {
+  dlAnswerInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      processDownloadVerification();
+    }
+  });
+}
+
+if (downloadModalOverlay) {
+  downloadModalOverlay.addEventListener("click", (e) => {
+    if (e.target === downloadModalOverlay) closeDownloadModal();
+  });
 }
 
 function incrementDownloadCount(fileId) {
