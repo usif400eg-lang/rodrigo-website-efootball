@@ -72,43 +72,104 @@ function renderPlayers(list) {
   });
 }
 
-// ── Create Single Player Card ──
+// ── Create Single Player Card (Top Cards Layout Matching Reference Image) ──
 function createPlayerCard(player, delay = 0) {
   const card = document.createElement("div");
-  card.className = "player-card";
-  card.style.animationDelay = `${delay * 0.05}s`;
+  card.className = "top-card-item";
+  card.style.animationDelay = `${delay * 0.04}s`;
   card.dataset.playerId = player.id;
   card.onclick = () => openPlayerDevModal(player.id);
 
   const imgHTML = player.image
     ? `<img src="${player.image}" alt="${escapeHtml(player.name)}" loading="lazy">`
-    : `<div class="player-card-img-placeholder">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        <span>${escapeHtml(player.name)}</span>
+    : `<div class="top-card-img-placeholder">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>`;
 
+  const playstyle = player.playstyle || "Hole Player";
+  const booster = player.booster || "Basic";
+  const overall = player.overall || "100";
+
   card.innerHTML = `
-    <!-- Card Frame (Contains image + mobile badge) -->
-    <div class="player-card-frame">
-      <div class="player-card-img-wrap">
-        ${imgHTML}
-        <span class="mobile-card-badge-new">جديد</span>
+    <!-- Card Artwork / Portrait on Left -->
+    <div class="top-card-art-box">
+      ${imgHTML}
+    </div>
+
+    <!-- Center Info -->
+    <div class="top-card-info">
+      <div class="top-card-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
+      <div class="top-card-tags">
+        <span class="top-tag-playstyle">
+          <span class="tag-arrow-icon">⮝</span>
+          <span class="tag-text">${escapeHtml(playstyle)}</span>
+        </span>
+        <span class="top-tag-booster">
+          <span class="tag-booster-icon">🗲</span>
+          <span class="tag-text">${escapeHtml(booster)}</span>
+        </span>
       </div>
     </div>
 
-    <!-- Desktop View (Image 1): Centered clean name under the card -->
-    <div class="desktop-player-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
-
-    <!-- Mobile View (Image 2): Dark name box + Golden Action Button -->
-    <div class="mobile-card-footer">
-      <div class="mobile-player-name-strip">${escapeHtml(player.name)}</div>
-      <button type="button" class="mobile-player-dev-btn" onclick="event.stopPropagation(); openPlayerDevModal(${player.id})">
-        ⭐ عرض التطويرة الخاصة ⭐
-      </button>
+    <!-- Overall Capsule on Right -->
+    <div class="top-card-ovr-wrap">
+      <div class="top-card-ovr">${overall}</div>
     </div>
+
+    <!-- 3D Specular Glare Layer -->
+    <div class="card-glare"></div>
   `;
 
+  // Attach 3D mousemove tilt & shine effect
+  attachCardTiltEffect(card);
+
   return card;
+}
+
+// ── 3D Tilt & Dynamic Specular Lighting on Mousemove ──
+function attachCardTiltEffect(card) {
+  let isHovered = false;
+
+  card.addEventListener("mouseenter", () => {
+    isHovered = true;
+    card.style.transition = "transform 0.08s ease-out, box-shadow 0.2s ease, border-color 0.2s ease";
+  });
+
+  card.addEventListener("mousemove", (e) => {
+    if (!isHovered) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const percentX = (x - centerX) / centerX; // -1 to 1
+    const percentY = (y - centerY) / centerY; // -1 to 1
+
+    const tiltX = -percentY * 11; // max tilt degrees
+    const tiltY = percentX * 11;
+
+    card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateZ(12px) translateY(-4px)`;
+
+    const glare = card.querySelector(".card-glare");
+    if (glare) {
+      const posX = (x / rect.width) * 100;
+      const posY = (y / rect.height) * 100;
+      glare.style.opacity = "1";
+      glare.style.background = `radial-gradient(circle 220px at ${posX.toFixed(1)}% ${posY.toFixed(1)}%, rgba(255,255,255,0.22) 0%, rgba(56,189,248,0.12) 40%, transparent 80%)`;
+    }
+  });
+
+  card.addEventListener("mouseleave", () => {
+    isHovered = false;
+    card.style.transition = "transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease";
+    card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) translateY(0px)";
+    const glare = card.querySelector(".card-glare");
+    if (glare) {
+      glare.style.opacity = "0";
+    }
+  });
 }
 
 // ── Open Player Development Modal ──
@@ -521,14 +582,14 @@ document.addEventListener("DOMContentLoaded", () => {
 function showPlayerSkeletons() {
   if (!playersGrid) return;
   playersGrid.innerHTML = Array(6).fill(`
-    <div class="player-card skeleton-card">
-      <div class="player-card-frame skeleton-pulse">
-        <div class="skeleton-img"></div>
+    <div class="top-card-item skeleton-top-card">
+      <div class="top-card-art-box skeleton-pulse" style="background:rgba(255,255,255,0.06);border-radius:8px;"></div>
+      <div class="top-card-info">
+        <div class="skeleton-line skeleton-pulse" style="width:55%;height:18px;margin-bottom:8px;"></div>
+        <div class="skeleton-line skeleton-pulse" style="width:35%;height:14px;"></div>
       </div>
-      <div class="desktop-player-name skeleton-line" style="width:75%;margin:8px auto 0;"></div>
-      <div class="mobile-card-footer">
-        <div class="skeleton-line" style="height:26px;border-radius:6px;margin-bottom:4px;"></div>
-        <div class="skeleton-line" style="height:32px;border-radius:6px;"></div>
+      <div class="top-card-ovr-wrap">
+        <div class="top-card-ovr skeleton-pulse" style="color:transparent;background:rgba(255,255,255,0.08);">100</div>
       </div>
     </div>
   `).join("");

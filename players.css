@@ -59,254 +59,309 @@
   50% { opacity: 0.5; transform: scale(1.4); }
 }
 
-/* ── Players Grid (Desktop: 6 cards per row matching Image 1) ── */
+/* ═══════════════════════════════════════════════
+   Top Cards Board (eFHUB Ranking Layout - Image Match)
+   ═══════════════════════════════════════════════ */
+.top-cards-board {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #090e17;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 24px 28px 28px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+/* ── Top Cards Header ── */
+.top-cards-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.top-cards-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.top-cards-trophy-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.2);
+}
+
+.top-cards-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.top-cards-badge-ar {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.top-cards-show-all-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 7px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.top-cards-show-all-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ── Top Cards Grid (2 Columns on Desktop, 1 on Mobile) ── */
 .players-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 24px 16px;
-  padding: 0 24px;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-@media (max-width: 1200px) {
-  .players-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px 14px;
-  }
-}
-
-@media (max-width: 960px) {
-  .players-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px 12px;
-  }
-}
-
-/* ── Player Card: Desktop View (Image 1) ── */
-.player-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   padding: 0;
-  user-select: none;
-  animation: playerCardIn 0.45s ease both;
-  transition: transform 0.25s ease;
+  margin: 0;
 }
 
-@keyframes playerCardIn {
-  from { opacity: 0; transform: translateY(18px); }
+@media (max-width: 860px) {
+  .players-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .top-cards-board {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .top-cards-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* ── Top Card Item (Matching Image Layout) ── */
+.top-card-item {
+  position: relative;
+  background: #080c14;
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 8px 18px 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  transform-style: preserve-3d;
+  will-change: transform;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  animation: cardItemIn 0.4s ease both;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+@keyframes cardItemIn {
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Card graphic frame */
-.player-card-frame {
-  position: relative;
-  width: 100%;
+.top-card-item:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+/* Card Artwork on Left */
+.top-card-art-box {
+  width: 66px;
+  height: 86px;
+  aspect-ratio: 3/4;
   border-radius: 8px;
   overflow: hidden;
-  border: 1.5px solid rgba(255, 215, 0, 0.25);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
-  background: linear-gradient(145deg, #16202c 0%, #0d131d 100%);
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  border: 1.5px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+  flex-shrink: 0;
+  background: #0a0f18;
+  transform: translateZ(18px);
+  transition: transform 0.3s ease;
 }
 
-.player-card:hover .player-card-frame {
-  transform: translateY(-6px) scale(1.025);
-  border-color: rgba(56, 189, 248, 0.75);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75), 0 0 22px rgba(56, 189, 248, 0.35);
+.top-card-item:hover .top-card-art-box {
+  transform: translateZ(26px) scale(1.04);
+  border-color: #38bdf8;
 }
 
-/* Card image container */
-.player-card-img-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3/4;
-  overflow: hidden;
-  background: #090e18;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.player-card-img-wrap img {
+.top-card-art-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: top center;
   display: block;
-  transition: transform 0.35s ease;
 }
 
-.player-card:hover .player-card-img-wrap img {
-  transform: scale(1.04);
-}
-
-/* Desktop Name under the card (Centered, Clean - exactly as in Image 1) */
-.desktop-player-name {
-  display: block;
-  font-family: var(--font-primary);
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #f1f5f9;
-  text-align: center;
-  margin-top: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: -0.01em;
-  transition: color 0.2s ease;
-}
-
-.player-card:hover .desktop-player-name {
-  color: #38bdf8;
-}
-
-/* Image Placeholder */
-.player-card-img-placeholder {
+.top-card-img-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #131c2a, #0a0f17);
-  color: rgba(255, 255, 255, 0.35);
-  padding: 10px;
-  text-align: center;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.player-card-img-placeholder svg {
-  opacity: 0.4;
+/* Middle Details: Name & Tags */
+.top-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transform: translateZ(14px);
 }
 
-.player-card-img-placeholder span {
-  font-size: 0.75rem;
-  font-weight: 600;
+.top-card-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+.top-card-item:hover .top-card-name {
+  color: #38bdf8;
+}
+
+.top-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Playstyle tag with red/pink arrow */
+.top-tag-playstyle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #94a3b8;
+  white-space: nowrap;
 }
 
-/* Hide mobile elements on desktop by default */
-.mobile-card-footer {
-  display: none;
+.tag-arrow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: rgba(244, 63, 94, 0.18);
+  color: #f43f5e;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
-.mobile-card-badge-new {
-  display: none;
+/* Booster tag with cyan icon */
+.top-tag-booster {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  white-space: nowrap;
 }
 
-/* ── Mobile View: Exactly matching Image 2 (@media max-width: 768px) ── */
-@media (max-width: 768px) {
-  /* Exactly 2 columns on mobile */
-  .players-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 14px 10px !important;
-    padding: 0 12px !important;
-  }
+.tag-booster-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+}
 
-  /* Card container matching Image 2 */
-  .player-card {
-    background: rgba(13, 19, 31, 0.95);
-    border: 1.5px solid rgba(255, 255, 255, 0.12);
-    border-radius: 12px;
-    padding: 6px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
+/* Overall Capsule on Right */
+.top-card-ovr-wrap {
+  flex-shrink: 0;
+  transform: translateZ(22px);
+}
 
-  .player-card-frame {
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 8px !important;
-    overflow: hidden;
-    transform: none !important;
-  }
+.top-card-ovr {
+  background: #04060b;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  text-align: center;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.75);
+  letter-spacing: -0.02em;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
 
-  .player-card-img-wrap {
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 3/4;
-  }
+.top-card-item:hover .top-card-ovr {
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: scale(1.05);
+}
 
-  /* Green "جديد" (New) badge in top right corner of card */
-  .mobile-card-badge-new {
-    display: block !important;
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    background: rgba(5, 46, 22, 0.9);
-    border: 1px solid #22c55e;
-    color: #4ade80;
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 2px 7px;
-    border-radius: 4px;
-    z-index: 2;
-    letter-spacing: 0.04em;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  }
+/* 3D Dynamic Specular Glare / Hologram Layer */
+.card-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: inherit;
+  transition: opacity 0.25s ease;
+  mix-blend-mode: overlay;
+  z-index: 5;
+}
 
-  /* Hide desktop name on mobile */
-  .desktop-player-name {
-    display: none !important;
-  }
-
-  /* Show mobile footer with Name Strip + Golden Yellow Button */
-  .mobile-card-footer {
-    display: flex !important;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 6px;
-  }
-
-  /* Dark name strip underneath card */
-  .mobile-player-name-strip {
-    background: #05080f;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    padding: 6px 4px;
-    color: #ffffff;
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-family: var(--font-primary);
-  }
-
-  /* Iconic Golden Yellow Button matching Image 2 */
-  .mobile-player-dev-btn {
-    background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
-    border: 1px solid #ca8a04;
-    color: #1c1917;
-    font-size: 0.72rem;
-    font-weight: 900;
-    padding: 8px 4px;
-    border-radius: 6px;
-    text-align: center;
-    width: 100%;
-    box-shadow: 0 2px 10px rgba(234, 179, 8, 0.4);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-primary);
-    letter-spacing: -0.01em;
-    transition: transform 0.15s ease, filter 0.15s ease;
-  }
-
-  .mobile-player-dev-btn:active {
-    transform: scale(0.97);
-    filter: brightness(0.92);
-  }
+/* Skeleton Loading for Top Cards */
+.skeleton-top-card {
+  pointer-events: none;
 }
 
 /* ── No Players State ── */
