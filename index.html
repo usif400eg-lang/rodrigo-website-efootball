@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="players.css">
 </head>
 <body>
   <!-- Ambient background effects -->
@@ -28,6 +29,7 @@
       </a>
       <div class="nav-links">
         <a href="#home" class="nav-link active">Home</a>
+        <a href="#players" class="nav-link">Players</a>
         <a href="#downloads" class="nav-link">Downloads</a>
         <a href="#footer" class="nav-link">Contact</a>
         <a href="admin.html" class="nav-admin-link">
@@ -45,6 +47,7 @@
   <div class="mobile-menu-overlay" id="mobileMenuOverlay">
     <div class="mobile-menu-content">
       <a href="#home" class="mobile-link">Home</a>
+      <a href="#players" class="mobile-link">🎮 Players</a>
       <a href="#downloads" class="mobile-link">Downloads</a>
       <a href="#footer" class="mobile-link">Contact</a>
       <a href="admin.html" class="mobile-link mobile-admin-link">⚡ لوحة التحكم (Admin)</a>
@@ -98,6 +101,30 @@
         <div class="fc-icon">⚡</div>
         <div class="fc-text">Optimized</div>
       </div>
+    </div>
+  </section>
+
+  <!-- Players Development Section -->
+  <section class="players-section" id="players">
+    <div class="section-header">
+      <div class="players-section-badge">
+        <span class="badge-dot"></span>
+        <span>Player Developments</span>
+      </div>
+      <h2 class="section-title">تطوير اللاعبين</h2>
+      <p class="section-subtitle">استعرض تطويرات اللاعبين وتحديثاتهم داخل لعبة eFootball</p>
+    </div>
+
+    <!-- Players Grid -->
+    <div class="players-grid" id="playersGrid">
+      <!-- Player cards injected by JS -->
+    </div>
+
+    <!-- No Players State -->
+    <div class="no-players" id="noPlayers">
+      <div class="no-players-icon">🎮</div>
+      <h3>لا توجد تطويرات بعد</h3>
+      <p>سيتم إضافة تطويرات اللاعبين قريباً</p>
     </div>
   </section>
 
@@ -210,6 +237,13 @@
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
   </button>
 
+  <!-- Player Development Detail Modal -->
+  <div class="player-dev-modal-overlay" id="playerDevModalOverlay">
+    <div class="player-dev-modal" id="playerDevModal">
+      <!-- Content injected dynamically by players.js -->
+    </div>
+  </div>
+
   <!-- Download Verification Modal (Math / Security Code Gate) -->
   <div class="dl-modal-overlay" id="downloadModalOverlay">
     <div class="dl-modal">
@@ -277,5 +311,6 @@
   <script src="firebase-config.js"></script>
   <script src="storage-db.js"></script>
   <script src="script.js"></script>
+  <script src="players.js"></script>
 </body>
 </html>

@@ -6,45 +6,26 @@
 // ── Storage Key (shared with admin panel) ──
 const STORAGE_KEY = "rodrigo_files";
 
-// ── Default Files (fallback if localStorage is empty) ──
-const DEFAULT_FILES = [
-  { id: 1,  name: "RODRIGO 2-3 RAM — 30 FPS",  ram: "2-3",   fps: 30,  downloads: 4821,  image: "", link: "#" },
-  { id: 2,  name: "RODRIGO 2-3 RAM — 60 FPS",  ram: "2-3",   fps: 60,  downloads: 6234,  image: "", link: "#" },
-  { id: 3,  name: "RODRIGO 4-6 RAM — 30 FPS",  ram: "4-6",   fps: 30,  downloads: 3912,  image: "", link: "#" },
-  { id: 4,  name: "RODRIGO 4-6 RAM — 60 FPS",  ram: "4-6",   fps: 60,  downloads: 7543,  image: "", link: "#" },
-  { id: 5,  name: "RODRIGO 6-8 RAM — 30 FPS",  ram: "6-8",   fps: 30,  downloads: 2876,  image: "", link: "#" },
-  { id: 6,  name: "RODRIGO 6-8 RAM — 60 FPS",  ram: "6-8",   fps: 60,  downloads: 8190,  image: "", link: "#" },
-  { id: 7,  name: "RODRIGO 6-8 RAM — 90 FPS",  ram: "6-8",   fps: 90,  downloads: 5421,  image: "", link: "#" },
-  { id: 8,  name: "RODRIGO 6-8 RAM — 120 FPS", ram: "6-8",   fps: 120, downloads: 3245,  image: "", link: "#" },
-  { id: 9,  name: "RODRIGO 8-12 RAM — 30 FPS",  ram: "8-12",  fps: 30,  downloads: 2134,  image: "", link: "#" },
-  { id: 10, name: "RODRIGO 8-12 RAM — 60 FPS",  ram: "8-12",  fps: 60,  downloads: 9876,  image: "", link: "#" },
-  { id: 11, name: "RODRIGO 8-12 RAM — 90 FPS",  ram: "8-12",  fps: 90,  downloads: 6543,  image: "", link: "#" },
-  { id: 12, name: "RODRIGO 8-12 RAM — 120 FPS", ram: "8-12",  fps: 120, downloads: 4312,  image: "", link: "#" },
-  { id: 13, name: "RODRIGO 12-24 RAM — 30 FPS",  ram: "12-24", fps: 30,  downloads: 1567,  image: "", link: "#" },
-  { id: 14, name: "RODRIGO 12-24 RAM — 60 FPS",  ram: "12-24", fps: 60,  downloads: 8321,  image: "", link: "#" },
-  { id: 15, name: "RODRIGO 12-24 RAM — 90 FPS",  ram: "12-24", fps: 90,  downloads: 7198,  image: "", link: "#" },
-  { id: 16, name: "RODRIGO 12-24 RAM — 120 FPS", ram: "12-24", fps: 120, downloads: 5432,  image: "", link: "#" },
-  { id: 17, name: "RODRIGO 12-24 RAM — 240 FPS", ram: "12-24", fps: 240, downloads: 2109,  image: "", link: "#" },
-];
-
-// ── Load files from localStorage (synced with admin) ──
-function loadFiles() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    try { return JSON.parse(stored); } catch { /* fall through */ }
-  }
-  // First visit: save defaults and return them
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_FILES));
-  return [...DEFAULT_FILES];
-}
-
 // ── Icon helper ──
 function getIconForRam(ram) {
   const icons = { "2-3": "📁", "4-6": "📂", "6-8": "📦", "8-12": "🗃️", "12-24": "💎" };
   return icons[ram] || "📁";
 }
 
-let FILES = loadFiles();
+// ── Load files from localStorage (fallback only) ──
+function loadFilesFromLocal() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch { /* fall through */ }
+  }
+  return [];
+}
+
+// FILES starts as cached local data (will be overwritten by Firebase on first subscription callback)
+let FILES = loadFilesFromLocal();
 
 // ── State ──
 let activeRam = "all";
@@ -615,31 +596,88 @@ function updateHeroStats() {
 // ── Live Sync across Tabs ──
 window.addEventListener("storage", (e) => {
   if (e.key === STORAGE_KEY) {
-    FILES = loadFiles();
-    renderCards();
-    updateHeroStats();
+    const fresh = loadFilesFromLocal();
+    if (fresh.length > 0) {
+      FILES = fresh;
+      renderCards();
+      updateHeroStats();
+    }
   }
 });
 
-// ── Realtime Cloud Sync (Firebase) ──
+// ── Realtime Cloud Sync (Firebase) — PRIMARY data source ──
+let cloudSyncUnsubscribe = null;
+
 function setupCloudLiveSync() {
-  if (typeof CloudDB !== "undefined") {
-    CloudDB.subscribeFiles((cloudFiles) => {
+  if (typeof CloudDB === "undefined") {
+    // Firebase SDK not available — use local data
+    if (FILES.length === 0) showLoadingError();
+    return;
+  }
+
+  if (!CloudDB.isReady()) {
+    // Firebase not configured/connected — fallback to localStorage
+    console.log("Firebase not ready, using local data");
+    if (FILES.length === 0) showLoadingError();
+    return;
+  }
+
+  // Subscribe to real-time updates from Firebase
+  cloudSyncUnsubscribe = CloudDB.subscribeFiles(
+    (cloudFiles) => {
       if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
         FILES = cloudFiles;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(FILES));
         renderCards();
         updateHeroStats();
+      } else {
+        // Firebase returned empty/null — use local cache if available
+        const localCache = loadFilesFromLocal();
+        if (localCache.length > 0) {
+          FILES = localCache;
+          renderCards();
+          updateHeroStats();
+        } else {
+          showLoadingError();
+        }
       }
-    });
+    },
+    (err) => {
+      console.warn("Firebase subscription error, falling back to local:", err);
+      const localCache = loadFilesFromLocal();
+      if (localCache.length > 0) {
+        FILES = localCache;
+        renderCards();
+        updateHeroStats();
+      } else {
+        showLoadingError();
+      }
+    }
+  );
+}
+
+function showLoadingError() {
+  const grid = document.getElementById("cardsGrid");
+  const noRes = document.getElementById("noResults");
+  if (grid) grid.style.display = "none";
+  if (noRes) {
+    noRes.classList.add("visible");
+    const h3 = noRes.querySelector("h3");
+    const p  = noRes.querySelector("p");
+    if (h3) h3.textContent = "لا توجد ملفات حالياً";
+    if (p)  p.textContent  = "سيتم إضافة الملفات قريباً";
   }
 }
 
 // ── Initialize ──
 document.addEventListener("DOMContentLoaded", () => {
-  updateHeroStats();
-  renderCards();
+  // Render immediately from local cache (if any) so page isn't blank
+  if (FILES.length > 0) {
+    updateHeroStats();
+    renderCards();
+  }
   animateCounters();
   updateActiveNavLink();
+  // Firebase is the primary source — subscribe and override local data
   setupCloudLiveSync();
 });

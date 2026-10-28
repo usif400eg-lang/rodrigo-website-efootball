@@ -108,34 +108,35 @@ function loadFiles() {
     try {
       files = JSON.parse(stored);
     } catch {
-      files = [...DEFAULT_FILES];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+      files = [];
     }
   } else {
-    files = [...DEFAULT_FILES];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+    files = [];
   }
 
   // Subscribe to real-time Cloud updates if Firebase is configured
   if (typeof CloudDB !== "undefined" && CloudDB.isReady() && !isSubscribedToCloud) {
     isSubscribedToCloud = true;
-    CloudDB.subscribeFiles(async (cloudFiles) => {
-      if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
-        files = cloudFiles;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
-        renderTable(adminSearchInput ? adminSearchInput.value.trim() : "");
-        updateStats();
-      } else if (!cloudFiles || cloudFiles.length === 0) {
-        // Firebase database is empty! Auto-seed with current files
-        console.log("⚡ Database is empty, auto-seeding files to Firebase...");
-        try {
-          await CloudDB.saveAllFiles(files);
-          showToast("تم مزامنة ورفع الملفات إلى Firebase تلقائياً ⚡", "success");
-        } catch (e) {
-          console.warn("Auto-seed error:", e);
+    CloudDB.subscribeFiles(
+      (cloudFiles) => {
+        if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+          files = cloudFiles;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(files));
+          renderTable(adminSearchInput ? adminSearchInput.value.trim() : "");
+          updateStats();
+        } else if (cloudFiles !== null && (!cloudFiles || cloudFiles.length === 0)) {
+          // Firebase database is empty — just show empty state, let admin add files manually
+          console.log("Firebase DB is empty. Showing empty admin table.");
+          // Keep local files if any
+          renderTable(adminSearchInput ? adminSearchInput.value.trim() : "");
+          updateStats();
         }
+      },
+      (err) => {
+        console.warn("Firebase subscription error in admin:", err);
+        showToast("⚠️ تعذر الاتصال بالسحابة مؤقتاً", "warning");
       }
-    });
+    );
   }
 }
 
@@ -911,10 +912,14 @@ if (btnSaveCloudConfig) {
       // Save to localStorage
       localStorage.setItem(FIREBASE_CONFIG_STORAGE_KEY, JSON.stringify(configToSave));
       
-      // Re-init Firebase
-      initFirebaseApp();
+      // Re-init Firebase with new config
+      reinitFirebaseApp();
 
-      updateCloudStatusUI();
+      // Give Firebase a moment to reconnect then update UI
+      setTimeout(() => {
+        initFirebaseApp();
+        updateCloudStatusUI();
+      }, 500);
       showToast("تم ربط قاعدة بيانات Firebase بنجاح! السحابة متصلة الآن ⚡", "success");
 
       // Auto start cloud subscription
