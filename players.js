@@ -91,7 +91,7 @@ function createPlayerCard(player, delay = 0) {
   const overall = player.overall || "100";
 
   card.innerHTML = `
-    <!-- Card Artwork / Portrait on Left -->
+    <!-- Card Artwork on Left (Popping Out Above Container - Exact Image Match) -->
     <div class="top-card-art-box">
       ${imgHTML}
     </div>
@@ -101,11 +101,15 @@ function createPlayerCard(player, delay = 0) {
       <div class="top-card-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
       <div class="top-card-tags">
         <span class="top-tag-playstyle">
-          <span class="tag-arrow-icon">⮝</span>
+          <span class="tag-box-icon red-box" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
+          </span>
           <span class="tag-text">${escapeHtml(playstyle)}</span>
         </span>
         <span class="top-tag-booster">
-          <span class="tag-booster-icon">🗲</span>
+          <span class="tag-box-icon cyan-box" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
+          </span>
           <span class="tag-text">${escapeHtml(booster)}</span>
         </span>
       </div>
@@ -147,24 +151,37 @@ function attachCardTiltEffect(card) {
     const percentX = (x - centerX) / centerX; // -1 to 1
     const percentY = (y - centerY) / centerY; // -1 to 1
 
-    const tiltX = -percentY * 11; // max tilt degrees
-    const tiltY = percentX * 11;
+    const tiltX = -percentY * 12; // tilt X axis
+    const tiltY = percentX * 12;  // tilt Y axis
 
-    card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateZ(12px) translateY(-4px)`;
+    card.style.transform = `perspective(900px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateY(-5px)`;
 
+    // Card artwork parallax pop-out movement!
+    const artBox = card.querySelector(".top-card-art-box");
+    if (artBox) {
+      artBox.style.transform = `translateY(-10px) scale(1.08) rotate(${tiltY * 0.4}deg) translateZ(30px)`;
+    }
+
+    // Dynamic specular glare layer following cursor
     const glare = card.querySelector(".card-glare");
     if (glare) {
       const posX = (x / rect.width) * 100;
       const posY = (y / rect.height) * 100;
       glare.style.opacity = "1";
-      glare.style.background = `radial-gradient(circle 220px at ${posX.toFixed(1)}% ${posY.toFixed(1)}%, rgba(255,255,255,0.22) 0%, rgba(56,189,248,0.12) 40%, transparent 80%)`;
+      glare.style.background = `radial-gradient(circle 220px at ${posX.toFixed(1)}% ${posY.toFixed(1)}%, rgba(255,255,255,0.2) 0%, rgba(56,189,248,0.12) 40%, transparent 80%)`;
     }
   });
 
   card.addEventListener("mouseleave", () => {
     isHovered = false;
-    card.style.transition = "transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease";
-    card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) translateY(0px)";
+    card.style.transition = "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease";
+    card.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+
+    const artBox = card.querySelector(".top-card-art-box");
+    if (artBox) {
+      artBox.style.transform = "translateY(0px) scale(1) rotate(0deg) translateZ(0px)";
+    }
+
     const glare = card.querySelector(".card-glare");
     if (glare) {
       glare.style.opacity = "0";
