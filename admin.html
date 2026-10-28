@@ -164,8 +164,9 @@
             <th>البطاقة</th>
             <th>اللاعب</th>
             <th>OVR</th>
-            <th>المهارات الأساسية</th>
-            <th>صفحة التطوير</th>
+            <th>المركز والأسلوب</th>
+            <th>نقاط التطوير (Build)</th>
+            <th>المهارات</th>
             <th>الإجراءات</th>
           </tr>
         </thead>
@@ -184,93 +185,493 @@
 
   </div> <!-- /dashboard -->
 
-  <!-- ════ PLAYERS PANEL COMMENT MARKER ════ -->
-
   <!-- Players Modal (Add/Edit) -->
   <div class="modal-overlay" id="playerModalOverlay">
-    <div class="modal modal-lg" id="playerModal">
+    <div class="modal modal-xl" id="playerModal">
       <div class="modal-header">
-        <h3 class="modal-title" id="playerModalTitle">إضافة لاعب</h3>
+        <div class="modal-header-with-badge">
+          <span class="modal-header-badge">⚡ eFootball Player Hub</span>
+          <h3 class="modal-title" id="playerModalTitle">إضافة لاعب وتطويره</h3>
+        </div>
         <button class="modal-close" id="playerModalClose" aria-label="إغلاق">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
+
+      <!-- Player Modal Tabs -->
+      <div class="player-form-tabs">
+        <button type="button" class="p-tab-btn active" data-tab="basic">
+          <span>📌</span>
+          <span>1. البطاقة والأساسيات</span>
+        </button>
+        <button type="button" class="p-tab-btn" data-tab="progression">
+          <span>⚡</span>
+          <span>2. توزيع نقاط التطوير</span>
+        </button>
+        <button type="button" class="p-tab-btn" data-tab="stats">
+          <span>📊</span>
+          <span>3. طاقات اللاعب (Stats)</span>
+        </button>
+        <button type="button" class="p-tab-btn" data-tab="skills">
+          <span>🎯</span>
+          <span>4. المهارات والحالة</span>
+        </button>
+      </div>
+
       <form id="playerForm" autocomplete="off">
-        <div class="modal-body">
+        <div class="modal-body player-modal-body">
 
-          <!-- Card Image Upload -->
-          <div class="image-upload-area" id="playerImageUploadArea">
-            <input type="file" id="playerImageInput" accept="image/*" hidden>
-            <div class="image-preview" id="playerImagePreview">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              <span>صورة بطاقة اللاعب</span>
-              <span class="image-hint">PNG, JPG, WEBP — حد أقصى 2MB</span>
+          <!-- ════ TAB 1: BASIC INFO ════ -->
+          <div class="player-tab-pane active" id="paneBasic">
+            <!-- Card Image Upload -->
+            <div class="image-upload-area" id="playerImageUploadArea">
+              <input type="file" id="playerImageInput" accept="image/*" hidden>
+              <div class="image-preview" id="playerImagePreview">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <span>صورة بطاقة اللاعب</span>
+                <span class="image-hint">PNG, JPG, WEBP — حد أقصى 5MB</span>
+              </div>
+              <img id="playerPreviewImg" class="preview-img" alt="معاينة">
+              <button type="button" class="remove-img-btn" id="playerRemoveImgBtn" style="display:none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
             </div>
-            <img id="playerPreviewImg" class="preview-img" alt="معاينة">
-            <button type="button" class="remove-img-btn" id="playerRemoveImgBtn" style="display:none;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
+
+            <div class="form-grid">
+              <!-- Player Name -->
+              <div class="input-group full-width">
+                <label for="playerName">اسم اللاعب <span class="required">*</span></label>
+                <input type="text" id="playerName" placeholder="مثال: Lionel Messi" required>
+              </div>
+
+              <!-- Overall + Position -->
+              <div class="input-group">
+                <label for="playerOverall">الـ Overall الإجمالي <span class="required">*</span></label>
+                <input type="number" id="playerOverall" placeholder="102" min="40" max="115" required>
+              </div>
+              <div class="input-group">
+                <label for="playerPosition">المركز الأساسي <span class="required">*</span></label>
+                <input type="text" id="playerPosition" placeholder="مثال: AMF, CF, SS, CB, GK" required>
+              </div>
+
+              <!-- Compatible Positions -->
+              <div class="input-group full-width">
+                <label for="playerCompatiblePositions">المراكز الفرعية المتوافقة</label>
+                <input type="text" id="playerCompatiblePositions" placeholder="مثال: SS, AMF, RMF, LMF, CMF">
+                <span class="input-hint">افصل بين المراكز بفاصلة (تظهر كبطاقات صغيرة مثل eFHUB)</span>
+              </div>
+
+              <!-- Playstyle & Booster -->
+              <div class="input-group">
+                <label for="playerPlaystyle">أسلوب اللعب (Playstyle)</label>
+                <input type="text" id="playerPlaystyle" placeholder="مثال: HOLE PLAYER, GOAL POACHER">
+              </div>
+              <div class="input-group">
+                <label for="playerBooster">المعزز / البوستر (Booster)</label>
+                <input type="text" id="playerBooster" placeholder="مثال: PASS DISRUPTOR, AGILITY">
+              </div>
+
+              <!-- Playstyle Description -->
+              <div class="input-group full-width">
+                <label for="playerPlaystyleDesc">شرح أسلوب اللعب (اختياري)</label>
+                <input type="text" id="playerPlaystyleDesc" placeholder="مثال: A player who looks to make runs into the opposition goal area...">
+              </div>
+
+              <!-- Level Cap & Points -->
+              <div class="input-group">
+                <label for="playerLevelCap">أقصى لفل (Level Cap)</label>
+                <input type="number" id="playerLevelCap" placeholder="33" value="33" min="1" max="100">
+              </div>
+              <div class="input-group">
+                <label for="playerMaxPoints">مجموع نقاط التطوير (Points)</label>
+                <input type="number" id="playerMaxPoints" placeholder="64" value="64" min="0" max="200">
+              </div>
+
+              <!-- Manager Rating -->
+              <div class="input-group full-width">
+                <label for="playerManagerRating">تقييم المدرب (Manager Boost)</label>
+                <input type="number" id="playerManagerRating" placeholder="70 أو 88" value="70">
+              </div>
+            </div>
           </div>
 
-          <div class="form-grid">
-            <!-- Player Name -->
+          <!-- ════ TAB 2: PROGRESSION POINTS ALLOCATION ════ -->
+          <div class="player-tab-pane" id="paneProgression">
+            <div class="tab-pane-intro">
+              <strong>⚡ توزيع نقاط التطوير (Progression Allocation)</strong>
+              <p>حدد عدد النقاط الموزعة على كل خاصية للاعب كما تظهر تماماً في لعبة eFootball و eFHUB:</p>
+            </div>
+
+            <div class="progression-grid">
+              <!-- Shooting -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">SHOOTING</span>
+                  <span class="prog-ar">التسديد</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progShooting">-</button>
+                  <input type="number" id="progShooting" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progShooting">+</button>
+                </div>
+              </div>
+
+              <!-- Passing -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">PASSING</span>
+                  <span class="prog-ar">التمرير</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progPassing">-</button>
+                  <input type="number" id="progPassing" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progPassing">+</button>
+                </div>
+              </div>
+
+              <!-- Dribbling -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">DRIBBLING</span>
+                  <span class="prog-ar">المراوغة</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progDribbling">-</button>
+                  <input type="number" id="progDribbling" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progDribbling">+</button>
+                </div>
+              </div>
+
+              <!-- Dexterity -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">DEXTERITY</span>
+                  <span class="prog-ar">الرشاقة والتسارع</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progDexterity">-</button>
+                  <input type="number" id="progDexterity" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progDexterity">+</button>
+                </div>
+              </div>
+
+              <!-- Lower Body Strength -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">LOWER BODY STRENGTH</span>
+                  <span class="prog-ar">قوة الجزء السفلي / السرعة</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progLowerBody">-</button>
+                  <input type="number" id="progLowerBody" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progLowerBody">+</button>
+                </div>
+              </div>
+
+              <!-- Aerial Strength -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">AERIAL STRENGTH</span>
+                  <span class="prog-ar">القوة الهوائية / القفز</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progAerial">-</button>
+                  <input type="number" id="progAerial" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progAerial">+</button>
+                </div>
+              </div>
+
+              <!-- Defending -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">DEFENDING</span>
+                  <span class="prog-ar">الدفاع</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progDefending">-</button>
+                  <input type="number" id="progDefending" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progDefending">+</button>
+                </div>
+              </div>
+
+              <!-- GK 1 -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">GK 1</span>
+                  <span class="prog-ar">حراسة 1</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progGk1">-</button>
+                  <input type="number" id="progGk1" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progGk1">+</button>
+                </div>
+              </div>
+
+              <!-- GK 2 -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">GK 2</span>
+                  <span class="prog-ar">حراسة 2</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progGk2">-</button>
+                  <input type="number" id="progGk2" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progGk2">+</button>
+                </div>
+              </div>
+
+              <!-- GK 3 -->
+              <div class="prog-item">
+                <div class="prog-info">
+                  <span class="prog-name">GK 3</span>
+                  <span class="prog-ar">حراسة 3</span>
+                </div>
+                <div class="stepper-box">
+                  <button type="button" class="step-btn step-minus" data-target="progGk3">-</button>
+                  <input type="number" id="progGk3" class="prog-input" value="0" min="0" max="30">
+                  <button type="button" class="step-btn step-plus" data-target="progGk3">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════ TAB 3: IN-GAME STATS ════ -->
+          <div class="player-tab-pane" id="paneStats">
+            <div class="tab-pane-intro">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                <div>
+                  <strong>📊 طاقات اللاعب داخل اللعبة (Attributes)</strong>
+                  <p>أدخل قيم الطاقات (يتم تلوينها تلقائياً باللون الأخضر/الأزرق/الأصفر/الأحمر بحسب قوتها):</p>
+                </div>
+                <div class="quick-preset-btns">
+                  <button type="button" class="btn-preset" onclick="fillStatsPreset('amf')">⚡ نموذج صانع ألعاب</button>
+                  <button type="button" class="btn-preset" onclick="fillStatsPreset('cf')">⚡ نموذج مهاجم</button>
+                  <button type="button" class="btn-preset" onclick="fillStatsPreset('cb')">⚡ نموذج مدافع</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group: Attacking -->
+            <div class="stats-group-box">
+              <div class="stats-group-title">🎯 الهجوم والتحكم (Attacking)</div>
+              <div class="stats-inputs-grid">
+                <div class="stat-field">
+                  <label>Attacking Awareness (الوعي الهجومي)</label>
+                  <input type="number" id="st_attackingAwareness" value="80" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Ball Control (التحكم بالكرة)</label>
+                  <input type="number" id="st_ballControl" value="84" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Dribbling (المراوغة)</label>
+                  <input type="number" id="st_dribbling" value="86" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Tight Possession (الاستحواذ بمساحات ضيقة)</label>
+                  <input type="number" id="st_tightPossession" value="85" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Low Pass (التمرير المنخفض)</label>
+                  <input type="number" id="st_lowPass" value="84" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Lofted Pass (التمرير المرتفع)</label>
+                  <input type="number" id="st_loftedPass" value="78" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Finishing (الإنهاء أمام المرمى)</label>
+                  <input type="number" id="st_finishing" value="79" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Heading (الرأسيات)</label>
+                  <input type="number" id="st_heading" value="55" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Set Piece Taking (الركلات الثابتة)</label>
+                  <input type="number" id="st_setPieceTaking" value="69" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Curl (تقويس الكرة)</label>
+                  <input type="number" id="st_curl" value="75" min="40" max="105">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group: Defending -->
+            <div class="stats-group-box">
+              <div class="stats-group-title">🛡️ الدفاع والافتكاك (Defending)</div>
+              <div class="stats-inputs-grid">
+                <div class="stat-field">
+                  <label>Defensive Awareness (الوعي الدفاعي)</label>
+                  <input type="number" id="st_defensiveAwareness" value="43" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Defensive Engagement (المشاركة الدفاعية)</label>
+                  <input type="number" id="st_defensiveEngagement" value="43" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Tackling (افتكاك الكرة)</label>
+                  <input type="number" id="st_tackling" value="42" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Aggression (الشراسة)</label>
+                  <input type="number" id="st_aggression" value="42" min="40" max="105">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group: Athleticism -->
+            <div class="stats-group-box">
+              <div class="stats-group-title">⚡ البدنية واللياقة (Athleticism)</div>
+              <div class="stats-inputs-grid">
+                <div class="stat-field">
+                  <label>Speed (السرعة)</label>
+                  <input type="number" id="st_speed" value="80" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Acceleration (التسارع)</label>
+                  <input type="number" id="st_acceleration" value="84" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Kicking Power (قوة التسديد)</label>
+                  <input type="number" id="st_kickingPower" value="80" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Jumping (القفز)</label>
+                  <input type="number" id="st_jumping" value="54" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Physical Contact (الالتحام الجسدي)</label>
+                  <input type="number" id="st_physicalContact" value="73" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Balance (التوازن)</label>
+                  <input type="number" id="st_balance" value="82" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>Stamina (التحمل)</label>
+                  <input type="number" id="st_stamina" value="73" min="40" max="105">
+                </div>
+              </div>
+            </div>
+
+            <!-- Group: Goalkeeping (Collapsible) -->
+            <details class="stats-group-details">
+              <summary class="stats-group-summary">🧤 طاقات حراسة المرمى (Goalkeeping - لحراس المرمى فقط)</summary>
+              <div class="stats-inputs-grid" style="padding-top:14px;">
+                <div class="stat-field">
+                  <label>GK Awareness (وعي الحارس)</label>
+                  <input type="number" id="st_gkAwareness" value="40" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>GK Catching (إمساك الكرة)</label>
+                  <input type="number" id="st_gkCatching" value="40" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>GK Parrying (إبعاد الكرة)</label>
+                  <input type="number" id="st_gkParrying" value="40" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>GK Reflexes (ردات الفعل)</label>
+                  <input type="number" id="st_gkReflexes" value="40" min="40" max="105">
+                </div>
+                <div class="stat-field">
+                  <label>GK Reach (مد الذراعين)</label>
+                  <input type="number" id="st_gkReach" value="40" min="40" max="105">
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <!-- ════ TAB 4: SKILLS & OTHER STATS ════ -->
+          <div class="player-tab-pane" id="paneSkills">
+            
+            <!-- Quick Skills Preset Bar -->
+            <div class="skills-preset-bar">
+              <span class="skills-preset-title">⚡ نقرة سريعة لإضافة مهارة:</span>
+              <div class="skills-quick-chips">
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Double Touch')">+ Double Touch</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Long-range Curler')">+ Long-range Curler</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Through Passing')">+ Through Passing</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('One-touch Pass')">+ One-touch Pass</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Momentum Dribbling')">+ Momentum Dribbling</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Phenomenal Pass')">+ Phenomenal Pass</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Sole Control')">+ Sole Control</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('First-time Shot')">+ First-time Shot</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Outside Curler')">+ Outside Curler</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Interception')">+ Interception</button>
+                <button type="button" class="quick-skill-tag" onclick="quickAddSkill('Blocker')">+ Blocker</button>
+              </div>
+            </div>
+
+            <!-- Basic Skills List -->
             <div class="input-group full-width">
-              <label for="playerName">اسم اللاعب <span class="required">*</span></label>
-              <input type="text" id="playerName" placeholder="مثال: Lionel Messi" required>
+              <label>مهارات اللاعب الأساسية (Player Skills)</label>
+              <div class="skills-list-container" id="basicSkillsList"></div>
+              <button type="button" class="add-skill-btn" id="addBasicSkillBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                إضافة مهارة مخصصة
+              </button>
             </div>
 
-            <!-- Overall + Position Row -->
-            <div class="input-group">
-              <label for="playerOverall">الـ Overall <span class="required">*</span></label>
-              <input type="number" id="playerOverall" placeholder="95" min="1" max="99" required>
-            </div>
-            <div class="input-group">
-              <label for="playerPosition">المركز (اختياري)</label>
-              <input type="text" id="playerPosition" placeholder="مثال: CF, SS, AMF">
-            </div>
-
-            <!-- Update Label -->
-            <div class="input-group full-width">
-              <label for="playerUpdateLabel">تسمية التحديث (اختياري)</label>
-              <input type="text" id="playerUpdateLabel" placeholder="مثال: بطاقة عيد الميلاد 2025">
+            <!-- Additional Skills -->
+            <div class="input-group full-width" style="margin-top:16px;">
+              <label>المهارات الإضافية المقترحة (Additional Skills)</label>
+              <div class="skills-list-container" id="additionalSkillsList"></div>
+              <button type="button" class="add-skill-btn" id="addExtraSkillBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                إضافة مهارة إضافية
+              </button>
             </div>
 
-            <!-- Page Path -->
-            <div class="input-group full-width">
-              <label for="playerPagePath">رابط صفحة التطوير (page player)</label>
-              <input type="text" id="playerPagePath" placeholder="page player/messi.html">
-              <p class="page-path-hint">مثال: <code>page player/messi.html</code> — ضع مسار الصفحة التفصيلية التي ستضعها يدوياً في مجلد <code>page player</code></p>
+            <!-- COM Skills -->
+            <div class="input-group full-width" style="margin-top:16px;">
+              <label for="playerComSkills">مهارات الذكاء الاصطناعي (COM Skills)</label>
+              <input type="text" id="playerComSkills" placeholder="مثال: Mazing Run, Incisive Run">
             </div>
-          </div>
 
-          <!-- Developments Section -->
-          <div class="input-group full-width" style="margin-top:8px;">
-            <label>التطويرات والتحديثات <span class="required">*</span></label>
-            <div id="developmentsList"></div>
-            <button type="button" class="add-skill-btn" id="addDevBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              إضافة تطوير جديد
-            </button>
-          </div>
+            <!-- Other Stats (Weak foot, Form, etc.) -->
+            <div class="other-stats-box" style="margin-top:16px;">
+              <div class="stats-group-title">📋 خصائص اللعب وحالة اللاعب (Other Stats)</div>
+              <div class="form-grid">
+                <div class="input-group">
+                  <label for="playerWeakFootUsage">استخدام القدم الضعيفة (Weak Foot Usage)</label>
+                  <select id="playerWeakFootUsage">
+                    <option value="Occasionally">Occasionally (أحياناً)</option>
+                    <option value="Rarely">Rarely (نادراً)</option>
+                    <option value="Regularly">Regularly (بانتظام)</option>
+                    <option value="Almost Always">Almost Always (دائماً)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="playerWeakFootAccuracy">دقة القدم الضعيفة (Weak Foot Accuracy)</label>
+                  <select id="playerWeakFootAccuracy">
+                    <option value="Very High">Very High (عالية جداً)</option>
+                    <option value="High">High (عالية)</option>
+                    <option value="Medium">Medium (متوسطة)</option>
+                    <option value="Low">Low (منخفضة)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="playerForm">الحالة والاستمرارية (Form)</label>
+                  <select id="playerForm">
+                    <option value="Unwavering">Unwavering (ثابت)</option>
+                    <option value="Standard">Standard (قياسي)</option>
+                    <option value="Inconsistent">Inconsistent (متقلب)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label for="playerInjuryResistance">مقاومة الإصابة (Injury Resistance)</label>
+                  <select id="playerInjuryResistance">
+                    <option value="Medium">Medium (متوسطة)</option>
+                    <option value="High">High (عالية)</option>
+                    <option value="Low">Low (منخفضة)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
 
-          <!-- Basic Skills Section -->
-          <div class="input-group full-width">
-            <label>المهارات الأساسية</label>
-            <div class="skills-list-container" id="basicSkillsList"></div>
-            <button type="button" class="add-skill-btn" id="addBasicSkillBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              إضافة مهارة أساسية
-            </button>
-          </div>
-
-          <!-- Additional Skills Section -->
-          <div class="input-group full-width">
-            <label>المهارات الإضافية</label>
-            <div class="skills-list-container" id="additionalSkillsList"></div>
-            <button type="button" class="add-skill-btn" id="addExtraSkillBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              إضافة مهارة إضافية
-            </button>
           </div>
 
         </div>
@@ -278,7 +679,7 @@
           <button type="button" class="btn-outline" id="playerModalCancelBtn">إلغاء</button>
           <button type="submit" class="btn-primary" id="playerModalSaveBtn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>حفظ</span>
+            <span>حفظ التطوير ونشره فوراً ⚡</span>
           </button>
         </div>
       </form>

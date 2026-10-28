@@ -364,13 +364,13 @@
   50% { opacity: 0.5; }
 }
 
-/* ── Player Development Modal ── */
+/* ── Player Development Modal (eFHUB Authentic Replica) ── */
 .player-dev-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   z-index: 1000;
   display: flex;
   align-items: flex-start;
@@ -388,382 +388,672 @@
 }
 
 .player-dev-modal {
-  background: #0e0e1a;
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 24px;
+  background: #0b111c;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 20px;
   width: 100%;
-  max-width: 880px;
+  max-width: 1180px;
   margin: auto;
-  transform: translateY(30px) scale(0.97);
+  transform: translateY(24px) scale(0.98);
   transition: transform var(--transition-normal);
   overflow: hidden;
-  box-shadow: 0 30px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(168,85,247,0.1);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(56, 189, 248, 0.1);
+  position: relative;
+  color: #f8fafc;
 }
 
 .player-dev-modal-overlay.active .player-dev-modal {
   transform: translateY(0) scale(1);
 }
 
-/* Modal Header */
-.pdm-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 28px 32px 0;
-  gap: 16px;
-}
-
-.pdm-header-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.pdm-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(168, 85, 247, 0.1);
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  color: #a855f7;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 999px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  width: fit-content;
-}
-
-.pdm-player-name {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  margin-bottom: 8px;
-}
-
-.pdm-overall-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #6c63ff, #a855f7);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 800;
-  padding: 6px 16px;
-  border-radius: 999px;
-  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.4);
-}
-
-.pdm-close-btn {
-  width: 40px;
-  height: 40px;
+/* Close Button */
+.efhub-close-btn {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: var(--text-secondary);
-  font-size: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-size: 1.4rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.pdm-close-btn:hover {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
-
-/* Modal Body */
-.pdm-body {
-  padding: 24px 32px 32px;
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 28px;
-}
-
-.pdm-card-column {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.pdm-card-img-wrap {
-  width: 100%;
-  aspect-ratio: 3/4;
-  border-radius: 16px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #1a1a2e, #0f3460);
-  border: 1px solid rgba(168, 85, 247, 0.2);
-}
-
-.pdm-card-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-}
-
-.pdm-overall-card {
-  background: linear-gradient(135deg, rgba(108, 99, 255, 0.15), rgba(168, 85, 247, 0.1));
-  border: 1px solid rgba(108, 99, 255, 0.3);
-  border-radius: 12px;
-  padding: 14px;
-  text-align: center;
-}
-
-.pdm-overall-num {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  font-weight: 900;
-  color: #fff;
+  z-index: 10;
   line-height: 1;
-  background: linear-gradient(135deg, #6c63ff, #a855f7, #00d4ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
-.pdm-overall-label {
-  font-size: 0.72rem;
-  color: var(--text-tertiary);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 2px;
+.efhub-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #fff;
 }
 
-/* Right Column */
-.pdm-info-column {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  overflow: hidden;
-}
-
-/* Section Block */
-.pdm-section {
-  background: rgba(255,255,255,0.025);
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 18px 20px;
-}
-
-.pdm-section-title {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-tertiary);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
+/* ── Top Identity Bar ── */
+.efhub-top-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  padding: 22px 28px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, transparent 100%);
 }
 
-.pdm-section-title::before {
-  content: '';
-  width: 3px;
-  height: 14px;
-  background: linear-gradient(180deg, #a855f7, #6c63ff);
-  border-radius: 3px;
-}
-
-/* Developments List */
-.pdm-developments-list {
+.efhub-identity-left {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: 18px;
 }
 
-.pdm-dev-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 10px 14px;
-  background: rgba(168, 85, 247, 0.06);
-  border: 1px solid rgba(168, 85, 247, 0.12);
-  border-radius: 10px;
-  transition: border-color var(--transition-fast);
-}
-
-.pdm-dev-item:hover {
-  border-color: rgba(168, 85, 247, 0.25);
-}
-
-.pdm-dev-icon {
-  width: 28px;
-  height: 28px;
+.efhub-card-thumb {
+  width: 64px;
+  height: 84px;
+  object-fit: cover;
   border-radius: 8px;
-  background: linear-gradient(135deg, #a855f7, #6c63ff);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.efhub-card-placeholder {
+  width: 64px;
+  height: 84px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  flex-shrink: 0;
+  font-size: 1.8rem;
 }
 
-.pdm-dev-text {
-  flex: 1;
-  min-width: 0;
+.efhub-identity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.pdm-dev-title {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.3;
+.efhub-player-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.pdm-dev-desc {
-  font-size: 0.78rem;
-  color: var(--text-tertiary);
-  margin-top: 2px;
+.efhub-pos-badge {
+  background: #14532d;
+  color: #4ade80;
+  border: 1px solid #22c55e;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
 }
 
-/* Skills Grid */
-.pdm-skills-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+.efhub-player-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.1;
+  text-transform: uppercase;
 }
 
-.pdm-skill-item {
+.efhub-ovr-tag {
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 900;
+  padding: 3px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.4);
+}
+
+.efhub-meta-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
-  background: rgba(0, 212, 255, 0.04);
-  border: 1px solid rgba(0, 212, 255, 0.1);
-  border-radius: 8px;
-}
-
-.pdm-skill-icon {
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.pdm-skill-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-/* Additional Skills as Tags */
-.pdm-extra-skills {
-  display: flex;
   flex-wrap: wrap;
+}
+
+.efhub-badge-playstyle {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.efhub-badge-booster {
+  background: rgba(192, 132, 252, 0.12);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  color: #c084fc;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.efhub-badge-meta {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.efhub-badge-meta strong {
+  color: #f1f5f9;
+}
+
+/* ── Mobile Tabs Switcher ── */
+.efhub-mobile-tabs {
+  display: none;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 16px;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.efhub-m-tab {
+  flex: 1;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.efhub-m-tab.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+/* ── Main Content Layout ── */
+.efhub-content-layout {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 20px;
+  padding: 20px 28px 28px;
+}
+
+/* ════ LEFT COLUMN ════ */
+.efhub-left-panel {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.efhub-panel-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.efhub-pill-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.efhub-pill-btn.active {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+.efhub-pill-btn.green-btn {
+  background: #14532d;
+  color: #4ade80;
+  border-color: #22c55e;
+}
+
+.efhub-pill-btn.blue-btn {
+  background: #0c4a6e;
+  color: #38bdf8;
+  border-color: #0284c7;
+}
+
+.efhub-points-summary {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.efhub-points-summary strong {
+  color: #fff;
+  font-family: var(--font-display);
+}
+
+/* Progression Rows */
+.efhub-progression-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.efhub-prog-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 24px;
+  align-items: center;
   gap: 8px;
 }
 
-.pdm-extra-tag {
+.efhub-prog-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.efhub-prog-track {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.efhub-prog-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7, #22c55e);
+  border-radius: 999px;
+}
+
+.efhub-prog-dot {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.efhub-prog-value {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #f8fafc;
+  text-align: right;
+}
+
+/* Extra Controls: Stamina & Manager */
+.efhub-extra-controls {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.efhub-stamina-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.efhub-stamina-val {
+  color: #22c55e;
+}
+
+.efhub-stamina-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.efhub-stamina-fill {
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #eab308, #22c55e);
+  border-radius: 999px;
+}
+
+.efhub-manager-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.efhub-manager-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #f8fafc;
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+/* Playstyle Card */
+.efhub-playstyle-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.efhub-playstyle-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #22c55e;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.efhub-comp-positions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.efhub-pos-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.efhub-pos-chip.active {
+  background: #14532d;
+  color: #4ade80;
+  border-color: #22c55e;
+}
+
+.efhub-playstyle-desc {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.efhub-booster-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* ════ RIGHT COLUMN ════ */
+.efhub-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 3-Column Attributes Grid */
+.efhub-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.efhub-stats-column {
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.efhub-column-header {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.efhub-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.efhub-stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.efhub-stat-name {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Authentic eFHUB Stat Number Badges */
+.efhub-stat-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 22px;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Color Classes Matching eFHUB */
+.stat-cyan {
+  background: #083344;
+  color: #22d3ee;
+  border: 1px solid #06b6d4;
+  box-shadow: 0 0 6px rgba(6, 182, 212, 0.3);
+}
+
+.stat-blue {
+  background: #1e1b4b;
+  color: #818cf8;
+  border: 1px solid #6366f1;
+}
+
+.stat-green {
+  background: #052e16;
+  color: #22c55e;
+  border: 1px solid #16a34a;
+}
+
+.stat-yellow {
+  background: #422006;
+  color: #eab308;
+  border: 1px solid #ca8a04;
+}
+
+.stat-orange {
+  background: #431407;
+  color: #f97316;
+  border: 1px solid #ea580c;
+}
+
+.stat-red {
+  background: #450a0a;
+  color: #ef4444;
+  border: 1px solid #dc2626;
+}
+
+/* ── Skills & Other Stats Section ── */
+.efhub-skills-section {
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.efhub-sub-header {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.efhub-skills-tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.efhub-skill-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: 999px;
-  transition: all var(--transition-fast);
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
 }
 
-.pdm-extra-tag:hover {
-  background: rgba(168, 85, 247, 0.1);
+.efhub-skill-pill.add-skill {
+  background: rgba(168, 85, 247, 0.12);
   border-color: rgba(168, 85, 247, 0.3);
   color: #c084fc;
 }
 
-/* Page Link Button */
-.pdm-page-link-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.efhub-skill-pill.com-skill {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+}
+
+.efhub-skill-icon {
+  font-size: 0.8rem;
+  color: #38bdf8;
+}
+
+/* Other Stats Grid */
+.efhub-other-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 10px;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #6c63ff, #a855f7);
-  color: #fff;
-  font-family: var(--font-primary);
-  font-size: 0.95rem;
+  margin-top: 10px;
+}
+
+.efhub-other-item {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.efhub-other-label {
+  color: #94a3b8;
+}
+
+.efhub-other-val {
+  color: #f1f5f9;
   font-weight: 700;
-  border-radius: 14px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  transition: all var(--transition-normal);
-  box-shadow: 0 8px 30px rgba(108, 99, 255, 0.4);
-  letter-spacing: 0.01em;
-  margin-top: 4px;
 }
 
-.pdm-page-link-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(108, 99, 255, 0.55);
-  background: linear-gradient(135deg, #7c74ff, #b86bff);
+.efhub-other-val.highlight {
+  color: #22c55e;
 }
 
-.pdm-page-link-btn svg {
-  transition: transform var(--transition-fast);
-}
-
-.pdm-page-link-btn:hover svg {
-  transform: translateX(4px);
-}
-
-/* ── Responsive ── */
-@media (max-width: 700px) {
-  .pdm-body {
+/* ── Responsive Behavior ── */
+@media (max-width: 960px) {
+  .efhub-content-layout {
     grid-template-columns: 1fr;
-    padding: 20px 20px 28px;
   }
 
-  .pdm-card-column {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 16px;
-    align-items: start;
+  .efhub-mobile-tabs {
+    display: flex;
   }
 
-  .pdm-header {
-    padding: 20px 20px 0;
+  .efhub-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .efhub-top-bar {
+    padding: 16px;
   }
 
-  .pdm-player-name {
-    font-size: 1.6rem;
+  .efhub-player-name {
+    font-size: 1.3rem;
+  }
+
+  .efhub-content-layout {
+    padding: 16px;
+  }
+
+  .efhub-card-thumb {
+    width: 48px;
+    height: 64px;
   }
 
   .players-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
-    padding: 0 16px;
-  }
-
-  .pdm-skills-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 440px) {
-  .pdm-card-column {
-    grid-template-columns: 1fr;
-  }
-
-  .pdm-card-img-wrap {
-    max-width: 180px;
-    margin: 0 auto;
-  }
-
-  .players-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    padding: 0 12px;
-  }
-}

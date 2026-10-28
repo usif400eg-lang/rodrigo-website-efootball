@@ -1,15 +1,15 @@
 /* ═══════════════════════════════════════════════
    RODRIGO Admin — Players Management
-   JavaScript Controller
+   Full eFootball Hub (eFHUB) Sync Controller
    ═══════════════════════════════════════════════ */
 
 const PLAYERS_DB_PATH = "rodrigo_players";
 
 // ── State ──
-let adminPlayers   = [];
-let editingPlayerId = null;
-let deletingPlayerId = null;
-let playerImageBase64 = "";
+let adminPlayers        = [];
+let editingPlayerId      = null;
+let deletingPlayerId     = null;
+let playerImageBase64    = "";
 let isSubscribedToPlayers = false;
 
 // ── DOM References ──
@@ -21,37 +21,49 @@ const playerModalSaveBtn    = document.getElementById("playerModalSaveBtn");
 const playerModalTitle      = document.getElementById("playerModalTitle");
 const playerForm            = document.getElementById("playerForm");
 
-const playerNameInput       = document.getElementById("playerName");
-const playerOverallInput    = document.getElementById("playerOverall");
-const playerPositionInput   = document.getElementById("playerPosition");
-const playerUpdateLabelInput= document.getElementById("playerUpdateLabel");
-const playerPagePathInput   = document.getElementById("playerPagePath");
+// Basic inputs
+const playerNameInput            = document.getElementById("playerName");
+const playerOverallInput         = document.getElementById("playerOverall");
+const playerPositionInput        = document.getElementById("playerPosition");
+const playerCompatiblePosInput   = document.getElementById("playerCompatiblePositions");
+const playerPlaystyleInput       = document.getElementById("playerPlaystyle");
+const playerPlaystyleDescInput   = document.getElementById("playerPlaystyleDesc");
+const playerBoosterInput         = document.getElementById("playerBooster");
+const playerLevelCapInput        = document.getElementById("playerLevelCap");
+const playerMaxPointsInput       = document.getElementById("playerMaxPoints");
+const playerManagerRatingInput   = document.getElementById("playerManagerRating");
 
+// Image inputs
 const playerImageInput      = document.getElementById("playerImageInput");
 const playerImagePreview    = document.getElementById("playerImagePreview");
 const playerPreviewImg      = document.getElementById("playerPreviewImg");
 const playerRemoveImgBtn    = document.getElementById("playerRemoveImgBtn");
 const playerImageUploadArea = document.getElementById("playerImageUploadArea");
 
-const developmentsList      = document.getElementById("developmentsList");
-const addDevBtn             = document.getElementById("addDevBtn");
+// Skills & Other
 const basicSkillsList       = document.getElementById("basicSkillsList");
 const addBasicSkillBtn      = document.getElementById("addBasicSkillBtn");
 const additionalSkillsList  = document.getElementById("additionalSkillsList");
 const addExtraSkillBtn      = document.getElementById("addExtraSkillBtn");
+const playerComSkillsInput  = document.getElementById("playerComSkills");
+const playerWeakFootUsage   = document.getElementById("playerWeakFootUsage");
+const playerWeakFootAccuracy= document.getElementById("playerWeakFootAccuracy");
+const playerFormSelect      = document.getElementById("playerForm");
+const playerInjurySelect    = document.getElementById("playerInjuryResistance");
 
+// Table
 const playersTableBody      = document.getElementById("playersTableBody");
 const playersTable          = document.getElementById("playersTable");
 const playersTableEmpty     = document.getElementById("playersTableEmpty");
 
+// Delete modal
 const playerDeleteModalOverlay = document.getElementById("playerDeleteModalOverlay");
 const playerDeleteCancelBtn    = document.getElementById("playerDeleteCancelBtn");
 const playerDeleteConfirmBtn   = document.getElementById("playerDeleteConfirmBtn");
 const deletePlayerNameEl       = document.getElementById("deletePlayerName");
 
-// ── Tab Switching ──
+// ── Tab Switching (Files vs Players) ──
 window.switchAdminTab = function(tab) {
-  // Update tab buttons
   document.querySelectorAll(".admin-nav-tab").forEach(btn => {
     btn.classList.remove("active");
   });
@@ -64,7 +76,6 @@ window.switchAdminTab = function(tab) {
     document.getElementById("tabPlayers").classList.add("active");
     document.getElementById("panelPlayers").classList.add("active");
     document.getElementById("panelFiles").classList.remove("active");
-    // Load players when tab first opened
     if (!isSubscribedToPlayers) setupPlayersAdminSync();
   }
 };
@@ -110,19 +121,38 @@ function renderPlayersTable() {
   adminPlayers.forEach(player => {
     const tr = document.createElement("tr");
 
-    // Basic skills preview
-    const basicSkills = player.basicSkills || [];
+    // Progression Build preview string
+    const prog = player.progression || {};
+    const buildParts = [];
+    if (prog.shooting) buildParts.push(`Shoot:${prog.shooting}`);
+    if (prog.passing) buildParts.push(`Pass:${prog.passing}`);
+    if (prog.dribbling) buildParts.push(`Drib:${prog.dribbling}`);
+    if (prog.dexterity) buildParts.push(`Dex:${prog.dexterity}`);
+    if (prog.lowerBody) buildParts.push(`L.Body:${prog.lowerBody}`);
+    if (prog.aerial) buildParts.push(`Air:${prog.aerial}`);
+    if (prog.defending) buildParts.push(`Def:${prog.defending}`);
+    if (prog.gk1) buildParts.push(`GK1:${prog.gk1}`);
+    const buildPreviewHTML = buildParts.length > 0
+      ? `<div style="font-family:monospace;font-size:0.75rem;color:var(--accent-secondary);background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:6px;max-width:200px;line-height:1.4;">${buildParts.slice(0, 4).join(" | ")}${buildParts.length > 4 ? ` <span style="color:var(--text-tertiary)">+${buildParts.length - 4}</span>` : ""}</div>`
+      : `<span style="color:var(--text-tertiary);font-size:0.8rem;">—</span>`;
+
+    // Skills preview
+    const basicSkills = player.skills || player.basicSkills || [];
     const skillsPreviewHTML = basicSkills.length > 0
       ? `<div class="skills-preview">
-          ${basicSkills.slice(0, 3).map(s => `<span class="skill-preview-tag">${escHtml(s.icon || "")} ${escHtml(s.name || s)}</span>`).join("")}
+          ${basicSkills.slice(0, 3).map(s => `<span class="skill-preview-tag">⚡ ${escHtml(typeof s === 'string' ? s : (s.name || ''))}</span>`).join("")}
           ${basicSkills.length > 3 ? `<span class="skill-preview-more">+${basicSkills.length - 3}</span>` : ""}
         </div>`
       : `<span style="color:var(--text-tertiary);font-size:0.8rem;">—</span>`;
 
-    // Page path
-    const pagePath = player.pagePath
-      ? `<a href="${encodeURI(player.pagePath)}" target="_blank" style="color:var(--accent-secondary);font-size:0.8rem;text-decoration:none;" title="${escHtml(player.pagePath)}">📄 ${escHtml(player.pagePath.split("/").pop())}</a>`
-      : `<span style="color:var(--text-tertiary);font-size:0.8rem;">—</span>`;
+    // Playstyle & Booster
+    const playstyleHTML = `
+      <div style="font-size:0.8rem;">
+        ${player.position ? `<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:700;font-size:0.72rem;margin-bottom:3px;">${escHtml(player.position)}</span>` : ""}
+        ${player.playstyle ? `<div style="color:var(--text-primary);font-weight:600;font-size:0.78rem;">${escHtml(player.playstyle)}</div>` : ""}
+        ${player.booster ? `<div style="color:#c084fc;font-size:0.72rem;">✦ ${escHtml(player.booster)}</div>` : ""}
+      </div>
+    `;
 
     tr.innerHTML = `
       <td>
@@ -131,15 +161,15 @@ function renderPlayersTable() {
           : `<div class="player-table-img-placeholder">🎮</div>`}
       </td>
       <td>
-        <strong>${escHtml(player.name)}</strong>
-        ${player.position ? `<div style="margin-top:4px;"><span style="font-size:0.75rem;color:var(--accent-secondary);">${escHtml(player.position)}</span></div>` : ""}
-        ${player.updateLabel ? `<div style="margin-top:4px;font-size:0.72rem;color:#a855f7;">✦ ${escHtml(player.updateLabel)}</div>` : ""}
+        <strong style="font-size:0.95rem;">${escHtml(player.name)}</strong>
+        ${player.levelCap ? `<div style="font-size:0.72rem;color:var(--text-tertiary);margin-top:2px;">Level Cap: ${player.levelCap} | Points: ${player.maxPoints || 0}</div>` : ""}
       </td>
       <td>
         <span class="overall-badge">${player.overall || "—"}</span>
       </td>
+      <td>${playstyleHTML}</td>
+      <td>${buildPreviewHTML}</td>
       <td>${skillsPreviewHTML}</td>
-      <td>${pagePath}</td>
       <td>
         <div class="actions-cell">
           <button class="btn-icon edit" onclick="openPlayerEditModal(${player.id})" title="تعديل">
@@ -155,27 +185,126 @@ function renderPlayersTable() {
   });
 }
 
-// ── Next Player ID ──
-function getNextPlayerId() {
-  if (adminPlayers.length === 0) return Date.now();
-  return Math.max(...adminPlayers.map(p => p.id || 0)) + 1;
-}
+// ── Modal Form Tabs (1. Basic, 2. Progression, 3. Stats, 4. Skills) ──
+document.querySelectorAll(".p-tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".p-tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".player-tab-pane").forEach(p => p.classList.remove("active"));
 
-// ── Open Add Modal ──
-if (addPlayerBtn) {
-  addPlayerBtn.addEventListener("click", () => {
-    resetPlayerForm();
-    playerModalTitle.textContent = "إضافة لاعب جديد";
-    editingPlayerId = null;
-    openPlayerModal();
+    btn.classList.add("active");
+    const target = btn.dataset.tab;
+    if (target === "basic") document.getElementById("paneBasic").classList.add("active");
+    else if (target === "progression") document.getElementById("paneProgression").classList.add("active");
+    else if (target === "stats") document.getElementById("paneStats").classList.add("active");
+    else if (target === "skills") document.getElementById("paneSkills").classList.add("active");
   });
-}
+});
 
-function openPlayerModal() {
+// ── Progression Points Steppers (+ / -) ──
+document.addEventListener("click", (e) => {
+  const stepBtn = e.target.closest(".step-btn");
+  if (!stepBtn) return;
+  const targetId = stepBtn.dataset.target;
+  const input = document.getElementById(targetId);
+  if (!input) return;
+
+  let val = parseInt(input.value) || 0;
+  if (stepBtn.classList.contains("step-plus")) {
+    val = Math.min(30, val + 1);
+  } else if (stepBtn.classList.contains("step-minus")) {
+    val = Math.max(0, val - 1);
+  }
+  input.value = val;
+});
+
+// ── Quick Presets for Stats ──
+window.fillStatsPreset = function(type) {
+  const setVal = (id, v) => {
+    const el = document.getElementById(id);
+    if (el) el.value = v;
+  };
+
+  if (type === "amf") {
+    setVal("st_attackingAwareness", 82);
+    setVal("st_ballControl", 88);
+    setVal("st_dribbling", 90);
+    setVal("st_tightPossession", 89);
+    setVal("st_lowPass", 86);
+    setVal("st_loftedPass", 82);
+    setVal("st_finishing", 80);
+    setVal("st_heading", 58);
+    setVal("st_setPieceTaking", 75);
+    setVal("st_curl", 82);
+    setVal("st_defensiveAwareness", 45);
+    setVal("st_defensiveEngagement", 45);
+    setVal("st_tackling", 44);
+    setVal("st_aggression", 44);
+    setVal("st_speed", 84);
+    setVal("st_acceleration", 88);
+    setVal("st_kickingPower", 82);
+    setVal("st_jumping", 56);
+    setVal("st_physicalContact", 72);
+    setVal("st_balance", 86);
+    setVal("st_stamina", 78);
+    showToast("تم تطبيق نموذج صانع الألعاب (AMF) ✓", "success");
+  } else if (type === "cf") {
+    setVal("st_attackingAwareness", 92);
+    setVal("st_ballControl", 84);
+    setVal("st_dribbling", 82);
+    setVal("st_tightPossession", 80);
+    setVal("st_lowPass", 74);
+    setVal("st_loftedPass", 68);
+    setVal("st_finishing", 94);
+    setVal("st_heading", 82);
+    setVal("st_setPieceTaking", 70);
+    setVal("st_curl", 74);
+    setVal("st_defensiveAwareness", 42);
+    setVal("st_defensiveEngagement", 40);
+    setVal("st_tackling", 40);
+    setVal("st_aggression", 48);
+    setVal("st_speed", 88);
+    setVal("st_acceleration", 86);
+    setVal("st_kickingPower", 90);
+    setVal("st_jumping", 84);
+    setVal("st_physicalContact", 85);
+    setVal("st_balance", 78);
+    setVal("st_stamina", 80);
+    showToast("تم تطبيق نموذج المهاجم القناص (CF) ✓", "success");
+  } else if (type === "cb") {
+    setVal("st_attackingAwareness", 55);
+    setVal("st_ballControl", 70);
+    setVal("st_dribbling", 65);
+    setVal("st_tightPossession", 66);
+    setVal("st_lowPass", 74);
+    setVal("st_loftedPass", 72);
+    setVal("st_finishing", 50);
+    setVal("st_heading", 88);
+    setVal("st_setPieceTaking", 55);
+    setVal("st_curl", 55);
+    setVal("st_defensiveAwareness", 92);
+    setVal("st_defensiveEngagement", 90);
+    setVal("st_tackling", 94);
+    setVal("st_aggression", 92);
+    setVal("st_speed", 78);
+    setVal("st_acceleration", 74);
+    setVal("st_kickingPower", 82);
+    setVal("st_jumping", 90);
+    setVal("st_physicalContact", 92);
+    setVal("st_balance", 70);
+    setVal("st_stamina", 84);
+    showToast("تم تطبيق نموذج المدافع الصلب (CB) ✓", "success");
+  }
+};
+
+// ── Open / Close Player Modal ──
+function openPlayerModal(isEdit = false) {
   if (playerModalOverlay) {
     playerModalOverlay.classList.add("active");
     document.body.style.overflow = "hidden";
   }
+  // Reset tabs to first
+  const firstTab = document.querySelector(".p-tab-btn[data-tab='basic']");
+  if (firstTab) firstTab.click();
 }
 
 function closePlayerModal() {
@@ -184,6 +313,15 @@ function closePlayerModal() {
     document.body.style.overflow = "";
   }
   resetPlayerForm();
+}
+
+if (addPlayerBtn) {
+  addPlayerBtn.addEventListener("click", () => {
+    editingPlayerId = null;
+    playerModalTitle.textContent = "إضافة لاعب وتطويره";
+    resetPlayerForm();
+    openPlayerModal(false);
+  });
 }
 
 if (playerModalClose)     playerModalClose.addEventListener("click", closePlayerModal);
@@ -197,17 +335,22 @@ if (playerModalOverlay) {
 // ── Reset Form ──
 function resetPlayerForm() {
   if (playerForm) playerForm.reset();
-  editingPlayerId  = null;
+  editingPlayerId   = null;
   playerImageBase64 = "";
   if (playerPreviewImg) { playerPreviewImg.src = ""; playerPreviewImg.classList.remove("visible"); }
   if (playerImagePreview) playerImagePreview.classList.remove("has-image");
   if (playerRemoveImgBtn) playerRemoveImgBtn.style.display = "none";
-  if (developmentsList)    developmentsList.innerHTML = "";
-  if (basicSkillsList)     basicSkillsList.innerHTML = "";
+  if (basicSkillsList)      basicSkillsList.innerHTML = "";
   if (additionalSkillsList) additionalSkillsList.innerHTML = "";
+
+  // Reset progression inputs to 0
+  document.querySelectorAll(".prog-input").forEach(i => i.value = "0");
+
+  // Reset default preset
+  fillStatsPreset("amf");
 }
 
-// ── Image Upload (Reuse admin's compressImage function) ──
+// ── Image Upload ──
 function processPlayerImage(file) {
   if (!file || !file.type.startsWith("image/")) {
     showToast("يرجى اختيار ملف صورة صالح", "error");
@@ -221,7 +364,7 @@ function processPlayerImage(file) {
   reader.onload = async (ev) => {
     try {
       const compressed = typeof compressImage === "function"
-        ? await compressImage(ev.target.result, 600, 800, 0.82)
+        ? await compressImage(ev.target.result, 600, 800, 0.85)
         : ev.target.result;
       playerImageBase64 = compressed;
       if (playerPreviewImg) { playerPreviewImg.src = compressed; playerPreviewImg.classList.add("visible"); }
@@ -266,84 +409,134 @@ if (playerRemoveImgBtn) {
   });
 }
 
-// ════════════════════════════════
-// DEVELOPMENTS LIST MANAGEMENT
-// ════════════════════════════════
-
-function addDevItem(data = {}) {
-  const item = document.createElement("div");
-  item.className = "dev-list-item";
-  item.innerHTML = `
-    <div class="dev-list-item-header">
-      <input type="text" class="dev-emoji-input" value="${data.icon || '⚡'}" placeholder="⚡" maxlength="4" title="أيقونة/إيموجي">
-      <input type="text" class="dev-title-input" value="${escHtml(data.title || '')}" placeholder="عنوان التطوير...">
-      <button type="button" class="dev-remove-btn" onclick="this.closest('.dev-list-item').remove()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        حذف
-      </button>
-    </div>
-    <textarea class="dev-desc-input" placeholder="وصف اختياري للتطوير...">${escHtml(data.desc || '')}</textarea>
-  `;
-  if (developmentsList) developmentsList.appendChild(item);
-}
-
-if (addDevBtn) addDevBtn.addEventListener("click", () => addDevItem());
-
-// ════════════════════════════════
-// SKILLS LIST MANAGEMENT
-// ════════════════════════════════
-
-function addSkillItem(container, data = {}) {
+// ── Skills List Management ──
+function addSkillItem(container, skillName = "") {
+  if (!container) return;
   const item = document.createElement("div");
   item.className = "skill-list-item";
   item.innerHTML = `
-    <input type="text" class="dev-emoji-input skill-list-emoji-btn" value="${data.icon || '✦'}" placeholder="✦" maxlength="4" title="أيقونة">
-    <input type="text" class="skill-list-input" value="${escHtml(data.name || '')}" placeholder="اسم المهارة...">
+    <span class="skill-list-emoji-btn">⚡</span>
+    <input type="text" class="skill-list-input" value="${escHtml(skillName)}" placeholder="اسم المهارة...">
     <button type="button" class="skill-list-remove-btn" onclick="this.closest('.skill-list-item').remove()">✕</button>
   `;
-  if (container) container.appendChild(item);
+  container.appendChild(item);
 }
 
-if (addBasicSkillBtn)   addBasicSkillBtn.addEventListener("click",   () => addSkillItem(basicSkillsList));
-if (addExtraSkillBtn)   addExtraSkillBtn.addEventListener("click",   () => addSkillItem(additionalSkillsList));
+window.quickAddSkill = function(name) {
+  if (!basicSkillsList) return;
+  // Check if already added
+  const existing = Array.from(basicSkillsList.querySelectorAll(".skill-list-input")).map(i => i.value.trim());
+  if (existing.includes(name)) {
+    showToast(`المهارة "${name}" مضافة بالفعل`, "warning");
+    return;
+  }
+  addSkillItem(basicSkillsList, name);
+  showToast(`تمت إضافة ${name} ✓`, "success");
+};
 
-// ── Collect form data ──
-function collectDevelopments() {
-  if (!developmentsList) return [];
-  return Array.from(developmentsList.querySelectorAll(".dev-list-item")).map(item => ({
-    icon:  item.querySelector(".dev-emoji-input")?.value?.trim() || "⚡",
-    title: item.querySelector(".dev-title-input")?.value?.trim() || "",
-    desc:  item.querySelector(".dev-desc-input")?.value?.trim()  || ""
-  })).filter(d => d.title);
-}
+if (addBasicSkillBtn) addBasicSkillBtn.addEventListener("click", () => addSkillItem(basicSkillsList));
+if (addExtraSkillBtn) addExtraSkillBtn.addEventListener("click", () => addSkillItem(additionalSkillsList));
 
 function collectSkills(container) {
   if (!container) return [];
-  return Array.from(container.querySelectorAll(".skill-list-item")).map(item => ({
-    icon: item.querySelector(".dev-emoji-input")?.value?.trim() || "✦",
-    name: item.querySelector(".skill-list-input")?.value?.trim() || ""
-  })).filter(s => s.name);
+  return Array.from(container.querySelectorAll(".skill-list-input"))
+    .map(i => i.value.trim())
+    .filter(Boolean);
 }
 
-// ════════════════════════════════
-// SAVE PLAYER (Add/Edit)
-// ════════════════════════════════
+// ── Collect Progression Points ──
+function collectProgression() {
+  const getNum = (id) => Math.max(0, parseInt(document.getElementById(id)?.value) || 0);
+  return {
+    shooting:   getNum("progShooting"),
+    passing:    getNum("progPassing"),
+    dribbling:  getNum("progDribbling"),
+    dexterity:  getNum("progDexterity"),
+    lowerBody:  getNum("progLowerBody"),
+    aerial:     getNum("progAerial"),
+    defending:  getNum("progDefending"),
+    gk1:        getNum("progGk1"),
+    gk2:        getNum("progGk2"),
+    gk3:        getNum("progGk3")
+  };
+}
 
+// ── Collect In-Game Stats ──
+function collectStats() {
+  const getStat = (id) => parseInt(document.getElementById(id)?.value) || 40;
+  return {
+    // Attacking
+    attackingAwareness: getStat("st_attackingAwareness"),
+    ballControl:        getStat("st_ballControl"),
+    dribbling:          getStat("st_dribbling"),
+    tightPossession:    getStat("st_tightPossession"),
+    lowPass:            getStat("st_lowPass"),
+    loftedPass:         getStat("st_loftedPass"),
+    finishing:          getStat("st_finishing"),
+    heading:            getStat("st_heading"),
+    setPieceTaking:     getStat("st_setPieceTaking"),
+    curl:               getStat("st_curl"),
+
+    // Defending
+    defensiveAwareness:  getStat("st_defensiveAwareness"),
+    defensiveEngagement: getStat("st_defensiveEngagement"),
+    tackling:            getStat("st_tackling"),
+    aggression:          getStat("st_aggression"),
+
+    // Athleticism
+    speed:           getStat("st_speed"),
+    acceleration:    getStat("st_acceleration"),
+    kickingPower:    getStat("st_kickingPower"),
+    jumping:         getStat("st_jumping"),
+    physicalContact: getStat("st_physicalContact"),
+    balance:         getStat("st_balance"),
+    stamina:         getStat("st_stamina"),
+
+    // Goalkeeping
+    gkAwareness: getStat("st_gkAwareness"),
+    gkCatching:  getStat("st_gkCatching"),
+    gkParrying:  getStat("st_gkParrying"),
+    gkReflexes:  getStat("st_gkReflexes"),
+    gkReach:     getStat("st_gkReach")
+  };
+}
+
+// ── SAVE PLAYER (Add / Edit) ──
 if (playerForm) {
   playerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name    = playerNameInput?.value.trim();
     const overall = parseInt(playerOverallInput?.value) || 0;
-    const position     = playerPositionInput?.value.trim();
-    const updateLabel  = playerUpdateLabelInput?.value.trim();
-    const pagePath     = playerPagePathInput?.value.trim();
-    const developments = collectDevelopments();
-    const basicSkills  = collectSkills(basicSkillsList);
+    const position = playerPositionInput?.value.trim() || "AMF";
+    const compatiblePositionsStr = playerCompatiblePosInput?.value.trim() || "";
+    const compatiblePositions = compatiblePositionsStr
+      ? compatiblePositionsStr.split(",").map(s => s.trim().toUpperCase()).filter(Boolean)
+      : [position.toUpperCase()];
+
+    const playstyle       = playerPlaystyleInput?.value.trim() || "HOLE PLAYER";
+    const playstyleDesc   = playerPlaystyleDescInput?.value.trim() || "";
+    const booster         = playerBoosterInput?.value.trim() || "";
+    const levelCap        = parseInt(playerLevelCapInput?.value) || 33;
+    const maxPoints       = parseInt(playerMaxPointsInput?.value) || 64;
+    const managerRating   = parseInt(playerManagerRatingInput?.value) || 70;
+
+    const progression      = collectProgression();
+    const stats            = collectStats();
+    const skills           = collectSkills(basicSkillsList);
     const additionalSkills = collectSkills(additionalSkillsList);
+    const comSkillsStr     = playerComSkillsInput?.value.trim() || "";
+    const comSkills        = comSkillsStr ? comSkillsStr.split(",").map(s => s.trim()).filter(Boolean) : [];
+
+    const otherStats = {
+      weakFootUsage:    playerWeakFootUsage?.value || "Occasionally",
+      weakFootAccuracy: playerWeakFootAccuracy?.value || "Very High",
+      form:             playerFormSelect?.value || "Unwavering",
+      injuryResistance: playerInjurySelect?.value || "Medium"
+    };
 
     if (!name || !overall) {
-      showToast("يرجى إدخال اسم اللاعب والـ Overall", "error");
+      showToast("يرجى إدخال اسم اللاعب والـ Overall الإجمالي", "error");
       return;
     }
 
@@ -356,31 +549,38 @@ if (playerForm) {
         return;
       }
 
-      if (editingPlayerId) {
-        // Edit existing player
-        const playerData = {
-          id: editingPlayerId, name, overall, position, updateLabel, pagePath,
-          developments, basicSkills, additionalSkills,
-          image: playerImageBase64 || (adminPlayers.find(p => p.id === editingPlayerId)?.image || "")
-        };
-        // If image was removed (no base64 and removeBtn hidden)
-        if (!playerImageBase64 && playerRemoveImgBtn?.style.display === "none") {
-          playerData.image = "";
-        }
-        await firebaseDb.ref(`${PLAYERS_DB_PATH}/p_${editingPlayerId}`).set(playerData);
-        showToast("تم تعديل اللاعب وتطبيق التغييرات فوراً عند الجميع ⚡", "success");
-      } else {
-        // Add new player
-        const newId = getNextPlayerId();
-        const playerData = {
-          id: newId, name, overall, position, updateLabel, pagePath,
-          developments, basicSkills, additionalSkills,
-          image: playerImageBase64
-        };
-        await firebaseDb.ref(`${PLAYERS_DB_PATH}/p_${newId}`).set(playerData);
-        showToast("تم إضافة اللاعب وظهوره فوراً في الموقع ⚡", "success");
+      const id = editingPlayerId || getNextPlayerId();
+      const existingPlayer = adminPlayers.find(p => p.id === id);
+
+      let finalImage = playerImageBase64;
+      if (!finalImage && existingPlayer && playerRemoveImgBtn?.style.display !== "none") {
+        finalImage = existingPlayer.image || "";
       }
 
+      const playerData = {
+        id,
+        name,
+        overall,
+        position,
+        compatiblePositions,
+        playstyle,
+        playstyleDesc,
+        booster,
+        levelCap,
+        maxPoints,
+        managerRating,
+        progression,
+        stats,
+        skills,
+        additionalSkills,
+        comSkills,
+        otherStats,
+        image: finalImage,
+        updatedAt: Date.now()
+      };
+
+      await firebaseDb.ref(`${PLAYERS_DB_PATH}/p_${id}`).set(playerData);
+      showToast(editingPlayerId ? "تم تعديل اللاعب وتحديثه عند الجميع ⚡" : "تم إضافة وتطوير اللاعب ونشره فوراً في الموقع ⚡", "success");
       closePlayerModal();
     } catch (err) {
       console.error("Save player error:", err);
@@ -392,24 +592,92 @@ if (playerForm) {
   });
 }
 
-// ════════════════════════════════
-// EDIT PLAYER
-// ════════════════════════════════
-
+// ── EDIT PLAYER ──
 window.openPlayerEditModal = function(id) {
   const player = adminPlayers.find(p => p.id === id);
   if (!player) return;
 
   editingPlayerId = id;
-  playerModalTitle.textContent = "تعديل اللاعب";
+  playerModalTitle.textContent = "تعديل تطوير اللاعب";
 
-  if (playerNameInput)        playerNameInput.value        = player.name || "";
-  if (playerOverallInput)     playerOverallInput.value     = player.overall || "";
-  if (playerPositionInput)    playerPositionInput.value    = player.position || "";
-  if (playerUpdateLabelInput) playerUpdateLabelInput.value = player.updateLabel || "";
-  if (playerPagePathInput)    playerPagePathInput.value    = player.pagePath || "";
+  // Basic Info
+  if (playerNameInput)          playerNameInput.value          = player.name || "";
+  if (playerOverallInput)       playerOverallInput.value       = player.overall || "";
+  if (playerPositionInput)      playerPositionInput.value      = player.position || "";
+  if (playerCompatiblePosInput) playerCompatiblePosInput.value = (player.compatiblePositions || []).join(", ");
+  if (playerPlaystyleInput)     playerPlaystyleInput.value     = player.playstyle || "";
+  if (playerPlaystyleDescInput) playerPlaystyleDescInput.value = player.playstyleDesc || "";
+  if (playerBoosterInput)       playerBoosterInput.value       = player.booster || "";
+  if (playerLevelCapInput)      playerLevelCapInput.value      = player.levelCap || 33;
+  if (playerMaxPointsInput)     playerMaxPointsInput.value     = player.maxPoints || 64;
+  if (playerManagerRatingInput) playerManagerRatingInput.value = player.managerRating || 70;
 
-  // Image
+  // Progression Points
+  const prog = player.progression || {};
+  const setProg = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || 0; };
+  setProg("progShooting", prog.shooting);
+  setProg("progPassing", prog.passing);
+  setProg("progDribbling", prog.dribbling);
+  setProg("progDexterity", prog.dexterity);
+  setProg("progLowerBody", prog.lowerBody);
+  setProg("progAerial", prog.aerial);
+  setProg("progDefending", prog.defending);
+  setProg("progGk1", prog.gk1);
+  setProg("progGk2", prog.gk2);
+  setProg("progGk3", prog.gk3);
+
+  // In-Game Stats
+  const st = player.stats || {};
+  const setSt = (id, val, def) => { const el = document.getElementById(id); if (el) el.value = (val !== undefined && val !== null) ? val : def; };
+  setSt("st_attackingAwareness", st.attackingAwareness, 80);
+  setSt("st_ballControl", st.ballControl, 84);
+  setSt("st_dribbling", st.dribbling, 86);
+  setSt("st_tightPossession", st.tightPossession, 85);
+  setSt("st_lowPass", st.lowPass, 84);
+  setSt("st_loftedPass", st.loftedPass, 78);
+  setSt("st_finishing", st.finishing, 79);
+  setSt("st_heading", st.heading, 55);
+  setSt("st_setPieceTaking", st.setPieceTaking, 69);
+  setSt("st_curl", st.curl, 75);
+
+  setSt("st_defensiveAwareness", st.defensiveAwareness, 43);
+  setSt("st_defensiveEngagement", st.defensiveEngagement, 43);
+  setSt("st_tackling", st.tackling, 42);
+  setSt("st_aggression", st.aggression, 42);
+
+  setSt("st_speed", st.speed, 80);
+  setSt("st_acceleration", st.acceleration, 84);
+  setSt("st_kickingPower", st.kickingPower, 80);
+  setSt("st_jumping", st.jumping, 54);
+  setSt("st_physicalContact", st.physicalContact, 73);
+  setSt("st_balance", st.balance, 82);
+  setSt("st_stamina", st.stamina, 73);
+
+  setSt("st_gkAwareness", st.gkAwareness, 40);
+  setSt("st_gkCatching", st.gkCatching, 40);
+  setSt("st_gkParrying", st.gkParrying, 40);
+  setSt("st_gkReflexes", st.gkReflexes, 40);
+  setSt("st_gkReach", st.gkReach, 40);
+
+  // Skills
+  if (basicSkillsList) basicSkillsList.innerHTML = "";
+  const skillsList = player.skills || (player.basicSkills ? player.basicSkills.map(s => typeof s === 'string' ? s : s.name) : []);
+  skillsList.forEach(s => addSkillItem(basicSkillsList, s));
+
+  if (additionalSkillsList) additionalSkillsList.innerHTML = "";
+  const addSkills = player.additionalSkills || [];
+  addSkills.forEach(s => addSkillItem(additionalSkillsList, typeof s === 'string' ? s : s.name));
+
+  if (playerComSkillsInput) playerComSkillsInput.value = (player.comSkills || []).join(", ");
+
+  // Other Stats
+  const ot = player.otherStats || {};
+  if (playerWeakFootUsage)    playerWeakFootUsage.value    = ot.weakFootUsage || "Occasionally";
+  if (playerWeakFootAccuracy) playerWeakFootAccuracy.value = ot.weakFootAccuracy || "Very High";
+  if (playerFormSelect)       playerFormSelect.value       = ot.form || "Unwavering";
+  if (playerInjurySelect)     playerInjurySelect.value     = ot.injuryResistance || "Medium";
+
+  // Image Preview
   if (player.image) {
     playerImageBase64 = player.image;
     if (playerPreviewImg) { playerPreviewImg.src = player.image; playerPreviewImg.classList.add("visible"); }
@@ -422,28 +690,14 @@ window.openPlayerEditModal = function(id) {
     if (playerRemoveImgBtn) playerRemoveImgBtn.style.display = "none";
   }
 
-  // Developments
-  if (developmentsList) developmentsList.innerHTML = "";
-  (player.developments || []).forEach(d => addDevItem(d));
-
-  // Basic Skills
-  if (basicSkillsList) basicSkillsList.innerHTML = "";
-  (player.basicSkills || []).forEach(s => addSkillItem(basicSkillsList, s));
-
-  // Additional Skills
-  if (additionalSkillsList) additionalSkillsList.innerHTML = "";
-  (player.additionalSkills || []).forEach(s => addSkillItem(additionalSkillsList, s));
-
-  openPlayerModal();
+  openPlayerModal(true);
 };
 
-// ════════════════════════════════
-// DELETE PLAYER
-// ════════════════════════════════
-
+// ── DELETE PLAYER ──
 window.openPlayerDeleteModal = function(id) {
   const player = adminPlayers.find(p => p.id === id);
   if (!player) return;
+
   deletingPlayerId = id;
   if (deletePlayerNameEl) deletePlayerNameEl.textContent = player.name;
   if (playerDeleteModalOverlay) {
@@ -460,7 +714,7 @@ function closePlayerDeleteModal() {
   deletingPlayerId = null;
 }
 
-if (playerDeleteCancelBtn) playerDeleteCancelBtn.addEventListener("click", closePlayerDeleteModal);
+if (playerDeleteCancelBtn)  playerDeleteCancelBtn.addEventListener("click", closePlayerDeleteModal);
 if (playerDeleteModalOverlay) {
   playerDeleteModalOverlay.addEventListener("click", (e) => {
     if (e.target === playerDeleteModalOverlay) closePlayerDeleteModal();
@@ -469,21 +723,37 @@ if (playerDeleteModalOverlay) {
 
 if (playerDeleteConfirmBtn) {
   playerDeleteConfirmBtn.addEventListener("click", async () => {
-    if (!deletingPlayerId || !firebaseDb) return;
+    if (!deletingPlayerId) return;
+
+    playerDeleteConfirmBtn.disabled = true;
+    playerDeleteConfirmBtn.style.opacity = "0.7";
+
     try {
-      playerDeleteConfirmBtn.disabled = true;
+      if (!firebaseDb) {
+        showToast("Firebase غير متصل. تعذر الحذف.", "error");
+        return;
+      }
+
       await firebaseDb.ref(`${PLAYERS_DB_PATH}/p_${deletingPlayerId}`).remove();
-      showToast("تم حذف اللاعب من الموقع فوراً ✓", "success");
+      showToast("تم حذف اللاعب وتحديث الموقع فوراً ⚡", "success");
       closePlayerDeleteModal();
     } catch (err) {
+      console.error("Delete player error:", err);
       showToast("حدث خطأ أثناء الحذف: " + (err.message || ""), "error");
     } finally {
       playerDeleteConfirmBtn.disabled = false;
+      playerDeleteConfirmBtn.style.opacity = "1";
     }
   });
 }
 
-// ── Helper ──
+// ── Helpers ──
+function getNextPlayerId() {
+  if (adminPlayers.length === 0) return 1;
+  const ids = adminPlayers.map(p => Number(p.id) || 0);
+  return Math.max(...ids) + 1;
+}
+
 function escHtml(str) {
   if (!str) return "";
   const d = document.createElement("div");
@@ -491,10 +761,11 @@ function escHtml(str) {
   return d.innerHTML;
 }
 
-// ── Keyboard shortcuts for players modals ──
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    if (playerModalOverlay?.classList.contains("active")) closePlayerModal();
-    if (playerDeleteModalOverlay?.classList.contains("active")) closePlayerDeleteModal();
-  }
+// ── Initialize on load ──
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    if (typeof firebaseDb !== "undefined" && firebaseDb && !isSubscribedToPlayers) {
+      setupPlayersAdminSync();
+    }
+  }, 500);
 });
