@@ -76,63 +76,34 @@ function renderPlayers(list) {
 function createPlayerCard(player, delay = 0) {
   const card = document.createElement("div");
   card.className = "player-card";
-  card.style.animationDelay = `${delay * 0.08}s`;
+  card.style.animationDelay = `${delay * 0.05}s`;
   card.dataset.playerId = player.id;
-
-  const skillsList = player.skills || (player.basicSkills ? player.basicSkills.map(s => typeof s === 'string' ? s : s.name) : []);
-  const skillsCount = skillsList.length;
-
-  const prog = player.progression || {};
-  const totalAllocated = Object.values(prog).reduce((sum, n) => sum + (Number(n) || 0), 0);
+  card.onclick = () => openPlayerDevModal(player.id);
 
   const imgHTML = player.image
     ? `<img src="${player.image}" alt="${escapeHtml(player.name)}" loading="lazy">`
     : `<div class="player-card-img-placeholder">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        <span>لا توجد صورة</span>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span>${escapeHtml(player.name)}</span>
       </div>`;
 
-  const posHTML = player.position
-    ? `<span class="player-position-tag">${escapeHtml(player.position)}</span>`
-    : "";
-
-  const playstyleHTML = player.playstyle
-    ? `<span class="player-playstyle-tag">⚡ ${escapeHtml(player.playstyle)}</span>`
-    : "";
-
-  const boosterHTML = player.booster
-    ? `<span class="player-update-tag">✦ ${escapeHtml(player.booster)}</span>`
-    : "";
-
   card.innerHTML = `
-    <div class="player-card-img-wrap">
-      ${imgHTML}
-      ${player.overall ? `<div class="player-overall-badge">${player.overall}</div>` : ""}
+    <!-- Card Frame (Contains image + mobile badge) -->
+    <div class="player-card-frame">
+      <div class="player-card-img-wrap">
+        ${imgHTML}
+        <span class="mobile-card-badge-new">جديد</span>
+      </div>
     </div>
-    <div class="player-card-body">
-      <div class="player-name">${escapeHtml(player.name)}</div>
-      <div class="player-position-row">
-        ${posHTML}
-        ${playstyleHTML}
-        ${boosterHTML}
-      </div>
-      <div class="player-quick-stats">
-        <div class="player-quick-stat">
-          <span class="player-quick-stat-val">${player.overall || "—"}</span>
-          <span class="player-quick-stat-label">OVR</span>
-        </div>
-        <div class="player-quick-stat">
-          <span class="player-quick-stat-val">${totalAllocated ? totalAllocated : (player.maxPoints || "64")}</span>
-          <span class="player-quick-stat-label">نقاط التطوير</span>
-        </div>
-        <div class="player-quick-stat">
-          <span class="player-quick-stat-val">${skillsCount || "—"}</span>
-          <span class="player-quick-stat-label">مهارات</span>
-        </div>
-      </div>
-      <button class="player-view-btn" onclick="openPlayerDevModal(${player.id})">
-        <span>عرض التطوير الكامل</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+
+    <!-- Desktop View (Image 1): Centered clean name under the card -->
+    <div class="desktop-player-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
+
+    <!-- Mobile View (Image 2): Dark name box + Golden Action Button -->
+    <div class="mobile-card-footer">
+      <div class="mobile-player-name-strip">${escapeHtml(player.name)}</div>
+      <button type="button" class="mobile-player-dev-btn" onclick="event.stopPropagation(); openPlayerDevModal(${player.id})">
+        ⭐ عرض التطويرة الخاصة ⭐
       </button>
     </div>
   `;
@@ -549,13 +520,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function showPlayerSkeletons() {
   if (!playersGrid) return;
-  playersGrid.innerHTML = Array(4).fill(`
-    <div class="player-card-skeleton">
-      <div class="skeleton-img"></div>
-      <div class="skeleton-body">
-        <div class="skeleton-line" style="width:70%"></div>
-        <div class="skeleton-line short"></div>
-        <div class="skeleton-line btn"></div>
+  playersGrid.innerHTML = Array(6).fill(`
+    <div class="player-card skeleton-card">
+      <div class="player-card-frame skeleton-pulse">
+        <div class="skeleton-img"></div>
+      </div>
+      <div class="desktop-player-name skeleton-line" style="width:75%;margin:8px auto 0;"></div>
+      <div class="mobile-card-footer">
+        <div class="skeleton-line" style="height:26px;border-radius:6px;margin-bottom:4px;"></div>
+        <div class="skeleton-line" style="height:32px;border-radius:6px;"></div>
       </div>
     </div>
   `).join("");
