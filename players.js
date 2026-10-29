@@ -53,12 +53,23 @@ function setupPlayersSync() {
 }
 
 // ── Render Players Grid ──
-function renderPlayers(list) {
+function renderPlayers(list, searchKeyword = "") {
   if (!playersGrid) return;
   playersGrid.innerHTML = "";
 
   if (!list || list.length === 0) {
-    if (noPlayersEl) noPlayersEl.classList.add("visible");
+    if (noPlayersEl) {
+      noPlayersEl.classList.add("visible");
+      const title = noPlayersEl.querySelector("h3");
+      const desc = noPlayersEl.querySelector("p");
+      if (searchKeyword) {
+        if (title) title.textContent = "لا يوجد لاعبين يطابقون بحثك";
+        if (desc) desc.textContent = `لم نتمكن من إيجاد لاعب مطابق للبحث "${searchKeyword}"`;
+      } else {
+        if (title) title.textContent = "لا توجد تطويرات بعد";
+        if (desc) desc.textContent = "سيتم إضافة تطويرات اللاعبين قريباً";
+      }
+    }
     playersGrid.style.display = "none";
     return;
   }
@@ -240,10 +251,13 @@ function attachCardTiltEffect(card) {
 
 // ── Open Player Development Modal ──
 window.openPlayerDevModal = function(playerId) {
-  const player = PLAYERS.find(p => p.id === playerId);
+  const player = PLAYERS.find(p => String(p.id) === String(playerId));
   if (!player) return;
 
   renderPlayerDevModal(player);
+
+  const modal = document.getElementById("playerDevModal");
+  if (modal) modal.scrollTop = 0;
 
   if (playerDevModalOverlay) {
     playerDevModalOverlay.classList.add("active");
@@ -436,6 +450,63 @@ function renderPlayerDevModal(player) {
     ? `<img src="${player.image}" alt="${escapeHtml(player.name)}" class="efhub-card-thumb">`
     : `<div class="efhub-card-placeholder">🎮</div>`;
 
+  // Find other versions of this same player (by name, case-insensitive, excluding current card)
+  const currentCleanName = (player.name || "").trim().toLowerCase();
+  const otherVersions = PLAYERS.filter(p => {
+    if (String(p.id) === String(player.id)) return false;
+    const otherCleanName = (p.name || "").trim().toLowerCase();
+    return otherCleanName === currentCleanName;
+  });
+
+  let otherVersionsHTML = "";
+  if (otherVersions.length > 0) {
+    otherVersionsHTML = `
+      <!-- ════ OTHER VERSIONS SECTION (نسخ أخرى لنفس اللاعب) ════ -->
+      <div class="efhub-other-versions-section">
+        <div class="efhub-other-versions-header">
+          <div class="efhub-ov-title-wrap">
+            <span class="efhub-ov-icon">🎴</span>
+            <div class="efhub-ov-title-text">
+              <h3 class="efhub-other-versions-title">نسخ أخرى للاعب (${escapeHtml(player.name)})</h3>
+              <span class="efhub-other-versions-count">${otherVersions.length} ${otherVersions.length === 1 ? 'نسخة متوفرة' : 'نسخ متوفرة'}</span>
+            </div>
+          </div>
+          <span class="efhub-ov-hint">اضغط على أي نسخة للتبديل المباشر وعرض تطويرتها</span>
+        </div>
+        <div class="efhub-other-versions-grid">
+          ${otherVersions.map(v => {
+            const vImg = v.image
+              ? `<img src="${v.image}" alt="${escapeHtml(v.name)}" class="efhub-v-thumb-img">`
+              : `<div class="efhub-v-thumb-ph">🎮</div>`;
+            return `
+              <div class="efhub-version-card" onclick="openPlayerDevModal('${v.id}')" role="button" tabindex="0" title="عرض نسخة ${escapeHtml(v.name)} (${v.overall})">
+                <div class="efhub-version-card-art">
+                  ${vImg}
+                  <span class="efhub-version-ovr">${v.overall || '100'}</span>
+                </div>
+                <div class="efhub-version-details">
+                  <div class="efhub-version-pos-row">
+                    <span class="efhub-version-pos">${escapeHtml(v.position || 'AMF')}</span>
+                    <span class="efhub-version-name">${escapeHtml(v.name)}</span>
+                  </div>
+                  <div class="efhub-version-tags">
+                    ${v.offensivePlaystyle || v.playstyle ? `<span class="efhub-v-tag red"><span class="v-dot"></span>${escapeHtml(v.offensivePlaystyle || v.playstyle)}</span>` : ''}
+                    ${v.defensivePlaystyle ? `<span class="efhub-v-tag blue"><span class="v-dot"></span>${escapeHtml(v.defensivePlaystyle)}</span>` : ''}
+                    ${v.booster ? `<span class="efhub-v-tag cyan"><span class="v-dot"></span>${escapeHtml(v.booster)}</span>` : ''}
+                  </div>
+                </div>
+                <div class="efhub-version-action">
+                  <span>عرض النسخة</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
   modal.innerHTML = `
     <!-- Modal Close Button -->
     <button class="efhub-close-btn" onclick="closePlayerDevModal()" aria-label="إغلاق">&times;</button>
@@ -566,6 +637,8 @@ function renderPlayerDevModal(player) {
       </div>
 
     </div>
+
+    ${otherVersionsHTML}
   `;
 }
 
@@ -630,9 +703,66 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
+// ── Player Search & Filter Logic ──
+let playerSearchQuery = "";
+
+function initPlayerSearch() {
+  const searchInput    = document.getElementById("playerSearchInput");
+  const searchClearBtn = document.getElementById("playerSearchClear");
+  const searchStatus   = document.getElementById("playerSearchStatus");
+  const searchCount    = document.getElementById("playerSearchCount");
+  const resetBtn       = document.getElementById("playerResetSearchBtn");
+  const showAllBtn     = document.getElementById("topCardsShowAllBtn");
+
+  if (!searchInput) return;
+
+  const handleSearch = (q) => {
+    playerSearchQuery = (q || "").trim();
+    if (searchClearBtn) searchClearBtn.style.display = playerSearchQuery ? "flex" : "none";
+
+    if (!playerSearchQuery) {
+      if (searchStatus) searchStatus.style.display = "none";
+      renderPlayers(PLAYERS);
+      return;
+    }
+
+    const needle = playerSearchQuery.toLowerCase();
+    const filtered = PLAYERS.filter(p => {
+      const name = (p.name || "").toLowerCase();
+      const pos = (p.position || "").toLowerCase();
+      const comp = (p.compatiblePositions || []).join(" ").toLowerCase();
+      const offPs = (p.offensivePlaystyle || p.playstyle || "").toLowerCase();
+      const defPs = (p.defensivePlaystyle || "").toLowerCase();
+      const bst = (p.booster || "").toLowerCase();
+      const ovr = String(p.overall || "");
+      return name.includes(needle) || pos.includes(needle) || comp.includes(needle) || offPs.includes(needle) || defPs.includes(needle) || bst.includes(needle) || ovr.includes(needle);
+    });
+
+    if (searchStatus && searchCount) {
+      searchStatus.style.display = "flex";
+      searchCount.textContent = `تم العثور على ${filtered.length} ${filtered.length === 1 ? 'لاعب' : 'لاعبين'}`;
+    }
+
+    renderPlayers(filtered, playerSearchQuery);
+  };
+
+  searchInput.addEventListener("input", (e) => handleSearch(e.target.value));
+
+  const clearSearch = () => {
+    searchInput.value = "";
+    handleSearch("");
+    searchInput.focus();
+  };
+
+  if (searchClearBtn) searchClearBtn.addEventListener("click", clearSearch);
+  if (resetBtn) resetBtn.addEventListener("click", clearSearch);
+  if (showAllBtn) showAllBtn.addEventListener("click", clearSearch);
+}
+
 // ── Initialize Players Section ──
 document.addEventListener("DOMContentLoaded", () => {
   showPlayerSkeletons();
+  initPlayerSearch();
   const trySync = () => {
     if (typeof firebaseDb !== "undefined" && firebaseDb) {
       setupPlayersSync();
