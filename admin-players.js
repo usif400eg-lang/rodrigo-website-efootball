@@ -63,21 +63,32 @@ const playerDeleteCancelBtn    = document.getElementById("playerDeleteCancelBtn"
 const playerDeleteConfirmBtn   = document.getElementById("playerDeleteConfirmBtn");
 const deletePlayerNameEl       = document.getElementById("deletePlayerName");
 
-// ── Tab Switching (Files vs Players) ──
+// ── Tab Switching (Files vs Players vs Managers) ──
 window.switchAdminTab = function(tab) {
   document.querySelectorAll(".admin-nav-tab").forEach(btn => {
     btn.classList.remove("active");
   });
+  document.querySelectorAll(".admin-section-panel").forEach(panel => {
+    panel.classList.remove("active");
+  });
 
   if (tab === "files") {
-    document.getElementById("tabFiles").classList.add("active");
-    document.getElementById("panelFiles").classList.add("active");
-    document.getElementById("panelPlayers").classList.remove("active");
-  } else {
-    document.getElementById("tabPlayers").classList.add("active");
-    document.getElementById("panelPlayers").classList.add("active");
-    document.getElementById("panelFiles").classList.remove("active");
+    const tabEl = document.getElementById("tabFiles");
+    const panelEl = document.getElementById("panelFiles");
+    if (tabEl) tabEl.classList.add("active");
+    if (panelEl) panelEl.classList.add("active");
+  } else if (tab === "players") {
+    const tabEl = document.getElementById("tabPlayers");
+    const panelEl = document.getElementById("panelPlayers");
+    if (tabEl) tabEl.classList.add("active");
+    if (panelEl) panelEl.classList.add("active");
     if (!isSubscribedToPlayers) setupPlayersAdminSync();
+  } else if (tab === "managers") {
+    const tabEl = document.getElementById("tabManagers");
+    const panelEl = document.getElementById("panelManagers");
+    if (tabEl) tabEl.classList.add("active");
+    if (panelEl) panelEl.classList.add("active");
+    if (typeof initManagersPanel === "function") initManagersPanel();
   }
 };
 

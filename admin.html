@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin.css">
   <link rel="stylesheet" href="admin-players.css">
+  <link rel="stylesheet" href="admin-managers.css">
 </head>
 <body>
 
@@ -103,6 +104,10 @@
       <button class="admin-nav-tab" id="tabPlayers" onclick="switchAdminTab('players')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         <span>تطوير اللاعبين</span>
+      </button>
+      <button class="admin-nav-tab" id="tabManagers" onclick="switchAdminTab('managers')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>المدربين وأساليب اللعب</span>
       </button>
     </div>
 
@@ -211,6 +216,54 @@
     </div>
 
   </div> <!-- /panelPlayers -->
+
+  <!-- ════ MANAGERS PANEL ════ -->
+  <div class="admin-section-panel" id="panelManagers">
+
+    <!-- Managers Action Bar -->
+    <div class="action-bar">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <h2 class="section-title-admin">إدارة المدربين وأساليب اللعب</h2>
+        <a href="managers.html" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-size:0.8rem;border-radius:8px;">
+          <span>عرض الصفحة العامة ↗</span>
+        </a>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div class="search-input-wrapper" style="position:relative;">
+          <input type="text" id="mgrSearch" class="form-control" placeholder="بحث عن مدرب..." style="width:220px;padding-right:32px;font-size:0.88rem;">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.5;pointer-events:none;">🔍</span>
+        </div>
+        <button class="btn-primary" id="addManagerBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>إضافة مدرب</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Managers Table -->
+    <div class="managers-table-wrap">
+      <table class="managers-table" id="managersTable">
+        <thead>
+          <tr>
+            <th style="width:70px;">الصورة</th>
+            <th>اسم المدرب</th>
+            <th>الجنسية / النادي</th>
+            <th>أسلوب اللعب الأساسي</th>
+            <th style="width:100px;">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="managersTableBody">
+          <!-- Dynamic rows -->
+        </tbody>
+      </table>
+      <div class="players-table-empty" id="managersTableEmpty" style="display:none;">
+        <p>👔</p>
+        <p>لا يوجد مدربون مضافون بعد</p>
+        <p style="font-size:0.82rem;margin-top:6px;color:var(--text-tertiary)">اضغط على "إضافة مدرب" للبدء بإضافة مدربين وشرح تكتيكاتهم</p>
+      </div>
+    </div>
+
+  </div> <!-- /panelManagers -->
 
   </div> <!-- /dashboard -->
 
@@ -1003,6 +1056,97 @@
   <!-- Toast Notification -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <!-- Manager Modal (Add/Edit) -->
+  <div class="modal-overlay" id="mgrModalOverlay">
+    <div class="modal modal-lg" id="mgrModal" style="max-width:700px;">
+      <div class="modal-header">
+        <div class="modal-header-with-badge">
+          <span class="modal-header-badge">👔 Manager Tactics Hub</span>
+          <h3 class="modal-title" id="mgrModalTitle">إضافة مدرب جديد</h3>
+        </div>
+        <button class="modal-close" id="mgrModalClose" aria-label="إغلاق">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="mgrForm" autocomplete="off">
+        <div class="modal-body" style="padding:24px;">
+          <div class="mgr-form-grid">
+            <div class="form-group">
+              <label class="form-label" for="mgrName">اسم المدرب <span style="color:var(--danger)">*</span></label>
+              <input type="text" id="mgrName" class="form-control" placeholder="مثال: Pep Guardiola أو Antonio Conte" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="mgrNationality">الجنسية أو النادي</label>
+              <input type="text" id="mgrNationality" class="form-control" placeholder="مثال: إسبانيا / مانشستر سيتي">
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label">أسلوب اللعب الأساسي <span style="color:var(--danger)">*</span></label>
+              <div class="playstyle-select-grid" id="playstyleOptions">
+                <!-- Injected by admin-managers.js -->
+              </div>
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label" for="mgrDesc">شرح التكتيك والأسلوب وطريقة اللعب</label>
+              <textarea id="mgrDesc" class="mgr-textarea" placeholder="اشرح بالتفصيل كيفية تحرك اللاعبين، خط الدفاع، الضغط العالي، نقاط القوة ونقاط الضعف..."></textarea>
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label" for="mgrPlaystyleDetail">نصائح إضافية أو التشكيلات المفضلة (اختياري)</label>
+              <textarea id="mgrPlaystyleDetail" class="mgr-textarea" style="min-height:70px;" placeholder="مثال: التشكيلة المثالية 4-3-3 أو 3-5-2، نصائح للمهاجمين، إلخ."></textarea>
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label">صورة المدرب (من مجلد Page Manager أو من جهازك)</label>
+              <div class="image-upload-area" id="mgrImageUploadArea">
+                <input type="file" id="mgrImageInput" accept="image/*" style="display:none;">
+                <div class="image-preview-container" id="mgrImagePreview" style="cursor:pointer;">
+                  <img id="mgrPreviewImg" alt="Preview" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:10px;">
+                  <div class="image-upload-placeholder" id="mgrPlaceholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span>اسحب صورة المدرب هنا أو اضغط للاختيار</span>
+                    <span style="font-size:0.75rem;color:var(--text-tertiary);margin-top:4px;">يدعم PNG, JPG, WebP</span>
+                  </div>
+                  <button type="button" class="btn-remove-image" id="mgrRemoveImgBtn" style="display:none;" title="حذف الصورة">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-outline" id="mgrModalCancelBtn">إلغاء</button>
+          <button type="submit" class="btn-primary" id="mgrModalSaveBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>حفظ المدرب</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manager Delete Confirmation Modal -->
+  <div class="modal-overlay" id="mgrDeleteOverlay">
+    <div class="modal modal-sm" id="mgrDeleteModal">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color:var(--danger)">تأكيد حذف المدرب</h3>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <p style="color:var(--text-secondary);font-size:0.95rem;line-height:1.6;">
+          هل أنت متأكد من رغبتك في حذف المدرب <strong id="mgrDeleteName" style="color:var(--text-primary)"></strong>؟
+          لا يمكن التراجع عن هذا الإجراء.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" id="mgrDeleteCancelBtn">إلغاء</button>
+        <button type="button" class="btn-danger" id="mgrDeleteConfirmBtn">تأكيد الحذف</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase SDK (v10 compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -1010,5 +1154,6 @@
   <script src="storage-db.js"></script>
   <script src="admin.js"></script>
   <script src="admin-players.js"></script>
+  <script src="admin-managers.js"></script>
 </body>
 </html>

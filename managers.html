@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RODRIGO — دليل أساليب لعب المدربين واللاعبين | eFootball Hub</title>
+  <meta name="description" content="الدليل التكتيكي الشامل للعبة eFootball — شرح مفصل لأساليب لعب المدربين (Possession, Quick Counter, Long Ball Counter, etc.) وأساليب تحرك اللاعبين ومراكزهم المناسبة.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="managers.css">
+</head>
+<body>
+
+  <!-- Background Orbs & Effects -->
+  <div class="bg-effects">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">⚡</span>
+        <span>RODRIGO</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">الرئيسية</a>
+        <a href="index.html#players" class="nav-link">تطوير اللاعبين</a>
+        <a href="managers.html" class="nav-link active">أساليب اللعب</a>
+        <a href="index.html#downloads" class="nav-link">التحميلات</a>
+        <a href="admin.html" class="nav-pill">
+          <span>لوحة التحكم ⚙️</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="mgr-hero">
+    <div class="hero-badge-mg">
+      <span>⚽</span>
+      <span>دليل التكتيك وأساليب اللعب | eFootball Tactical Hub</span>
+    </div>
+
+    <h1 class="hero-title-mg">
+      دليلك الشامل لأساليب <br>
+      <span class="grad">المدربين واللاعبين</span>
+    </h1>
+
+    <p class="hero-desc-mg">
+      تعرّف على الفروقات التكتيكية الدقيقة بين أساليب لعب المدربين الستة، وكيفية توظيف أساليب تحرك اللاعبين الـ 22 في الملعب لبناء أقوى تشكيلة تنافسية في eFootball.
+    </p>
+
+    <div class="hero-tabs">
+      <a href="#managerSection" class="hero-tab primary">
+        <span>👔</span>
+        <span>أساليب المدربين</span>
+      </a>
+      <a href="#playerSection" class="hero-tab secondary">
+        <span>🏃</span>
+        <span>أساليب اللاعبين</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1: MANAGERS & COACHING PLAYSTYLES
+       ═══════════════════════════════════════════════ -->
+  <section class="page-section" id="managerSection">
+
+    <div class="section-header-block">
+      <div>
+        <span class="section-label">SECTION 01 — MANAGERS TACTICS</span>
+        <h2 class="section-title-lg">أساليب لعب المدربين (Manager Playstyles)</h2>
+        <div class="section-divider"></div>
+      </div>
+      <p style="color:var(--text-sec);max-width:520px;font-size:0.92rem;line-height:1.6;">
+        أسلوب لعب المدرب هو الركيزة الأساسية لتحرك فريقك: يحدد ارتفاع خط الدفاع، سرعة الارتداد، تقارب اللاعبين وطريقة بناء الهجمة.
+      </p>
+    </div>
+
+    <!-- Playstyles Overview Guide Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:40px;">
+      
+      <!-- Possession Game -->
+      <div style="background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.22);border-radius:var(--radius-md);padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">🎯</span>
+            <div>
+              <h3 style="font-size:1.05rem;color:var(--text-primary);font-weight:800;">Possession Game</h3>
+              <span style="font-size:0.75rem;color:#a89cff;font-weight:600;">لعبة الاستحواذ والتمرير القصير</span>
+            </div>
+          </div>
+          <span style="background:rgba(108,99,255,0.2);color:#a89cff;font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:6px;">استحواذ</span>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text-sec);line-height:1.55;margin-bottom:12px;">
+          يقترب زملاؤك من حامل الكرة لطلب التمرير القصير، مع خط دفاع متقدم جداً وضغط فوري عند فقدان الكرة لاسترجاعها سريعاً.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);">
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🛡️ خط دفاع: عالي جداً</span>
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">⚡ سرعة بناء: هادئة</span>
+        </div>
+      </div>
+
+      <!-- Quick Counter -->
+      <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.22);border-radius:var(--radius-md);padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">💨</span>
+            <div>
+              <h3 style="font-size:1.05rem;color:var(--text-primary);font-weight:800;">Quick Counter</h3>
+              <span style="font-size:0.75rem;color:#4ade80;font-weight:600;">الكونتر السريع والضغط الشرس</span>
+            </div>
+          </div>
+          <span style="background:rgba(34,197,94,0.2);color:#4ade80;font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:6px;">كونتر سريع</span>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text-sec);line-height:1.55;margin-bottom:12px;">
+          بمجرد افتكاك الكرة ينطلق المهاجمون ولاعبو الوسط للأمام كالسهم لضرب المساحات، مع ضغط خانق وخطف للكرة في مناطق الخصم.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);">
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🛡️ خط دفاع: متقدم</span>
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">⚡ هجوم مباشر وفوري</span>
+        </div>
+      </div>
+
+      <!-- Long Ball Counter -->
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.22);border-radius:var(--radius-md);padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">⚡</span>
+            <div>
+              <h3 style="font-size:1.05rem;color:var(--text-primary);font-weight:800;">Long Ball Counter</h3>
+              <span style="font-size:0.75rem;color:#f87171;font-weight:600;">المرتدات الدفاعية المحكمة</span>
+            </div>
+          </div>
+          <span style="background:rgba(239,68,68,0.2);color:#f87171;font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:6px;">مرتدات دفاعية</span>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text-sec);line-height:1.55;margin-bottom:12px;">
+          الأكثر صلابة دفاعياً: يتراجع الفريق بأكمله للخلف ويغلق العمق تماماً، ثم ينقض بتمريرة بينية ساقطة طويلة عند قطع الكرة.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);">
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🛡️ خط دفاع: عميق ومتراجع</span>
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🔒 مناعة ضد الثغرات</span>
+        </div>
+      </div>
+
+      <!-- Out Wide -->
+      <div style="background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.22);border-radius:var(--radius-md);padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">🏃</span>
+            <div>
+              <h3 style="font-size:1.05rem;color:var(--text-primary);font-weight:800;">Out Wide</h3>
+              <span style="font-size:0.75rem;color:#67e8f9;font-weight:600;">التوسع عبر الأجنحة والعرضيات</span>
+            </div>
+          </div>
+          <span style="background:rgba(0,212,255,0.2);color:#67e8f9;font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:6px;">أطراف وعرضيات</span>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text-sec);line-height:1.55;margin-bottom:12px;">
+          ينتشر الأجنحة والأظهرة على أقصى خط التماس لفتح الملعب، مع دخول متزامن للاعبي الوسط والمهاجمين داخل الصندوق لاستقبال العرضيات.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);">
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🌐 انتشار عرضي واسع</span>
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🎯 مثالي للكرات الرأسية</span>
+        </div>
+      </div>
+
+      <!-- Long Ball -->
+      <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.22);border-radius:var(--radius-md);padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">🚀</span>
+            <div>
+              <h3 style="font-size:1.05rem;color:var(--text-primary);font-weight:800;">Long Ball</h3>
+              <span style="font-size:0.75rem;color:#fbbf24;font-weight:600;">الكرات الطويلة والمهاجم المحطة</span>
+            </div>
+          </div>
+          <span style="background:rgba(245,158,11,0.2);color:#fbbf24;font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:6px;">كرات طولية</span>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text-sec);line-height:1.55;margin-bottom:12px;">
+          تجاوز خط الوسط بالكامل بإرسال كرات هوائية عالية مباشرة نحو المهاجم المحطة (Target Man) لصراعات الكرات الثانية.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);">
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">⚔️ صراعات بدنية وهوائية</span>
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🛡️ خط دفاع متوازن</span>
+        </div>
+      </div>
+
+      <!-- Overload -->
+      <div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.22);border-radius:var(--radius-md);padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">💪</span>
+            <div>
+              <h3 style="font-size:1.05rem;color:var(--text-primary);font-weight:800;">Overload</h3>
+              <span style="font-size:0.75rem;color:#c084fc;font-weight:600;">التكثيف والزيادة العددية</span>
+            </div>
+          </div>
+          <span style="background:rgba(168,85,247,0.2);color:#c084fc;font-size:0.7rem;font-weight:800;padding:3px 8px;border-radius:6px;">تكثيف عددي</span>
+        </div>
+        <p style="font-size:0.84rem;color:var(--text-sec);line-height:1.55;margin-bottom:12px;">
+          حشد أكبر عدد من اللاعبين في جانب واحد من الملعب لخلق تفوق عددي كاسح ثم التحول السريع للجانب العكسي الخالي من الرقابة.
+        </p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:0.72rem;color:var(--text-dim);">
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🔥 زيادة عددية بالثلث الأخير</span>
+          <span style="background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:4px;">🔄 تدوير سريع للعب</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px;">
+      <div class="filter-row" style="margin-bottom:0;" id="managerFilterRow">
+        <button class="filter-btn active" data-style="all">الكل</button>
+        <button class="filter-btn" data-style="Possession Game">🎯 Possession Game</button>
+        <button class="filter-btn" data-style="Quick Counter">💨 Quick Counter</button>
+        <button class="filter-btn" data-style="Long Ball Counter">⚡ Long Ball Counter</button>
+        <button class="filter-btn" data-style="Out Wide">🏃 Out Wide</button>
+        <button class="filter-btn" data-style="Long Ball">🚀 Long Ball</button>
+        <button class="filter-btn" data-style="Overload">💪 Overload</button>
+      </div>
+
+      <div style="position:relative;min-width:240px;flex:1;max-width:320px;">
+        <input type="text" id="mgrPublicSearch" placeholder="ابحث عن مدرب بالاسم أو الأسلوب..." style="width:100%;padding:10px 36px 10px 14px;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:999px;color:white;font-size:0.85rem;outline:none;transition:border-color 0.2s;">
+        <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);opacity:0.5;pointer-events:none;">🔍</span>
+      </div>
+    </div>
+
+    <!-- Managers Grid Container -->
+    <div class="managers-grid" id="managersGrid">
+      <!-- Dynamic manager cards injected by JS -->
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       SEPARATOR
+       ═══════════════════════════════════════════════ -->
+  <div class="section-separator">
+    <div class="separator-line"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 2: PLAYER PLAYSTYLES
+       ═══════════════════════════════════════════════ -->
+  <section class="page-section" id="playerSection">
+
+    <div class="section-header-block">
+      <div>
+        <span class="section-label">SECTION 02 — PLAYER PLAYSTYLES</span>
+        <h2 class="section-title-lg">أساليب لعب وتحركات اللاعبين (Player Playstyles)</h2>
+        <div class="section-divider"></div>
+      </div>
+      <p style="color:var(--text-sec);max-width:560px;font-size:0.92rem;line-height:1.6;">
+        أسلوب اللاعب يحدد تصرفه بدون كرة وتحركاته الذاتية. اختر أسلوباً لترى أين يتفعل، وكيف تدمجه مع أسلوب مدربك لتحقيق أقصى تناغم.
+      </p>
+    </div>
+
+    <!-- Player Playstyles Category Filters -->
+    <div class="filter-row" id="playerStyleFilterRow">
+      <button class="filter-btn active" data-cat="all">الكل (22 أسلوب)</button>
+      <button class="filter-btn" data-cat="FWD">⚽ مهاجمون (FWD)</button>
+      <button class="filter-btn" data-cat="MID">🎯 وسط الملعب (MID)</button>
+      <button class="filter-btn" data-cat="DEF">🛡️ خط الدفاع (DEF)</button>
+      <button class="filter-btn" data-cat="GK">🧤 حراسة المرمى (GK)</button>
+    </div>
+
+    <!-- Player Playstyles Grid -->
+    <div class="player-styles-grid" id="playerStylesGrid">
+      <!-- Dynamic player style cards injected by JS -->
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       MODAL 1: MANAGER DETAIL MODAL
+       ═══════════════════════════════════════════════ -->
+  <div class="mgr-modal-overlay" id="mgrDetailModalOverlay">
+    <div class="mgr-modal" id="mgrDetailModal">
+      <div class="mgr-modal-hero" id="mgrModalHero">
+        <button class="mgr-modal-close" id="mgrDetailModalClose" aria-label="إغلاق">✕</button>
+        <div class="mgr-modal-hero-overlay"></div>
+        <img id="mgrModalImg" src="" alt="Manager">
+        <div class="mgr-modal-hero-placeholder" id="mgrModalHeroPlaceholder" style="display:none;">👔</div>
+      </div>
+
+      <div class="mgr-modal-body">
+        <div class="mgr-modal-top">
+          <div class="mgr-modal-title-block">
+            <h2 class="mgr-modal-name" id="mgrModalName">—</h2>
+            <div class="mgr-modal-tags">
+              <span class="mgr-style-tag" id="mgrModalStyleBadge">—</span>
+              <span class="meta-chip" id="mgrModalNatBadge">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tactical Overview -->
+        <div class="mgr-modal-section">
+          <h4 class="mgr-modal-section-title">شرح التكتيك والأسلوب وطريقة اللعب</h4>
+          <p class="mgr-modal-desc" id="mgrModalDescText">—</p>
+        </div>
+
+        <!-- Playstyle In-depth Breakdown -->
+        <div class="mgr-modal-section" id="mgrModalDetailSection">
+          <h4 class="mgr-modal-section-title">النصائح والتشكيلات الموصى بها</h4>
+          <div class="mgr-playstyle-detail">
+            <div class="mgr-playstyle-label">نصيحة تكتيكية</div>
+            <div class="mgr-playstyle-desc" id="mgrModalDetailText">—</div>
+          </div>
+        </div>
+
+        <!-- Quick Manager Key Traits -->
+        <div class="mgr-modal-section">
+          <h4 class="mgr-modal-section-title">خصائص أسلوب اللعب في eFootball</h4>
+          <div class="mgr-traits-grid" id="mgrModalTraits">
+            <!-- Trait pills injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       MODAL 2: PLAYER PLAYSTYLE DETAIL MODAL
+       ═══════════════════════════════════════════════ -->
+  <div class="ps-modal-overlay" id="psDetailModalOverlay">
+    <div class="ps-modal" id="psDetailModal">
+      <div class="ps-modal-header" style="position:relative;padding:28px 32px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="ps-icon" id="psModalIcon" style="width:56px;height:56px;font-size:1.8rem;">⚽</div>
+          <div>
+            <h3 class="ps-name-en" id="psModalTitleEn" style="font-size:1.5rem;">—</h3>
+            <div class="ps-name-ar" id="psModalTitleAr" style="font-size:0.95rem;color:var(--text-sec);margin-top:2px;">—</div>
+          </div>
+        </div>
+        <button class="mgr-modal-close" id="psDetailModalClose" style="position:static;" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="ps-modal-body" style="padding:28px 32px 36px;">
+        
+        <!-- Explanation -->
+        <div style="margin-bottom:24px;">
+          <h4 style="font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--accent-1);text-transform:uppercase;margin-bottom:8px;">كيف يتحرك اللاعب في الملعب؟</h4>
+          <p id="psModalFullDesc" style="font-size:0.95rem;color:var(--text-primary);line-height:1.7;">—</p>
+        </div>
+
+        <!-- Active Positions -->
+        <div style="margin-bottom:24px;">
+          <h4 style="font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--accent-green);text-transform:uppercase;margin-bottom:8px;">المراكز التي يتفعل فيها الأسلوب (Active Positions)</h4>
+          <div id="psModalActivePos" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+
+        <!-- Inactive Positions -->
+        <div style="margin-bottom:24px;">
+          <h4 style="font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--accent-red);text-transform:uppercase;margin-bottom:8px;">المراكز التي يتعطل فيها الأسلوب (Inactive Positions)</h4>
+          <p id="psModalInactivePos" style="font-size:0.85rem;color:var(--text-sec);line-height:1.5;">—</p>
+        </div>
+
+        <!-- Synergy with Manager Style -->
+        <div style="background:rgba(108,99,255,0.06);border:1px solid rgba(108,99,255,0.18);border-radius:var(--radius-md);padding:18px;margin-bottom:24px;">
+          <h4 style="font-size:0.75rem;font-weight:800;letter-spacing:1px;color:#a89cff;text-transform:uppercase;margin-bottom:6px;">التناغم الأفضل مع أسلوب المدرب</h4>
+          <p id="psModalSynergy" style="font-size:0.88rem;color:var(--text-sec);line-height:1.6;">—</p>
+        </div>
+
+        <!-- Famous Players Example -->
+        <div>
+          <h4 style="font-size:0.75rem;font-weight:800;letter-spacing:1px;color:var(--accent-gold);text-transform:uppercase;margin-bottom:10px;">أشهر نجوم اللعبة بهذا الأسلوب</h4>
+          <div id="psModalFamousPlayers" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="border-top:1px solid var(--border);padding:40px 24px;text-align:center;position:relative;z-index:1;background:rgba(10,10,15,0.8);">
+    <div style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.3rem;">⚡</span>
+        <span style="font-weight:900;letter-spacing:-0.5px;">RODRIGO eFootball Hub</span>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-sec);">
+        جميع الحقوق محفوظة © 2026 RODRIGO. مرجع شامل ومطور خصيصاً للاعبي eFootball.
+      </p>
+      <div style="display:flex;gap:16px;">
+        <a href="index.html" style="color:var(--text-sec);text-decoration:none;font-size:0.85rem;">الرئيسية</a>
+        <a href="index.html#players" style="color:var(--text-sec);text-decoration:none;font-size:0.85rem;">اللاعبين</a>
+        <a href="admin.html" style="color:var(--accent-1);text-decoration:none;font-size:0.85rem;font-weight:700;">لوحة التحكم</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK (v10 compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="managers.js"></script>
+</body>
+</html>
