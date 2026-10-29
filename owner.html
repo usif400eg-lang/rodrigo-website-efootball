@@ -1,0 +1,318 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RODRIGO — صفحة المالك</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    body { background: var(--bg-primary); font-family: var(--font-primary); color: var(--text-primary); min-height: 100vh; margin: 0; }
+    .owner-topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; background: rgba(10,10,15,0.9); border-bottom: 1px solid var(--border-subtle); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 100; }
+    .owner-topbar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; }
+    .owner-crown { font-size: 1.3rem; }
+    .owner-topbar-right { display: flex; align-items: center; gap: 12px; }
+    .add-admin-form { display: flex; flex-direction: column; gap: 14px; }
+    .add-admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .add-admin-row { grid-template-columns: 1fr; } }
+    .form-field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .form-field input { width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05); border: 1.5px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-primary); font-family: var(--font-primary); font-size: 0.95rem; outline: none; transition: border-color var(--transition-fast); box-sizing: border-box; }
+    .form-field input:focus { border-color: rgba(239, 68, 68, 0.5); }
+    .btn-add-admin { padding: 14px 24px; background: linear-gradient(135deg, #dc2626, #ef4444); border: none; border-radius: var(--radius-md); color: white; font-family: var(--font-primary); font-size: 1rem; font-weight: 700; cursor: pointer; transition: all var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-add-admin:hover { background: linear-gradient(135deg, #b91c1c, #dc2626); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(239,68,68,0.35); }
+    .btn-add-admin:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .form-error { color: #ef4444; font-size: 0.85rem; font-weight: 600; min-height: 18px; text-align: center; }
+    .form-success { color: #4ade80; font-size: 0.85rem; font-weight: 600; min-height: 18px; text-align: center; }
+    .empty-state { text-align: center; padding: 24px; color: var(--text-tertiary); font-size: 0.9rem; }
+    .empty-state-icon { font-size: 2rem; margin-bottom: 8px; }
+    #ownerLoginScreen { display: flex; }
+    #ownerDashboard { display: none; }
+    .toast-container-owner { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    .toast-owner { padding: 12px 22px; border-radius: var(--radius-full); font-size: 0.9rem; font-weight: 600; color: white; opacity: 1; transition: opacity 0.3s; }
+    .toast-owner.success { background: rgba(34,197,94,0.85); border: 1px solid rgba(34,197,94,0.4); }
+    .toast-owner.error { background: rgba(239,68,68,0.85); border: 1px solid rgba(239,68,68,0.4); }
+    .toast-owner.info { background: rgba(108,99,255,0.85); border: 1px solid rgba(108,99,255,0.4); }
+    .toast-owner.removing { opacity: 0; }
+    .pending-badge { display: inline-block; background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.4); color: #fbbf24; border-radius: var(--radius-full); padding: 2px 10px; font-size: 0.75rem; font-weight: 700; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="bg-effects">
+    <div class="orb orb-1" style="background:radial-gradient(circle,rgba(239,68,68,0.12) 0%,transparent 70%)"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- Owner Login -->
+  <div class="owner-login-screen" id="ownerLoginScreen">
+    <div class="owner-card">
+      <div class="owner-badge">👑 صفحة المالك</div>
+      <div class="login-logo" style="margin-bottom:8px">
+        <span class="logo-icon" style="color:#ef4444">⚡</span>
+        <span class="logo-text">RODRIGO</span>
+      </div>
+      <h2 class="login-title" style="margin-bottom:6px">وصول المالك فقط</h2>
+      <p class="login-subtitle" style="margin-bottom:24px">هذه الصفحة مخصصة لإدارة الأدمنية</p>
+      <form id="ownerLoginForm" autocomplete="off">
+        <div class="input-group">
+          <label for="ownerPassword">كلمة مرور المالك</label>
+          <input type="password" id="ownerPassword" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary btn-full" id="ownerLoginBtn" style="background:linear-gradient(135deg,#dc2626,#ef4444)">
+          <span>دخول</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        </button>
+        <p class="login-error" id="ownerLoginError"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Owner Dashboard -->
+  <div id="ownerDashboard">
+    <div class="owner-topbar">
+      <div class="owner-topbar-brand">
+        <span class="owner-crown">👑</span>
+        <span>صفحة المالك — RODRIGO</span>
+      </div>
+      <div class="owner-topbar-right">
+        <a href="admin.html" class="btn-outline btn-sm" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span>لوحة التحكم</span>
+        </a>
+        <button class="btn-ghost btn-sm" id="ownerLogoutBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>خروج</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="owner-dashboard">
+
+      <!-- Add Admin -->
+      <div class="owner-section">
+        <div class="owner-section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          إضافة أدمن جديد
+        </div>
+        <form class="add-admin-form" id="addAdminForm">
+          <div class="form-field">
+            <label>اسم الأدمن</label>
+            <input type="text" id="newAdminName" placeholder="مثال: أحمد" required>
+          </div>
+          <div class="add-admin-row">
+            <div class="form-field">
+              <label>المفتاح (14 رقم من الأدمن)</label>
+              <input type="text" id="newAdminKey" placeholder="00000000000000" maxlength="14" required>
+            </div>
+            <div class="form-field">
+              <label>كلمة المرور الخاصة به</label>
+              <input type="text" id="newAdminPassword" placeholder="اكتب باسورد يخش بيه" required>
+            </div>
+          </div>
+          <p class="form-error" id="addAdminError"></p>
+          <p class="form-success" id="addAdminSuccess"></p>
+          <button type="submit" class="btn-add-admin" id="btnAddAdmin">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة الأدمن
+          </button>
+        </form>
+      </div>
+
+      <!-- Pending -->
+      <div class="owner-section">
+        <div class="section-header">
+          <div class="owner-section-title" style="margin-bottom:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            طلبات الانضمام المعلقة
+          </div>
+          <span class="pending-badge" id="pendingCount">0</span>
+        </div>
+        <div id="pendingList">
+          <div class="empty-state"><div class="empty-state-icon">📭</div><div>لا توجد طلبات انضمام حالياً</div></div>
+        </div>
+      </div>
+
+      <!-- Approved -->
+      <div class="owner-section">
+        <div class="owner-section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          الأدمنية المعتمدون
+        </div>
+        <div id="approvedList">
+          <div class="empty-state"><div class="empty-state-icon">👥</div><div>لا يوجد أدمنية مضافون بعد</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="toast-container-owner" id="ownerToastContainer"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+    const OWNER_PW = "Usif2007";
+    const OWNER_AUTH_KEY = "rodrigo_owner_auth";
+
+    const ownerLoginScreen = document.getElementById("ownerLoginScreen");
+    const ownerDashboard   = document.getElementById("ownerDashboard");
+    const ownerLoginForm   = document.getElementById("ownerLoginForm");
+    const ownerPasswordEl  = document.getElementById("ownerPassword");
+    const ownerLoginError  = document.getElementById("ownerLoginError");
+    const ownerLogoutBtn   = document.getElementById("ownerLogoutBtn");
+
+    if (sessionStorage.getItem(OWNER_AUTH_KEY) === "true") showOwnerDashboard();
+
+    ownerLoginForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var pw = ownerPasswordEl.value.trim();
+      if (pw === OWNER_PW) {
+        sessionStorage.setItem(OWNER_AUTH_KEY, "true");
+        ownerLoginError.textContent = "";
+        showOwnerDashboard();
+      } else {
+        ownerLoginError.textContent = "كلمة المرور غير صحيحة";
+        ownerPasswordEl.value = "";
+        ownerPasswordEl.focus();
+      }
+    });
+
+    ownerLogoutBtn.addEventListener("click", function() {
+      sessionStorage.removeItem(OWNER_AUTH_KEY);
+      location.reload();
+    });
+
+    function showOwnerDashboard() {
+      ownerLoginScreen.style.display = "none";
+      ownerDashboard.style.display   = "block";
+      listenPendingAdmins();
+      listenApprovedAdmins();
+    }
+
+    function listenPendingAdmins() {
+      if (!firebaseDb) return;
+      firebaseDb.ref("rodrigo_pending_admins").on("value", function(snap) {
+        renderPendingList(snap.val());
+      });
+    }
+
+    function listenApprovedAdmins() {
+      if (!firebaseDb) return;
+      firebaseDb.ref("rodrigo_admins").on("value", function(snap) {
+        renderApprovedList(snap.val());
+      });
+    }
+
+    function renderPendingList(data) {
+      var container = document.getElementById("pendingList");
+      var countEl   = document.getElementById("pendingCount");
+      if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>لا توجد طلبات انضمام حالياً</div></div>';
+        countEl.textContent = "0";
+        return;
+      }
+      var entries = Object.entries(data);
+      countEl.textContent = entries.length;
+      container.innerHTML = entries.map(function(entry) {
+        var fbKey = entry[0], item = entry[1];
+        var time = item.requestedAt ? new Date(item.requestedAt).toLocaleString("ar-EG") : "";
+        return '<div class="pending-admin-item">' +
+               '<span class="pending-key">' + (item.key || "—") + '</span>' +
+               '<span class="pending-time">' + time + '</span>' +
+               '<button class="btn-danger-sm" onclick="deletePendingRequest(\'' + fbKey + '\')">حذف</button>' +
+               '</div>';
+      }).join("");
+    }
+
+    function renderApprovedList(data) {
+      var container = document.getElementById("approvedList");
+      if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><div>لا يوجد أدمنية مضافون بعد</div></div>';
+        return;
+      }
+      var entries = Object.entries(data);
+      container.innerHTML = entries.map(function(entry) {
+        var fbKey = entry[0], admin = entry[1];
+        return '<div class="approved-admin-item">' +
+               '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' +
+               '<span class="approved-admin-name">' + escapeHtml(admin.name || "أدمن") + '</span>' +
+               '<span class="approved-admin-pass">🔑 ' + escapeHtml(admin.password || "") + '</span>' +
+               '<button class="btn-danger-sm" onclick="revokeAdmin(\'' + fbKey + '\',\'' + escapeHtml(admin.name || '') + '\')">إزالة</button>' +
+               '</div>';
+      }).join("");
+    }
+
+    document.getElementById("addAdminForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var name     = document.getElementById("newAdminName").value.trim();
+      var key      = document.getElementById("newAdminKey").value.trim();
+      var password = document.getElementById("newAdminPassword").value.trim();
+      var errEl    = document.getElementById("addAdminError");
+      var sucEl    = document.getElementById("addAdminSuccess");
+      var btn      = document.getElementById("btnAddAdmin");
+
+      errEl.textContent = "";
+      sucEl.textContent = "";
+
+      if (!name || !key || !password) { errEl.textContent = "يرجى ملء جميع الحقول"; return; }
+      if (!/^\d{14}$/.test(key)) { errEl.textContent = "المفتاح يجب أن يكون 14 رقم بالضبط"; return; }
+      if (!firebaseDb) { errEl.textContent = "غير متصل بـ Firebase"; return; }
+
+      btn.disabled = true; btn.style.opacity = "0.6";
+      try {
+        var pendingSnap = await firebaseDb.ref("rodrigo_pending_admins").once("value");
+        var pendingData = pendingSnap.val();
+        var matchFbKey  = null;
+        if (pendingData) {
+          for (var k of Object.keys(pendingData)) {
+            if (pendingData[k].key === key) { matchFbKey = k; break; }
+          }
+        }
+        if (!matchFbKey) { errEl.textContent = "المفتاح غير موجود في قائمة الطلبات"; return; }
+
+        await firebaseDb.ref("rodrigo_admins").push({ name: name, password: password, key: key, approved: true, addedAt: new Date().toISOString() });
+        await firebaseDb.ref("rodrigo_pending_admins/" + matchFbKey).remove();
+
+        sucEl.textContent = "تم إضافة " + name + " كأدمن بنجاح!";
+        document.getElementById("addAdminForm").reset();
+        showOwnerToast("تم إضافة " + name + " كأدمن", "success");
+      } catch(err) {
+        errEl.textContent = "خطأ: " + err.message;
+      } finally {
+        btn.disabled = false; btn.style.opacity = "1";
+      }
+    });
+
+    window.deletePendingRequest = async function(fbKey) {
+      if (!firebaseDb) return;
+      try { await firebaseDb.ref("rodrigo_pending_admins/" + fbKey).remove(); showOwnerToast("تم حذف الطلب", "info"); }
+      catch(e) { showOwnerToast("خطأ في الحذف", "error"); }
+    };
+
+    window.revokeAdmin = async function(fbKey, name) {
+      if (!firebaseDb) return;
+      if (!confirm("هل تريد إزالة " + name + " من الأدمنية؟")) return;
+      try { await firebaseDb.ref("rodrigo_admins/" + fbKey).remove(); showOwnerToast("تم إزالة " + name, "info"); }
+      catch(e) { showOwnerToast("خطأ في الإزالة", "error"); }
+    };
+
+    function showOwnerToast(msg, type) {
+      var container = document.getElementById("ownerToastContainer");
+      var el = document.createElement("div");
+      el.className = "toast-owner " + (type || "info");
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(function() { el.classList.add("removing"); setTimeout(function() { el.remove(); }, 300); }, 3000);
+    }
+
+    function escapeHtml(str) {
+      var d = document.createElement("div");
+      d.textContent = str;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

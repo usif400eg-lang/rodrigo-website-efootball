@@ -161,8 +161,10 @@ function getNextId() {
 }
 
 // ═══════════════════════════
-// AUTH
+// AUTH — Multi-Admin System
 // ═══════════════════════════
+
+const OWNER_PASSWORD = "Usif2007"; // Owner's master password (unchanged)
 
 function checkAuth() {
   const auth = sessionStorage.getItem(AUTH_KEY);
@@ -179,24 +181,129 @@ function showDashboard() {
   updateStats();
 }
 
-loginForm.addEventListener("submit", (e) => {
+// Check password against owner password OR approved admins in Firebase
+async function verifyLogin(pw) {
+  // 1) Owner always gets in
+  if (pw === OWNER_PASSWORD) return { ok: true, name: "المالك" };
+
+  // 2) Check Firebase approved admins
+  if (typeof firebase !== "undefined" && firebaseDb) {
+    try {
+      const snap = await firebaseDb.ref("rodrigo_admins").once("value");
+      const admins = snap.val();
+      if (admins && typeof admins === "object") {
+        for (const key of Object.keys(admins)) {
+          const admin = admins[key];
+          if (admin && admin.password === pw && admin.approved === true) {
+            return { ok: true, name: admin.name || "أدمن" };
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Firebase admin check failed:", err);
+    }
+  }
+  return { ok: false };
+}
+
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const pw = loginPassword.value.trim();
-  if (pw === ADMIN_PASSWORD) {
+  const loginBtn = document.getElementById("loginBtn");
+  loginBtn.disabled = true;
+  loginBtn.style.opacity = "0.7";
+
+  const result = await verifyLogin(pw);
+
+  if (result.ok) {
     sessionStorage.setItem(AUTH_KEY, "true");
+    sessionStorage.setItem("rodrigo_admin_name", result.name);
     loginError.textContent = "";
     showDashboard();
-    showToast("تم تسجيل الدخول بنجاح ✓", "success");
+    showToast(`أهلاً ${result.name}! تم تسجيل الدخول ✓`, "success");
+    // Show owner page link only for the owner
+    if (result.name === "المالك") {
+      const ownerLink = document.getElementById("ownerPageLink");
+      if (ownerLink) ownerLink.style.display = "";
+    }
   } else {
     loginError.textContent = "❌ كلمة المرور غير صحيحة";
     loginPassword.value = "";
     loginPassword.focus();
   }
+
+  loginBtn.disabled = false;
+  loginBtn.style.opacity = "1";
 });
 
 logoutBtn.addEventListener("click", () => {
   sessionStorage.removeItem(AUTH_KEY);
+  sessionStorage.removeItem("rodrigo_admin_name");
   location.reload();
+});
+
+// ═══════════════════════════
+// JOIN AS ADMIN — Generate 14-digit key
+// ═══════════════════════════
+
+function generate14DigitKey() {
+  let key = "";
+  for (let i = 0; i < 14; i++) {
+    key += Math.floor(Math.random() * 10).toString();
+  }
+  return key;
+}
+
+const btnJoinAdmin = document.getElementById("btnJoinAdmin");
+const joinModalOverlay = document.getElementById("joinModalOverlay");
+const joinKeyDisplay = document.getElementById("joinKeyDisplay");
+const joinModalNote = document.getElementById("joinModalNote");
+const btnCopyKey = document.getElementById("btnCopyKey");
+const btnJoinClose = document.getElementById("btnJoinClose");
+
+btnJoinAdmin && btnJoinAdmin.addEventListener("click", async () => {
+  const key = generate14DigitKey();
+  joinKeyDisplay.textContent = key;
+  joinModalNote.textContent = "";
+
+  // Store pending request in Firebase
+  if (typeof firebase !== "undefined" && firebaseDb) {
+    try {
+      await firebaseDb.ref("rodrigo_pending_admins").push({
+        key: key,
+        requestedAt: new Date().toISOString(),
+        approved: false
+      });
+      joinModalNote.textContent = "✅ تم إرسال الطلب — أرسل المفتاح للمالك";
+      joinModalNote.style.color = "#4ade80";
+    } catch (err) {
+      joinModalNote.textContent = "⚠️ احتفظ بالمفتاح وأرسله للمالك يدوياً";
+      joinModalNote.style.color = "#fbbf24";
+    }
+  } else {
+    joinModalNote.textContent = "احتفظ بالمفتاح وأرسله للمالك";
+    joinModalNote.style.color = "#94a3b8";
+  }
+
+  joinModalOverlay.classList.add("active");
+});
+
+btnCopyKey && btnCopyKey.addEventListener("click", () => {
+  const key = joinKeyDisplay.textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    btnCopyKey.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    setTimeout(() => {
+      btnCopyKey.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    }, 2000);
+  });
+});
+
+btnJoinClose && btnJoinClose.addEventListener("click", () => {
+  joinModalOverlay.classList.remove("active");
+});
+
+joinModalOverlay && joinModalOverlay.addEventListener("click", (e) => {
+  if (e.target === joinModalOverlay) joinModalOverlay.classList.remove("active");
 });
 
 // ═══════════════════════════
