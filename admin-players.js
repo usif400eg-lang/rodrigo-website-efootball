@@ -27,10 +27,8 @@ const playerOverallInput         = document.getElementById("playerOverall");
 const playerPositionInput        = document.getElementById("playerPosition");
 const playerCompatiblePosInput   = document.getElementById("playerCompatiblePositions");
 const playerPlaystyleInput       = document.getElementById("playerPlaystyle");
-const playerPlaystyleTypeSelect  = document.getElementById("playerPlaystyleType");
 const playerPlaystyleDescInput   = document.getElementById("playerPlaystyleDesc");
 const playerBoosterInput         = document.getElementById("playerBooster");
-const playerBoosterTypeSelect    = document.getElementById("playerBoosterType");
 const playerLevelCapInput        = document.getElementById("playerLevelCap");
 const playerMaxPointsInput       = document.getElementById("playerMaxPoints");
 const playerManagerRatingInput   = document.getElementById("playerManagerRating");
@@ -344,8 +342,6 @@ function resetPlayerForm() {
   if (playerRemoveImgBtn) playerRemoveImgBtn.style.display = "none";
   if (basicSkillsList)      basicSkillsList.innerHTML = "";
   if (additionalSkillsList) additionalSkillsList.innerHTML = "";
-  if (playerPlaystyleTypeSelect) playerPlaystyleTypeSelect.value = "auto";
-  if (playerBoosterTypeSelect)   playerBoosterTypeSelect.value   = "auto";
 
   // Reset progression inputs to 0
   document.querySelectorAll(".prog-input").forEach(i => i.value = "0");
@@ -519,10 +515,8 @@ if (playerForm) {
       : [position.toUpperCase()];
 
     const playstyle       = playerPlaystyleInput?.value.trim() || "HOLE PLAYER";
-    const playstyleType   = playerPlaystyleTypeSelect?.value || "auto";
     const playstyleDesc   = playerPlaystyleDescInput?.value.trim() || "";
     const booster         = playerBoosterInput?.value.trim() || "";
-    const boosterType     = playerBoosterTypeSelect?.value || "auto";
     const levelCap        = parseInt(playerLevelCapInput?.value) || 33;
     const maxPoints       = parseInt(playerMaxPointsInput?.value) || 64;
     const managerRating   = parseInt(playerManagerRatingInput?.value) || 70;
@@ -570,10 +564,8 @@ if (playerForm) {
         position,
         compatiblePositions,
         playstyle,
-        playstyleType,
         playstyleDesc,
         booster,
-        boosterType,
         levelCap,
         maxPoints,
         managerRating,
@@ -614,10 +606,8 @@ window.openPlayerEditModal = function(id) {
   if (playerPositionInput)      playerPositionInput.value      = player.position || "";
   if (playerCompatiblePosInput) playerCompatiblePosInput.value = (player.compatiblePositions || []).join(", ");
   if (playerPlaystyleInput)      playerPlaystyleInput.value      = player.playstyle || "";
-  if (playerPlaystyleTypeSelect) playerPlaystyleTypeSelect.value = player.playstyleType || "auto";
   if (playerPlaystyleDescInput)  playerPlaystyleDescInput.value  = player.playstyleDesc || "";
   if (playerBoosterInput)        playerBoosterInput.value        = player.booster || "";
-  if (playerBoosterTypeSelect)   playerBoosterTypeSelect.value   = player.boosterType || "auto";
   if (playerLevelCapInput)       playerLevelCapInput.value       = player.levelCap || 33;
   if (playerMaxPointsInput)     playerMaxPointsInput.value     = player.maxPoints || 64;
   if (playerManagerRatingInput) playerManagerRatingInput.value = player.managerRating || 70;

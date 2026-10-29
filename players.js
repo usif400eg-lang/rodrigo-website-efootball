@@ -72,62 +72,6 @@ function renderPlayers(list) {
   });
 }
 
-// ── Determine Playstyle Visual Style (Offensive Red Up vs Defensive Blue Down) ──
-function getPlaystyleMeta(playstyle = "", type = "auto") {
-  const norm = String(playstyle).trim().toUpperCase();
-  const isDefensive = type === "defensive" || (type === "auto" && (
-    norm.includes("ANCHOR") || norm.includes("DESTROYER") || norm.includes("BUILD UP") ||
-    norm.includes("DEFENSIVE") || norm.includes("EXTRA FRONTMAN") || norm.includes("SWEEPER")
-  ));
-
-  if (isDefensive) {
-    return {
-      boxClass: "blue-box",
-      svg: `<svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>`
-    };
-  }
-
-  // Default: Offensive Playstyle (Red arrow up, like Prolific Winger in eFHUB)
-  return {
-    boxClass: "red-box",
-    svg: `<svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>`
-  };
-}
-
-// ── Determine Booster Visual Style (Basic Cyan Arrow vs Defensive Shield vs Offensive Boost) ──
-function getBoosterMeta(booster = "", type = "auto") {
-  const norm = String(booster).trim().toUpperCase();
-  const isDefensive = type === "defensive" || (type === "auto" && (
-    norm.includes("DEFEND") || norm.includes("DISRUPTOR") || norm.includes("FORTRESS") ||
-    norm.includes("SHUT DOWN") || norm.includes("DUEL") || norm.includes("INTERCEPT")
-  ));
-
-  const isOffensive = type === "offensive" || (type === "auto" && (
-    norm.includes("SHOOT") || norm.includes("FINISH") || norm.includes("GOAL") ||
-    norm.includes("ATTACK") || norm.includes("AGILITY") || norm.includes("BALL-CARRYING")
-  ));
-
-  if (isOffensive) {
-    return {
-      boxClass: "orange-box",
-      svg: `<svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1.5L7.8 5L11.5 5.5L8.8 8L9.5 11.5L6 9.7L2.5 11.5L3.2 8L0.5 5.5L4.2 5L6 1.5Z"/></svg>`
-    };
-  }
-
-  if (isDefensive) {
-    return {
-      boxClass: "cyan-box",
-      svg: `<svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 1L1.5 3V6.2C1.5 9 3.5 11 6 11.5C8.5 11 10.5 9 10.5 6.2V3L6 1ZM6 9.8C4.3 9.4 3 7.8 3 6.1V3.9L6 2.5L9 3.9V6.1C9 7.8 7.7 9.4 6 9.8Z"/></svg>`
-    };
-  }
-
-  // Default: Basic (Cyan arrow down, matching George Best eFHUB screenshot)
-  return {
-    boxClass: "cyan-box",
-    svg: `<svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>`
-  };
-}
-
 // ── Create Single Player Card (Top Cards Layout Matching Reference Image) ──
 function createPlayerCard(player, delay = 0) {
   const card = document.createElement("div");
@@ -142,15 +86,9 @@ function createPlayerCard(player, delay = 0) {
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>`;
 
-  const playstyle = player.playstyle || "Hole Player";
-  const booster = player.booster || "Basic";
+  const playstyle = player.playstyle || "HOLE PLAYER";
+  const booster = player.booster || "PASS DISRUPTOR";
   const overall = player.overall || "100";
-
-  // Playstyle meta: Offensive (red arrow up) vs Defensive (blue arrow down / shield)
-  const psMeta = getPlaystyleMeta(playstyle, player.playstyleType);
-
-  // Booster meta: Basic (cyan arrow down), Defensive (cyan/blue shield), Offensive (orange boost)
-  const bsMeta = getBoosterMeta(booster, player.boosterType);
 
   card.innerHTML = `
     <!-- Card Artwork on Left (Popping Out Above Container - Exact Image Match) -->
@@ -162,15 +100,17 @@ function createPlayerCard(player, delay = 0) {
     <div class="top-card-info">
       <div class="top-card-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
       <div class="top-card-tags">
-        <span class="top-tag-playstyle" title="أسلوب اللعب: ${escapeHtml(playstyle)}">
-          <span class="tag-box-icon ${psMeta.boxClass}" aria-hidden="true">
-            ${psMeta.svg}
+        <!-- Playstyle (Red/Pink Square Arrow Up) -->
+        <span class="top-tag-playstyle" title="${escapeHtml(playstyle)}">
+          <span class="tag-box-icon red-box" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
           </span>
           <span class="tag-text">${escapeHtml(playstyle)}</span>
         </span>
-        <span class="top-tag-booster" title="البوستر: ${escapeHtml(booster)}">
-          <span class="tag-box-icon ${bsMeta.boxClass}" aria-hidden="true">
-            ${bsMeta.svg}
+        <!-- Booster (Cyan Square Arrow Down) -->
+        <span class="top-tag-booster" title="${escapeHtml(booster)}">
+          <span class="tag-box-icon cyan-box" aria-hidden="true">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
           </span>
           <span class="tag-text">${escapeHtml(booster)}</span>
         </span>

@@ -280,25 +280,29 @@
   flex-wrap: wrap;
 }
 
-/* Playstyle tag */
+/* Playstyle tag (Red/Pink Box Arrow Up) */
 .top-tag-playstyle {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 0.82rem;
-  font-weight: 600;
-  color: #a1a1aa;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   white-space: nowrap;
 }
 
-/* Booster tag */
+/* Booster tag (Cyan Box Arrow Down) */
 .top-tag-booster {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 0.82rem;
-  font-weight: 600;
-  color: #a1a1aa;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   white-space: nowrap;
 }
 
