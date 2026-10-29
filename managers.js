@@ -81,16 +81,133 @@ const PLAYSTYLE_INFO = {
   }
 };
 
-// ── Pre-loaded Default Managers (with photos from Page Manager) ──
+// ── Pre-loaded Default Managers (with exact eFootball stats & boosters from screenshot) ──
 const DEFAULT_MANAGERS = [
+  {
+    _key: "def_makino",
+    name: "Makino Tomoaki",
+    nationality: "اليابان / فيسيل كوبه",
+    playstyle: "Overload",
+    image: "Page Manager/Makino Tomoaki.png",
+    boosters: ["Tackling +1", "Attacking Awareness +1"],
+    stats: {
+      possession: 65,
+      longBallCounter: 76,
+      quickCounter: 85,
+      longBall: 59,
+      outWide: 64,
+      overload: 88
+    },
+    description: "أسلوب Overload مع Quick Counter قوي جداً (تقييم 88 و 85): يمنح الفريق كثافة عددية في مناطق الخصم مع قدرة عالية على الضغط واسترجاع الكرات المقطوعة بسرعة.",
+    playstyleDetail: "التشكيلة المفضلة: 4-2-3-1 أو 3-5-2. بوستر التاكلينج والوعي الهجومي يعطي لاعبيك أفضلية كبيرة في الالتحامات والتحول الهجومي السريع."
+  },
+  {
+    _key: "def_rodriguez",
+    name: "R. Rodriguez",
+    nationality: "إسبانيا / جيرونا",
+    playstyle: "Possession Game",
+    image: "Page Manager/R. Rodriguez.png",
+    boosters: ["Tight Possession +1", "Balance +1"],
+    stats: {
+      possession: 88,
+      longBallCounter: 67,
+      quickCounter: 74,
+      longBall: 58,
+      outWide: 64,
+      overload: 85
+    },
+    description: "تيكي تاكا معاصرة مع Overload (تقييم 88 و 85): تحكم كامل في مجريات اللعب وتدوير سريع للكرة مع ثبات عالي للاعبين تحت الضغط بفضل بوستر Tight Possession و Balance.",
+    playstyleDetail: "التشكيلة المفضلة: 4-3-3 أو 4-2-1-3. يعتمد على تقارب المسافات بين اللاعبين وفتح ثغرات في دفاعات الخصم عبر التمرير القصير السريع."
+  },
+  {
+    _key: "def_adachi",
+    name: "Adachi Ryo",
+    nationality: "اليابان / يوكوهاما",
+    playstyle: "Out Wide",
+    image: "Page Manager/17593259887057.png",
+    boosters: ["Speed +1", "Acceleration +1"],
+    stats: {
+      possession: 68,
+      longBallCounter: 64,
+      quickCounter: 85,
+      longBall: 60,
+      outWide: 88,
+      overload: 75
+    },
+    description: "سلاح الأطراف السريع (تقييم 88 Out Wide و 85 Quick Counter): انتشار عرضي متميز مع بوستر السرعة والتسارع للأجنحة والأظهرة لضرب دفاعات الخصم بالعرضيات والانطلاقات الخاطفة.",
+    playstyleDetail: "التشكيلة المفضلة: 4-4-2 أو 3-4-3. استخدم أجنحة سريعة وأظهرة هجومية لاستغلال المساحات الشاسعة على الأطراف."
+  },
+  {
+    _key: "def_skibbe",
+    name: "Michael Skibbe",
+    nationality: "ألمانيا / سانفريس هيروشيما",
+    playstyle: "Long Ball Counter",
+    image: "Page Manager/17593528325190.png",
+    boosters: ["Low Pass +1", "Kicking Power +1"],
+    stats: {
+      possession: 66,
+      longBallCounter: 88,
+      quickCounter: 78,
+      longBall: 85,
+      outWide: 64,
+      overload: 74
+    },
+    description: "المرتدات المحكمة والكرات الطويلة (تقييم 88 LBC و 85 Long Ball): خط دفاع صلب ومتراجع يستدرج الخصم ثم يباغته بتمريرات طولية ساقطة وقوية نحو المهاجمين.",
+    playstyleDetail: "التشكيلة المفضلة: 4-2-2-2 أو 5-3-2. قوة التسديد والتمرير المنخفض تمنح لاعبيك دقة غير عادية في إنهاء المرتدات."
+  },
+  {
+    _key: "def_kovac",
+    name: "Niko Kovač",
+    nationality: "كرواتيا / موناكو - فولفسبورغ",
+    playstyle: "Possession Game",
+    image: "Page Manager/Niko Kovac.png",
+    boosters: ["Ball Control +1", "Defensive Engagement +1"],
+    stats: {
+      possession: 90,
+      longBallCounter: 59,
+      quickCounter: 67,
+      longBall: 53,
+      outWide: 89,
+      overload: 57
+    },
+    description: "استحواذ وأطراف من أعلى طراز (90 Possession و 89 Out Wide): تحكم رائع بالكرة مع التزام دفاعي قوي لقطع الكرات من لاعبي الوسط.",
+    playstyleDetail: "التشكيلة المفضلة: 4-3-3 أو 4-2-3-1. البوستر يرفع مهارات التحكم بالكرة والالتحام الدفاعي للاعبيك."
+  },
+  {
+    _key: "def_chivu",
+    name: "Cristian Chivu",
+    nationality: "رومانيا / إنتر ميلان",
+    playstyle: "Long Ball",
+    image: "Page Manager/Cristian Chivu.png",
+    boosters: ["Low Pass +1", "Lofted Pass +1"],
+    stats: {
+      possession: 51,
+      longBallCounter: 70,
+      quickCounter: 55,
+      longBall: 90,
+      outWide: 90,
+      overload: 56
+    },
+    description: "ثنائي خارق في الكرات الطويلة والعرضيات (90 Long Ball و 90 Out Wide): دقة التمرير الأرضي والعالي +1 تجعل كل كرة ساقطة أو عرضية بمثابة هدف محقق.",
+    playstyleDetail: "التشكيلة المفضلة: 4-4-2 أو 3-5-2. اعتمد على مهاجم محطة (Target Man) قوي بالرأس لاستقبال الكرات العالية والعرضيات المتقنة."
+  },
   {
     _key: "def_klopp",
     name: "Jürgen Klopp",
     nationality: "ألمانيا / ليفربول",
     playstyle: "Quick Counter",
     image: "Page Manager/Jurgen Klopp.png",
-    description: "أسلوب الـ Gegenpressing الشهير: ضغط هائل وعنيف في الثلث الأخير من ملعب الخصم بمجرد خسارة الكرة، وانقضاض فوري على المرمى بـ 3 مهاجمين سريعين.",
-    playstyleDetail: "أفضل تشكيلة: 4-3-3 مع أجنحة سريعة هدافة (Prolific Winger) ومهاجم قناص (Goal Poacher). اضبط الدفاع على الضغط العالي مع حارس هجومي ممتاز."
+    boosters: ["Defensive Awareness +1", "Stamina +1"],
+    stats: {
+      possession: 63,
+      longBallCounter: 72,
+      quickCounter: 90,
+      longBall: 60,
+      outWide: 57,
+      overload: 83
+    },
+    description: "أسطورة الـ Quick Counter (تقييم 90): ضغط خانق في مناطق الخصم وسرعة خارقة في الانقضاض، مع بوستر الوعي الدفاعي واللياقة البدنية لتطبيق الضغط طوال المباراة.",
+    playstyleDetail: "التشكيلة المفضلة: 4-3-3 أو 4-3-1-2. أجنحة هدافة (Prolific Winger) ومهاجم قناص (Goal Poacher) لتحويل كل ضغط لفرصة هدف مؤكدة."
   },
   {
     _key: "def_mourinho",
@@ -98,8 +215,17 @@ const DEFAULT_MANAGERS = [
     nationality: "البرتغال / روما - ريال مدريد",
     playstyle: "Long Ball Counter",
     image: "Page Manager/Jose Mourinho.png",
-    description: "ملك الدفاع التكتيكي والمرتدات القاتلة: خط دفاع متراجع وكتلة دفاعية منيعة تجبر الخصم على التسديد العشوائي، ثم ضربه بتمريرة ساقطة واحدة تقصم ظهره.",
-    playstyleDetail: "أفضل تشكيلة: 4-2-2-2 أو 5-2-1-2. اعتمد على ارتكاز دفاعي صلب (Anchor Man) مع مهاجمين سريعين جداً في الخط الأمامي لإنهاء المرتدات."
+    boosters: ["Tackling +1", "Defensive Awareness +1"],
+    stats: {
+      possession: 64,
+      longBallCounter: 90,
+      quickCounter: 72,
+      longBall: 85,
+      outWide: 62,
+      overload: 70
+    },
+    description: "أقوى أسلوب دفاعي في اللعبة (90 Long Ball Counter): تنظيم دفاعي حديدي يمنع أي اختراق لعمق الفريق، مع مرتدات قاتلة بلمسة واحدة.",
+    playstyleDetail: "التشكيلة المفضلة: 4-2-2-2 أو 5-2-1-2. اعتمد على ارتكاز صلب (Anchor Man) مع مهاجمين سريعين في الخط الأمامي."
   },
   {
     _key: "def_conte",
@@ -107,35 +233,17 @@ const DEFAULT_MANAGERS = [
     nationality: "إيطاليا / نابولي - إنتر ميلان",
     playstyle: "Long Ball Counter",
     image: "Page Manager/Antonio Conte.png",
-    description: "منظومة دفاعية حديدية بثلاثة قلوب دفاع وانطلاقات مرعبة للأجنحة الدفاعية (Wing-backs). صلابة لا تُقهر في الصندوق وتحولات مرتدة منظمة بالمليمتر.",
-    playstyleDetail: "أفضل تشكيلة: 3-5-2 أو 5-3-2. استخدم مهاجم محطة قوي بدنياً بجوار مهاجم قناص سريع، مع أظهرة هجومية ذوي لياقة بدنية خارقة."
-  },
-  {
-    _key: "def_chivu",
-    name: "Cristian Chivu",
-    nationality: "رومانيا / إنتر ميلان",
-    playstyle: "Possession Game",
-    image: "Page Manager/Cristian Chivu.png",
-    description: "بناء منظم وتدرج هادئ بالكرة من قلبي الدفاع مروراً بالارتكاز حتى إيجاد الثغرة بين خطوط المنافس، مع خط دفاع متقدم وتحكم في رتم المباراة.",
-    playstyleDetail: "أفضل تشكيلة: 4-3-3 أو 4-2-1-3. وظف مدافعين بأسلوب Build Up ولاعبي وسط بأسلوب Orchestrator للتحكم في ريتم التمرير والسيطرة."
-  },
-  {
-    _key: "def_kovac",
-    name: "Niko Kovac",
-    nationality: "كرواتيا / فولفسبورغ - موناكو",
-    playstyle: "Quick Counter",
-    image: "Page Manager/Niko Kovac.png",
-    description: "انضباط بدني عالي وركض لا يتوقف: سرعة هائلة في التحول من الدفاع إلى الهجوم فور استرجاع الكرة في وسط الملعب مع تغطية دفاعية فورية.",
-    playstyleDetail: "أفضل تشكيلة: 4-2-3-1 أو 4-3-3. يحتاج لاعبي وسط من نوعية Box-to-Box يتميزون بلياقة بدنية وقدرة على قطع الكرات والمساندة الهجومية."
-  },
-  {
-    _key: "def_makino",
-    name: "Makino Tomoaki",
-    nationality: "اليابان / فيسيل كوبه",
-    playstyle: "Out Wide",
-    image: "Page Manager/Makino Tomoaki.png",
-    description: "استغلال عرض الملعب بالكامل عبر الأجنحة السريعة والأظهرة المتقدمة، مع تحركات ذكية داخل منطقة الجزاء لاستقبال الكرات العرضية الرأسية.",
-    playstyleDetail: "أفضل تشكيلة: 4-4-2 أو 3-4-3. المهاجم يجب أن يكون مميزاً في ضربات الرأس والارتقاء، مع أجنحة بمهارة Pinpoint Crossing."
+    boosters: ["Physical Contact +1", "Aggression +1"],
+    stats: {
+      possession: 62,
+      longBallCounter: 89,
+      quickCounter: 75,
+      longBall: 86,
+      outWide: 65,
+      overload: 78
+    },
+    description: "صلابة بدنية وعنفوان تكتيكي (تقييم 89 LBC و 86 Long Ball): خطة 3 مدافعين منيعة مع انطلاقات أجنحة دفاعية مرعبة، وتحولات بالغة الدقة بالكرات الطويلة.",
+    playstyleDetail: "التشكيلة المفضلة: 3-5-2 أو 5-3-2. استخدم مهاجم محطة بدني قوي بجوار مهاجم قناص سريع."
   },
   {
     _key: "def_guardiola",
@@ -143,17 +251,17 @@ const DEFAULT_MANAGERS = [
     nationality: "إسبانيا / مانشستر سيتي",
     playstyle: "Possession Game",
     image: "Page Manager/17592991451474.png",
-    description: "فلسفة التيكي تاكا المعاصرة: الاستحواذ المطلق، تدوير الكرة باستمرار لإرهاق الخصم، وتوظيف الأظهرة كلاعبي وسط إضافيين (Inverted Fullbacks).",
-    playstyleDetail: "أفضل تشكيلة: 4-3-3 أو 3-2-4-1. ركّز على لاعبين يتمتعون بدقة تمرير تتجاوز 90 مع تحكم وثيق بالكرة (Tight Possession)."
-  },
-  {
-    _key: "def_rodriguez",
-    name: "R. Rodríguez",
-    nationality: "إسبانيا / جيرونا",
-    playstyle: "Overload",
-    image: "Page Manager/R. Rodriguez.png",
-    description: "تكتيك حديث يعتمد على نقل 4 إلى 5 لاعبين لجانب واحد من الملعب لسحب دفاع المنافس، ثم إرسال كرة قطرية نحو المساحة الفارغة في الطرف المقابل.",
-    playstyleDetail: "أفضل تشكيلة: 4-2-3-1 أو 3-4-2-1. استخدم صانع ألعاب ذكي (Creative Playmaker) يقرأ تحركات الفريق بسرعة وينقل اللعب للجهة العكسية."
+    boosters: ["Tight Possession +1", "Low Pass +1"],
+    stats: {
+      possession: 91,
+      longBallCounter: 60,
+      quickCounter: 75,
+      longBall: 55,
+      outWide: 84,
+      overload: 87
+    },
+    description: "قمة أسلوب الاستحواذ (91 Possession Game): تمريرات أرضية قصيرة بالمليمتر، سيطرة مطلقة على الكرة وحرمان الخصم من لمسها.",
+    playstyleDetail: "التشكيلة المفضلة: 4-3-3 أو 3-2-4-1. وظف لاعبي وسط بأسلوب Orchestrator وأظهرة هجومية للدخول كلاعبي وسط إضافيين."
   }
 ];
 
@@ -624,13 +732,37 @@ function loadManagersData() {
 }
 
 // ── Render Managers Grid ──
+// ── Rating Threshold Colors (90+ Cyan, 80-89 Green, 70-79 Yellow, 60-69 Orange, <60 Red) ──
+function getRatingStyle(val) {
+  val = Number(val) || 0;
+  if (val >= 90) return { badge: "stat-cyan", text: "txt-cyan", bar: "bar-cyan" };
+  if (val >= 80) return { badge: "stat-green", text: "txt-green", bar: "bar-green" };
+  if (val >= 70) return { badge: "stat-yellow", text: "txt-yellow", bar: "bar-yellow" };
+  if (val >= 60) return { badge: "stat-orange", text: "txt-orange", bar: "bar-orange" };
+  return { badge: "stat-red", text: "txt-red", bar: "bar-red" };
+}
+
+// ── Render Managers Grid (Exact eFootball Card Style) ──
 function renderManagers() {
   if (!managersGridEl) return;
 
   const filtered = allManagers.filter(m => {
-    // Style filter
-    const matchStyle = activeManagerFilter === "all" || m.playstyle === activeManagerFilter;
-    // Search query
+    // Style filter: check primary playstyle or if that stat is >= 80
+    let matchStyle = activeManagerFilter === "all" || m.playstyle === activeManagerFilter;
+    if (!matchStyle && m.stats && activeManagerFilter !== "all") {
+      const mapKey = {
+        "Possession Game": m.stats.possession,
+        "Long Ball Counter": m.stats.longBallCounter,
+        "Quick Counter": m.stats.quickCounter,
+        "Long Ball": m.stats.longBall,
+        "Out Wide": m.stats.outWide,
+        "Overload": m.stats.overload
+      };
+      if ((mapKey[activeManagerFilter] || 0) >= 80) {
+        matchStyle = true;
+      }
+    }
+
     const matchSearch = !managerSearchQuery ||
       (m.name || "").toLowerCase().includes(managerSearchQuery.toLowerCase()) ||
       (m.playstyle || "").toLowerCase().includes(managerSearchQuery.toLowerCase()) ||
@@ -653,44 +785,82 @@ function renderManagers() {
   }
 
   filtered.forEach(m => {
-    const ps = PLAYSTYLE_INFO[m.playstyle] || { emoji: "⚽", badgeClass: "style-possession", ar: m.playstyle };
     const card = document.createElement("div");
-    card.className = "manager-card";
+    card.className = "mgr-card-efootball";
     card.setAttribute("tabindex", "0");
     card.onclick = () => openManagerDetail(m);
 
-    // Image handling
-    const imgHtml = m.image
-      ? `<img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name || 'Manager')}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'manager-img-placeholder\\'>${ps.emoji}</div>';">`
-      : `<div class="manager-img-placeholder">${ps.emoji}</div>`;
+    // Normalize stats
+    const stats = m.stats || {
+      possession: m.playstyle === "Possession Game" ? 88 : 65,
+      longBallCounter: m.playstyle === "Long Ball Counter" ? 88 : 67,
+      quickCounter: m.playstyle === "Quick Counter" ? 88 : 74,
+      longBall: m.playstyle === "Long Ball" ? 88 : 58,
+      outWide: m.playstyle === "Out Wide" ? 88 : 64,
+      overload: m.playstyle === "Overload" ? 88 : 75
+    };
+
+    // Normalize boosters
+    const boostersList = Array.isArray(m.boosters)
+      ? m.boosters
+      : (m.boosters ? String(m.boosters).split(",") : []);
+    const boostersHtml = boostersList.map(b => `<span class="mgr-boost-pill">${escapeHtml(b.trim())}</span>`).join("");
+
+    // The 6 stats matching eFootball layout exactly
+    const statItems = [
+      { name: "Possession Game", val: stats.possession ?? 65 },
+      { name: "Long Ball Counter", val: stats.longBallCounter ?? 65 },
+      { name: "Quick Counter", val: stats.quickCounter ?? 65 },
+      { name: "Long Ball", val: stats.longBall ?? 60 },
+      { name: "Out Wide", val: stats.outWide ?? 64 },
+      { name: "Overload", val: stats.overload ?? 65 }
+    ];
+
+    const statsHtml = statItems.map(s => {
+      const cls = getRatingStyle(s.val);
+      return `
+        <div class="mgr-stat-row">
+          <div class="mgr-stat-top-line">
+            <span class="mgr-stat-badge ${cls.badge}">${s.val}</span>
+            <span class="mgr-stat-label ${cls.text}">${s.name}</span>
+          </div>
+          <div class="mgr-bar-track">
+            <div class="mgr-bar-fill ${cls.bar}" style="width: ${Math.min(s.val, 100)}%;"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
 
     card.innerHTML = `
-      <div class="manager-img-wrap">
-        ${imgHtml}
-      </div>
-      <div class="manager-card-body">
-        <span class="manager-style-tag ${ps.badgeClass}">
-          <span>${ps.emoji}</span>
-          <span>${escapeHtml(m.playstyle || 'Tactics')}</span>
-        </span>
-        <h3 class="manager-name">${escapeHtml(m.name || 'مدرب')}</h3>
-        <p class="manager-desc">${escapeHtml(m.description || 'شرح التكتيك وطريقة اللعب التنافسية في eFootball...')}</p>
-      </div>
-      <div class="manager-card-footer">
-        <div class="manager-meta">
-          ${m.nationality ? `<span class="meta-chip">🌍 ${escapeHtml(m.nationality)}</span>` : ''}
+      <div class="mgr-card-top">
+        <div class="mgr-avatar-box">
+          <img src="${escapeHtml(m.image || 'Page Manager/Makino Tomoaki.png')}"
+               class="mgr-avatar-img"
+               alt="${escapeHtml(m.name || 'Manager')}"
+               loading="lazy"
+               onerror="this.onerror=null;this.src='Page Manager/Makino Tomoaki.png';">
+          <div class="mgr-avatar-badge" title="Booster Manager">
+            <span class="badge-dot"></span>
+            <span class="badge-dot"></span>
+          </div>
         </div>
-        <span class="btn-view-manager">
-          <span>التفاصيل</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </span>
+        <div class="mgr-info-col">
+          <h3 class="mgr-card-name" title="${escapeHtml(m.name)}">${escapeHtml(m.name || 'Manager')}</h3>
+          <div class="mgr-boosters-row">
+            ${boostersHtml}
+          </div>
+        </div>
+      </div>
+      <div class="mgr-stats-list">
+        ${statsHtml}
       </div>
     `;
+
     managersGridEl.appendChild(card);
   });
 }
 
-// ── Open Manager Detail Modal ──
+// ── Open Manager Detail Modal ("صفحة المدرب الخاصة") ──
 function openManagerDetail(m) {
   const ps = PLAYSTYLE_INFO[m.playstyle] || { emoji: "⚽", badgeClass: "style-possession", ar: m.playstyle };
 
@@ -698,6 +868,61 @@ function openManagerDetail(m) {
   mgrModalStyleBadge.className = `mgr-style-tag ${ps.badgeClass}`;
   mgrModalStyleBadge.innerHTML = `<span>${ps.emoji}</span> <span>${escapeHtml(m.playstyle || '')} (${ps.ar || ''})</span>`;
   mgrModalNatBadge.textContent = m.nationality ? `🌍 ${m.nationality}` : "eFootball Manager";
+
+  // Boosters
+  const boostersEl = document.getElementById("mgrModalBoosters");
+  if (boostersEl) {
+    const boostersList = Array.isArray(m.boosters)
+      ? m.boosters
+      : (m.boosters ? String(m.boosters).split(",") : []);
+    if (boostersList.length > 0) {
+      boostersEl.innerHTML = boostersList.map(b => `
+        <span style="background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#93c5fd;font-size:0.78rem;font-weight:800;padding:4px 10px;border-radius:6px;">
+          ⚡ ${escapeHtml(b.trim())}
+        </span>
+      `).join("");
+      boostersEl.style.display = "flex";
+    } else {
+      boostersEl.style.display = "none";
+    }
+  }
+
+  // 6 Stats Breakdown in Modal
+  const statsListEl = document.getElementById("mgrModalStatsList");
+  if (statsListEl) {
+    const stats = m.stats || {
+      possession: m.playstyle === "Possession Game" ? 88 : 65,
+      longBallCounter: m.playstyle === "Long Ball Counter" ? 88 : 67,
+      quickCounter: m.playstyle === "Quick Counter" ? 88 : 74,
+      longBall: m.playstyle === "Long Ball" ? 88 : 58,
+      outWide: m.playstyle === "Out Wide" ? 88 : 64,
+      overload: m.playstyle === "Overload" ? 88 : 75
+    };
+
+    const statItems = [
+      { name: "Possession Game", val: stats.possession ?? 65 },
+      { name: "Long Ball Counter", val: stats.longBallCounter ?? 65 },
+      { name: "Quick Counter", val: stats.quickCounter ?? 65 },
+      { name: "Long Ball", val: stats.longBall ?? 60 },
+      { name: "Out Wide", val: stats.outWide ?? 64 },
+      { name: "Overload", val: stats.overload ?? 65 }
+    ];
+
+    statsListEl.innerHTML = statItems.map(s => {
+      const cls = getRatingStyle(s.val);
+      return `
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.8rem;font-weight:700;" class="${cls.text}">${s.name}</span>
+            <span class="mgr-stat-badge ${cls.badge}">${s.val}</span>
+          </div>
+          <div class="mgr-bar-track">
+            <div class="mgr-bar-fill ${cls.bar}" style="width: ${Math.min(s.val, 100)}%;"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
 
   mgrModalDescText.textContent = m.description || "شرح تكتيكي مفصل حول أسلوب اللعب وكيفية إدارة المباريات بكفاءة عالية.";
 
@@ -709,6 +934,25 @@ function openManagerDetail(m) {
     mgrModalDetailText.textContent = `التشكيلات الموصى بها: ${ps.bestFormation} — سرعة اللعب: ${ps.attackSpeed || 'متوازنة'}.`;
   } else {
     mgrModalDetailSection.style.display = "none";
+  }
+
+  // Recommended Synergies
+  const synergiesEl = document.getElementById("mgrModalSynergies");
+  if (synergiesEl) {
+    const recs = {
+      "Possession Game": ["Creative Playmaker", "Orchestrator", "Hole Player", "Deep-Lying Forward", "Build Up"],
+      "Quick Counter": ["Goal Poacher", "Prolific Winger", "The Destroyer", "Anchor Man", "Offensive GK"],
+      "Long Ball Counter": ["Goal Poacher", "Target Man", "Anchor Man", "Defensive Fullback", "Defensive GK"],
+      "Out Wide": ["Cross Specialist", "Target Man", "Fox in the Box", "Offensive Fullback"],
+      "Long Ball": ["Target Man", "Fox in the Box", "Box-to-Box", "Build Up"],
+      "Overload": ["Roaming Flank", "Fullback Finisher", "Hole Player", "Dummy Runner"]
+    };
+    const list = recs[m.playstyle] || ["Goal Poacher", "Anchor Man", "Box-to-Box"];
+    synergiesEl.innerHTML = list.map(item => `
+      <span style="background:rgba(108,99,255,0.12);border:1px solid rgba(108,99,255,0.3);color:#c084fc;padding:5px 12px;border-radius:6px;font-size:0.8rem;font-weight:700;">
+        ⭐ ${item}
+      </span>
+    `).join("");
   }
 
   // Traits list

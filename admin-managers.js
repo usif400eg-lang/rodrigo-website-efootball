@@ -48,6 +48,14 @@ const managersTableBody     = document.getElementById("managersTableBody");
 const managersTable         = document.getElementById("managersTable");
 const managersTableEmpty    = document.getElementById("managersTableEmpty");
 const mgrSearchInput        = document.getElementById("mgrSearch");
+const mgrBoost1Input        = document.getElementById("mgrBoost1");
+const mgrBoost2Input        = document.getElementById("mgrBoost2");
+const mgrStatPossessionInput = document.getElementById("mgrStatPossession");
+const mgrStatLBCInput       = document.getElementById("mgrStatLBC");
+const mgrStatQCInput        = document.getElementById("mgrStatQC");
+const mgrStatLBInput        = document.getElementById("mgrStatLB");
+const mgrStatOWInput        = document.getElementById("mgrStatOW");
+const mgrStatOverloadInput  = document.getElementById("mgrStatOverload");
 
 // ── Init ──
 function loadManagers() {
@@ -132,6 +140,14 @@ function resetMgrForm() {
   mgrImagePreview.classList.remove("has-image");
   mgrRemoveImgBtn.style.display = "none";
   mgrModalTitle.textContent = "إضافة مدرب جديد";
+  if (mgrBoost1Input) mgrBoost1Input.value = "";
+  if (mgrBoost2Input) mgrBoost2Input.value = "";
+  if (mgrStatPossessionInput) mgrStatPossessionInput.value = 65;
+  if (mgrStatLBCInput) mgrStatLBCInput.value = 65;
+  if (mgrStatQCInput) mgrStatQCInput.value = 65;
+  if (mgrStatLBInput) mgrStatLBInput.value = 60;
+  if (mgrStatOWInput) mgrStatOWInput.value = 64;
+  if (mgrStatOverloadInput) mgrStatOverloadInput.value = 65;
   renderPlaystyleOptions();
 }
 
@@ -223,16 +239,45 @@ mgrForm && mgrForm.addEventListener("submit", async (e) => {
   const nat      = mgrNationalityInput ? mgrNationalityInput.value.trim() : "";
   const desc     = mgrDescInput.value.trim();
   const psDetail = mgrPlaystyleDetailInput ? mgrPlaystyleDetailInput.value.trim() : "";
+  const boost1   = mgrBoost1Input ? mgrBoost1Input.value.trim() : "";
+  const boost2   = mgrBoost2Input ? mgrBoost2Input.value.trim() : "";
+  const boosters = [boost1, boost2].filter(Boolean);
+
+  const stats = {
+    possession: Number(mgrStatPossessionInput?.value) || 65,
+    longBallCounter: Number(mgrStatLBCInput?.value) || 65,
+    quickCounter: Number(mgrStatQCInput?.value) || 65,
+    longBall: Number(mgrStatLBInput?.value) || 60,
+    outWide: Number(mgrStatOWInput?.value) || 64,
+    overload: Number(mgrStatOverloadInput?.value) || 65
+  };
+
+  // Determine top playstyle if not explicitly set
+  let topStyle = selectedPlaystyle;
+  if (!topStyle) {
+    const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+    const topKey = sorted[0][0];
+    const mapKeys = {
+      possession: "Possession Game",
+      longBallCounter: "Long Ball Counter",
+      quickCounter: "Quick Counter",
+      longBall: "Long Ball",
+      outWide: "Out Wide",
+      overload: "Overload"
+    };
+    topStyle = mapKeys[topKey] || "Possession Game";
+  }
 
   if (!name) { showToast("يرجى إدخال اسم المدرب", "error"); return; }
-  if (!selectedPlaystyle) { showToast("يرجى اختيار أسلوب اللعب", "error"); return; }
 
   mgrModalSaveBtn.disabled = true; mgrModalSaveBtn.style.opacity = "0.7";
 
   const payload = {
     name,
     nationality: nat,
-    playstyle: selectedPlaystyle,
+    playstyle: topStyle,
+    boosters,
+    stats,
     description: desc,
     playstyleDetail: psDetail,
     image: mgrImageBase64 || (editingManagerId ? (adminManagers.find(m => m._key === editingManagerId)?.image || "") : ""),
@@ -268,12 +313,30 @@ window.openEditMgr = function(key) {
   mgrDescInput.value = m.description || "";
   if (mgrPlaystyleDetailInput) mgrPlaystyleDetailInput.value = m.playstyleDetail || "";
   selectedPlaystyle = m.playstyle || "";
+
+  const boosters = Array.isArray(m.boosters) ? m.boosters : (m.boosters ? String(m.boosters).split(",") : []);
+  if (mgrBoost1Input) mgrBoost1Input.value = boosters[0] || "";
+  if (mgrBoost2Input) mgrBoost2Input.value = boosters[1] || "";
+
+  const stats = m.stats || {};
+  if (mgrStatPossessionInput) mgrStatPossessionInput.value = stats.possession ?? 65;
+  if (mgrStatLBCInput) mgrStatLBCInput.value = stats.longBallCounter ?? 65;
+  if (mgrStatQCInput) mgrStatQCInput.value = stats.quickCounter ?? 65;
+  if (mgrStatLBInput) mgrStatLBInput.value = stats.longBall ?? 60;
+  if (mgrStatOWInput) mgrStatOWInput.value = stats.outWide ?? 64;
+  if (mgrStatOverloadInput) mgrStatOverloadInput.value = stats.overload ?? 65;
+
   mgrImageBase64 = m.image || "";
   if (m.image) {
     mgrPreviewImg.src = m.image;
     mgrPreviewImg.classList.add("visible");
     mgrImagePreview.classList.add("has-image");
     mgrRemoveImgBtn.style.display = "flex";
+  } else {
+    mgrPreviewImg.src = "";
+    mgrPreviewImg.classList.remove("visible");
+    mgrImagePreview.classList.remove("has-image");
+    mgrRemoveImgBtn.style.display = "none";
   }
   renderPlaystyleOptions();
   openMgrModal();

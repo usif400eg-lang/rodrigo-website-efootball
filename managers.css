@@ -285,138 +285,187 @@ body {
 /* ── Manager Cards Grid ── */
 .managers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+@media (max-width: 1200px) {
+  .managers-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 860px) {
+  .managers-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .managers-grid { grid-template-columns: 1fr; }
 }
 
-.manager-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+/* Authentic eFootball Manager Card */
+.mgr-card-efootball {
+  background: #0f141f;
+  border: 1px solid #1c2638;
+  border-radius: 12px;
+  padding: 16px 14px 14px;
   cursor: pointer;
-  transition: all var(--dur) var(--ease);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  animation: fadeUp 0.5s var(--ease) both;
+  user-select: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeUp 0.4s var(--ease) both;
 }
-.manager-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--border-glow);
-  box-shadow: var(--shadow-glow), var(--shadow-card);
+.mgr-card-efootball:hover {
+  transform: translateY(-5px);
+  border-color: #3b82f6;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 18px rgba(59,130,246,0.3);
 }
-.manager-card:hover .manager-img-wrap::after { opacity: 1; }
 
-.manager-img-wrap {
+/* Card Top: Avatar + Name + Boosters */
+.mgr-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mgr-avatar-box {
   position: relative;
-  aspect-ratio: 4/3;
-  overflow: hidden;
-  background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  padding: 2px;
+  background: linear-gradient(135deg, #475569, #1e293b);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+  flex-shrink: 0;
 }
-.manager-img-wrap::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(108,99,255,0.25), transparent);
-  opacity: 0;
-  transition: opacity var(--dur) var(--ease);
-}
-.manager-img-wrap img {
+.mgr-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  transition: transform 0.5s var(--ease);
+  border-radius: 8px;
+  display: block;
+  background: #0a0a0f;
 }
-.manager-card:hover .manager-img-wrap img { transform: scale(1.06); }
-
-.manager-img-placeholder {
-  width: 100%;
-  height: 100%;
+.mgr-avatar-badge {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #090e18;
+  border: 1.5px solid #00e5ff;
+  border-radius: 999px;
+  padding: 1px 5px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 4rem;
-  background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(0,212,255,0.05));
+  gap: 3px;
+  box-shadow: 0 0 8px rgba(0,229,255,0.4);
+}
+.mgr-avatar-badge .badge-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #00e5ff;
 }
 
-.manager-card-body {
-  padding: 20px;
+.mgr-info-col {
+  flex: 1;
+  min-width: 0;
 }
-
-.manager-style-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.72rem;
+.mgr-card-name {
+  font-size: 0.96rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
-}
-
-.manager-name {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-primary);
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   margin-bottom: 6px;
+  line-height: 1.2;
+  font-family: var(--font-display);
+}
+.mgr-boosters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.mgr-boost-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #111e3b;
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  color: #93c5fd;
+  white-space: nowrap;
   line-height: 1.2;
 }
 
-.manager-desc {
-  font-size: 0.85rem;
-  color: var(--text-sec);
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+/* Playstyle Stats List */
+.mgr-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mgr-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.mgr-stat-top-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mgr-stat-badge {
+  width: 25px;
+  height: 18px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+}
+
+/* Rating Badge Color Schemes (Cyan, Green, Yellow, Orange, Red) */
+.stat-cyan   { background: #00e5ff; color: #000; box-shadow: 0 0 6px rgba(0,229,255,0.4); }
+.stat-green  { background: #22c55e; color: #000; }
+.stat-yellow { background: #eab308; color: #000; }
+.stat-orange { background: #f97316; color: #000; }
+.stat-red    { background: #ef4444; color: #fff; }
+
+.mgr-stat-label {
+  font-size: 0.77rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+}
+.txt-cyan   { color: #00e5ff; }
+.txt-green  { color: #4ade80; }
+.txt-yellow { color: #facc15; }
+.txt-orange { color: #fb923c; }
+.txt-red    { color: #f87171; }
+
+.mgr-bar-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
   overflow: hidden;
 }
-
-.manager-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-top: 1px solid var(--border);
-  background: rgba(0,0,0,0.15);
+.mgr-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.manager-meta {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.meta-chip {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.07);
-  color: var(--text-sec);
-}
-
-.btn-view-manager {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--accent-1);
-  transition: gap var(--dur) var(--ease);
-}
-.manager-card:hover .btn-view-manager { gap: 10px; }
-
-/* ── Style Color Themes ── */
-.style-possession   { background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.3); color: #a89cff; }
-.style-longball-c   { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.3);  color: #f87171; }
-.style-quick-c      { background: rgba(34,197,94,0.12);  border: 1px solid rgba(34,197,94,0.3);  color: #4ade80; }
-.style-longball     { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: #fbbf24; }
-.style-out-wide     { background: rgba(0,212,255,0.12);  border: 1px solid rgba(0,212,255,0.3);  color: #67e8f9; }
-.style-overload     { background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3); color: #c084fc; }
+.bar-cyan   { background: #00e5ff; box-shadow: 0 0 5px #00e5ff; }
+.bar-green  { background: #22c55e; }
+.bar-yellow { background: #eab308; }
+.bar-orange { background: #f97316; }
+.bar-red    { background: #ef4444; }
 
 /* ── Manager Detail Modal ── */
 .mgr-modal-overlay {
