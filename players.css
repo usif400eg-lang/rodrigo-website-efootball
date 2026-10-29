@@ -293,7 +293,7 @@
   white-space: nowrap;
 }
 
-/* Booster tag (Cyan Box Arrow Down) */
+/* Booster tag (eFootball Hexagon Booster Icon) */
 .top-tag-booster {
   display: inline-flex;
   align-items: center;
@@ -306,6 +306,15 @@
   white-space: nowrap;
 }
 
+.tag-booster-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(0, 239, 255, 0.5));
+}
+
 /* Square Boxed Icons Matching Image (e.g. [ ⮝ ] and [ ⮟ ]) */
 .tag-box-icon {
   display: inline-flex;
@@ -313,12 +322,13 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  border-radius: 4px;
   line-height: 1;
   flex-shrink: 0;
 }
 
 .tag-box-icon svg {
+  width: 18px;
+  height: 18px;
   display: block;
 }
 

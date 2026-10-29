@@ -96,10 +96,12 @@ function createPlayerCard(player, delay = 0) {
 
   if (offensivePlaystyle) {
     tagsHTML += `
-      <!-- Offensive Playstyle (Red/Pink Square Arrow Up) -->
+      <!-- Offensive Playstyle (Red/Pink Official Icon) -->
       <span class="top-tag-playstyle tag-offensive" title="الأسلوب الهجومي: ${escapeHtml(offensivePlaystyle)}">
-        <span class="tag-box-icon red-box" aria-hidden="true">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
+        <span class="tag-box-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 60 60" fill="none">
+            <path d="M56 0C58.2091 0 60 1.79086 60 4V56C60 58.14 58.3194 59.8879 56.2061 59.9951L56 60H4L3.79395 59.9951C1.7488 59.8913 0.108652 58.2512 0.00488281 56.2061L0 56V4C0 1.79086 1.79086 1.12745e-07 4 0H56ZM6 54H54V6H6V54ZM50 24.5V45L30 36.5L10 45V24.5L30 15L50 24.5Z" fill="#FF3464"/>
+          </svg>
         </span>
         <span class="tag-text">${escapeHtml(offensivePlaystyle)}</span>
       </span>
@@ -108,10 +110,12 @@ function createPlayerCard(player, delay = 0) {
 
   if (defensivePlaystyle) {
     tagsHTML += `
-      <!-- Defensive Playstyle (Blue Square Arrow Down) -->
+      <!-- Defensive Playstyle (Cyan/Blue Official Icon) -->
       <span class="top-tag-playstyle tag-defensive" title="الأسلوب الدفاعي: ${escapeHtml(defensivePlaystyle)}">
-        <span class="tag-box-icon blue-box" aria-hidden="true">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
+        <span class="tag-box-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 60 60" fill="none">
+            <path d="M56 0C58.2091 0 60 1.79086 60 4V56C60 58.14 58.3194 59.8879 56.2061 59.9951L56 60H4L3.79395 59.9951C1.7488 59.8913 0.108652 58.2512 0.00488281 56.2061L0 56V4C0 1.79086 1.79086 1.12745e-07 4 0H56ZM6 54H54V6H6V54ZM50 35.5L30 45L10 35.5V15L30 23.5L50 15V35.5Z" fill="#00EFFF"/>
+          </svg>
         </span>
         <span class="tag-text">${escapeHtml(defensivePlaystyle)}</span>
       </span>
@@ -120,11 +124,9 @@ function createPlayerCard(player, delay = 0) {
 
   if (booster) {
     tagsHTML += `
-      <!-- Booster (Cyan Square Arrow Down) -->
+      <!-- Booster (Official eFootball Hexagon Icon) -->
       <span class="top-tag-booster" title="البوستر: ${escapeHtml(booster)}">
-        <span class="tag-box-icon cyan-box" aria-hidden="true">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
-        </span>
+        <img src="page player/Booster2.png" class="tag-booster-img" alt="Booster" width="20" height="20">
         <span class="tag-text">${escapeHtml(booster)}</span>
       </span>
     `;
@@ -134,15 +136,15 @@ function createPlayerCard(player, delay = 0) {
   if (!tagsHTML) {
     tagsHTML = `
       <span class="top-tag-playstyle tag-offensive">
-        <span class="tag-box-icon red-box" aria-hidden="true">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
+        <span class="tag-box-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 60 60" fill="none">
+            <path d="M56 0C58.2091 0 60 1.79086 60 4V56C60 58.14 58.3194 59.8879 56.2061 59.9951L56 60H4L3.79395 59.9951C1.7488 59.8913 0.108652 58.2512 0.00488281 56.2061L0 56V4C0 1.79086 1.79086 1.12745e-07 4 0H56ZM6 54H54V6H6V54ZM50 24.5V45L30 36.5L10 45V24.5L30 15L50 24.5Z" fill="#FF3464"/>
+          </svg>
         </span>
         <span class="tag-text">HOLE PLAYER</span>
       </span>
       <span class="top-tag-booster">
-        <span class="tag-box-icon cyan-box" aria-hidden="true">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
-        </span>
+        <img src="page player/Booster2.png" class="tag-booster-img" alt="Booster" width="20" height="20">
         <span class="tag-text">PASS DISRUPTOR</span>
       </span>
     `;
