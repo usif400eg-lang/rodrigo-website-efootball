@@ -86,9 +86,67 @@ function createPlayerCard(player, delay = 0) {
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>`;
 
-  const playstyle = player.playstyle || "HOLE PLAYER";
-  const booster = player.booster || "PASS DISRUPTOR";
+  const offensivePlaystyle = player.offensivePlaystyle || player.playstyle || "";
+  const defensivePlaystyle = player.defensivePlaystyle || "";
+  const booster = player.booster || "";
   const overall = player.overall || "100";
+
+  // Build tags HTML: 1. Offensive (Red Up), 2. Defensive (Blue Down), 3. Booster (Cyan Down)
+  let tagsHTML = "";
+
+  if (offensivePlaystyle) {
+    tagsHTML += `
+      <!-- Offensive Playstyle (Red/Pink Square Arrow Up) -->
+      <span class="top-tag-playstyle tag-offensive" title="الأسلوب الهجومي: ${escapeHtml(offensivePlaystyle)}">
+        <span class="tag-box-icon red-box" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
+        </span>
+        <span class="tag-text">${escapeHtml(offensivePlaystyle)}</span>
+      </span>
+    `;
+  }
+
+  if (defensivePlaystyle) {
+    tagsHTML += `
+      <!-- Defensive Playstyle (Blue Square Arrow Down) -->
+      <span class="top-tag-playstyle tag-defensive" title="الأسلوب الدفاعي: ${escapeHtml(defensivePlaystyle)}">
+        <span class="tag-box-icon blue-box" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
+        </span>
+        <span class="tag-text">${escapeHtml(defensivePlaystyle)}</span>
+      </span>
+    `;
+  }
+
+  if (booster) {
+    tagsHTML += `
+      <!-- Booster (Cyan Square Arrow Down) -->
+      <span class="top-tag-booster" title="البوستر: ${escapeHtml(booster)}">
+        <span class="tag-box-icon cyan-box" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
+        </span>
+        <span class="tag-text">${escapeHtml(booster)}</span>
+      </span>
+    `;
+  }
+
+  // If no tags provided at all, fallback to default preview
+  if (!tagsHTML) {
+    tagsHTML = `
+      <span class="top-tag-playstyle tag-offensive">
+        <span class="tag-box-icon red-box" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
+        </span>
+        <span class="tag-text">HOLE PLAYER</span>
+      </span>
+      <span class="top-tag-booster">
+        <span class="tag-box-icon cyan-box" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
+        </span>
+        <span class="tag-text">PASS DISRUPTOR</span>
+      </span>
+    `;
+  }
 
   card.innerHTML = `
     <!-- Card Artwork on Left (Popping Out Above Container - Exact Image Match) -->
@@ -100,20 +158,7 @@ function createPlayerCard(player, delay = 0) {
     <div class="top-card-info">
       <div class="top-card-name" title="${escapeHtml(player.name)}">${escapeHtml(player.name)}</div>
       <div class="top-card-tags">
-        <!-- Playstyle (Red/Pink Square Arrow Up) -->
-        <span class="top-tag-playstyle" title="${escapeHtml(playstyle)}">
-          <span class="tag-box-icon red-box" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 2.5L1.5 7.5L2.9 8.9L6 5.4L9.1 8.9L10.5 7.5L6 2.5Z"/></svg>
-          </span>
-          <span class="tag-text">${escapeHtml(playstyle)}</span>
-        </span>
-        <!-- Booster (Cyan Square Arrow Down) -->
-        <span class="top-tag-booster" title="${escapeHtml(booster)}">
-          <span class="tag-box-icon cyan-box" aria-hidden="true">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6 9.5L10.5 4.5L9.1 3.1L6 6.6L2.9 3.1L1.5 4.5L6 9.5Z"/></svg>
-          </span>
-          <span class="tag-text">${escapeHtml(booster)}</span>
-        </span>
+        ${tagsHTML}
       </div>
     </div>
 
@@ -404,7 +449,8 @@ function renderPlayerDevModal(player) {
             ${player.overall ? `<span class="efhub-ovr-tag">${player.overall}</span>` : ""}
           </div>
           <div class="efhub-meta-row">
-            ${player.playstyle ? `<span class="efhub-badge-playstyle">⚡ ${escapeHtml(player.playstyle)}</span>` : ""}
+            ${player.offensivePlaystyle || player.playstyle ? `<span class="efhub-badge-playstyle">⚡ ${escapeHtml(player.offensivePlaystyle || player.playstyle)}</span>` : ""}
+            ${player.defensivePlaystyle ? `<span class="efhub-badge-playstyle" style="border-color:rgba(56,189,248,0.35);color:#38bdf8;">🛡️ ${escapeHtml(player.defensivePlaystyle)}</span>` : ""}
             ${player.booster ? `<span class="efhub-badge-booster">✦ ${escapeHtml(player.booster)}</span>` : ""}
             <span class="efhub-badge-meta">Level Cap: <strong>${player.levelCap || 33}</strong></span>
             <span class="efhub-badge-meta">Points: <strong>${player.maxPoints || 64}</strong></span>

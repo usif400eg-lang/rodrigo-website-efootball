@@ -26,10 +26,11 @@ const playerNameInput            = document.getElementById("playerName");
 const playerOverallInput         = document.getElementById("playerOverall");
 const playerPositionInput        = document.getElementById("playerPosition");
 const playerCompatiblePosInput   = document.getElementById("playerCompatiblePositions");
-const playerPlaystyleInput       = document.getElementById("playerPlaystyle");
-const playerPlaystyleDescInput   = document.getElementById("playerPlaystyleDesc");
-const playerBoosterInput         = document.getElementById("playerBooster");
-const playerLevelCapInput        = document.getElementById("playerLevelCap");
+const playerOffensivePlaystyleInput = document.getElementById("playerOffensivePlaystyle");
+const playerDefensivePlaystyleInput = document.getElementById("playerDefensivePlaystyle");
+const playerPlaystyleDescInput      = document.getElementById("playerPlaystyleDesc");
+const playerBoosterInput            = document.getElementById("playerBooster");
+const playerLevelCapInput           = document.getElementById("playerLevelCap");
 const playerMaxPointsInput       = document.getElementById("playerMaxPoints");
 const playerManagerRatingInput   = document.getElementById("playerManagerRating");
 
@@ -514,12 +515,13 @@ if (playerForm) {
       ? compatiblePositionsStr.split(",").map(s => s.trim().toUpperCase()).filter(Boolean)
       : [position.toUpperCase()];
 
-    const playstyle       = playerPlaystyleInput?.value.trim() || "HOLE PLAYER";
-    const playstyleDesc   = playerPlaystyleDescInput?.value.trim() || "";
-    const booster         = playerBoosterInput?.value.trim() || "";
-    const levelCap        = parseInt(playerLevelCapInput?.value) || 33;
-    const maxPoints       = parseInt(playerMaxPointsInput?.value) || 64;
-    const managerRating   = parseInt(playerManagerRatingInput?.value) || 70;
+    const offensivePlaystyle = playerOffensivePlaystyleInput?.value.trim() || "";
+    const defensivePlaystyle = playerDefensivePlaystyleInput?.value.trim() || "";
+    const playstyleDesc      = playerPlaystyleDescInput?.value.trim() || "";
+    const booster            = playerBoosterInput?.value.trim() || "";
+    const levelCap           = parseInt(playerLevelCapInput?.value) || 33;
+    const maxPoints          = parseInt(playerMaxPointsInput?.value) || 64;
+    const managerRating      = parseInt(playerManagerRatingInput?.value) || 70;
 
     const progression      = collectProgression();
     const stats            = collectStats();
@@ -563,7 +565,9 @@ if (playerForm) {
         overall,
         position,
         compatiblePositions,
-        playstyle,
+        offensivePlaystyle,
+        defensivePlaystyle,
+        playstyle: offensivePlaystyle || defensivePlaystyle || "",
         playstyleDesc,
         booster,
         levelCap,
@@ -604,11 +608,11 @@ window.openPlayerEditModal = function(id) {
   if (playerNameInput)          playerNameInput.value          = player.name || "";
   if (playerOverallInput)       playerOverallInput.value       = player.overall || "";
   if (playerPositionInput)      playerPositionInput.value      = player.position || "";
-  if (playerCompatiblePosInput) playerCompatiblePosInput.value = (player.compatiblePositions || []).join(", ");
-  if (playerPlaystyleInput)      playerPlaystyleInput.value      = player.playstyle || "";
-  if (playerPlaystyleDescInput)  playerPlaystyleDescInput.value  = player.playstyleDesc || "";
-  if (playerBoosterInput)        playerBoosterInput.value        = player.booster || "";
-  if (playerLevelCapInput)       playerLevelCapInput.value       = player.levelCap || 33;
+  if (playerOffensivePlaystyleInput) playerOffensivePlaystyleInput.value = player.offensivePlaystyle || player.playstyle || "";
+  if (playerDefensivePlaystyleInput) playerDefensivePlaystyleInput.value = player.defensivePlaystyle || "";
+  if (playerPlaystyleDescInput)      playerPlaystyleDescInput.value      = player.playstyleDesc || "";
+  if (playerBoosterInput)            playerBoosterInput.value            = player.booster || "";
+  if (playerLevelCapInput)           playerLevelCapInput.value           = player.levelCap || 33;
   if (playerMaxPointsInput)     playerMaxPointsInput.value     = player.maxPoints || 64;
   if (playerManagerRatingInput) playerManagerRatingInput.value = player.managerRating || 70;
 

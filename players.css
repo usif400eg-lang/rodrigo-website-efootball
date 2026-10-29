@@ -175,12 +175,12 @@
   background: #121316;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 20px;
-  min-height: 72px;
-  height: 72px;
+  min-height: 74px;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 20px 8px 100px; /* Room on left for the popping card */
+  padding: 10px 20px 10px 100px; /* Room on left for the popping card */
   cursor: pointer;
   overflow: visible !important; /* CRITICAL: Card sticks out from top! */
   user-select: none;
