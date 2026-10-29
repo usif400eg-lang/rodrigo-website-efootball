@@ -267,8 +267,26 @@
                 <input type="text" id="playerPlaystyle" placeholder="مثال: HOLE PLAYER, GOAL POACHER">
               </div>
               <div class="input-group">
+                <label for="playerPlaystyleType">نوع أسلوب اللعب (الأيقونة)</label>
+                <select id="playerPlaystyleType">
+                  <option value="auto" selected>تلقائي (Auto-Detect)</option>
+                  <option value="offensive">هجومي ⮝ (Offensive - أحمر/وردي)</option>
+                  <option value="defensive">دفاعي ⮟ (Defensive - أزرق)</option>
+                </select>
+              </div>
+
+              <div class="input-group">
                 <label for="playerBooster">المعزز / البوستر (Booster)</label>
-                <input type="text" id="playerBooster" placeholder="مثال: PASS DISRUPTOR, AGILITY">
+                <input type="text" id="playerBooster" placeholder="مثال: BASIC, PASS DISRUPTOR, AGILITY">
+              </div>
+              <div class="input-group">
+                <label for="playerBoosterType">نوع البوستر (الأيقونة)</label>
+                <select id="playerBoosterType">
+                  <option value="auto" selected>تلقائي (Auto-Detect)</option>
+                  <option value="basic">أساسي ⮟ (Basic - سماوي)</option>
+                  <option value="defensive">دفاعي 🛡️ (Defensive - درع سماوي)</option>
+                  <option value="offensive">هجومي ⚡ (Offensive - برتقالي)</option>
+                </select>
               </div>
 
               <!-- Playstyle Description -->
