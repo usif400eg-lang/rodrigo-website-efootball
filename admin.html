@@ -220,48 +220,113 @@
   <!-- ════ MANAGERS PANEL ════ -->
   <div class="admin-section-panel" id="panelManagers">
 
-    <!-- Managers Action Bar -->
-    <div class="action-bar">
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <h2 class="section-title-admin">إدارة المدربين وأساليب اللعب</h2>
-        <a href="managers.html" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-size:0.8rem;border-radius:8px;">
-          <span>عرض الصفحة العامة ↗</span>
-        </a>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <div class="search-input-wrapper" style="position:relative;">
-          <input type="text" id="mgrSearch" class="form-control" placeholder="بحث عن مدرب..." style="width:220px;padding-right:32px;font-size:0.88rem;">
-          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.5;pointer-events:none;">🔍</span>
-        </div>
-        <button class="btn-primary" id="addManagerBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          <span>إضافة مدرب</span>
-        </button>
-      </div>
+    <!-- Subtab Navigation for Managers vs Player Playstyles -->
+    <div class="mgr-subtabs">
+      <button type="button" class="btn-mgr-subtab active" id="subtabMgrs" onclick="switchMgrSubtab('managers')">
+        <span>👔</span>
+        <span>المدربين (Managers)</span>
+      </button>
+      <button type="button" class="btn-mgr-subtab" id="subtabPStyles" onclick="switchMgrSubtab('playstyles')">
+        <span>🏃</span>
+        <span>أساليب لعب اللاعبين (Player Playstyles)</span>
+      </button>
+      <a href="managers.html" target="_blank" class="btn-outline btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;font-size:0.8rem;border-radius:8px;margin-right:auto;">
+        <span>عرض الصفحة العامة ↗</span>
+      </a>
     </div>
 
-    <!-- Managers Table -->
-    <div class="managers-table-wrap">
-      <table class="managers-table" id="managersTable">
-        <thead>
-          <tr>
-            <th style="width:70px;">الصورة</th>
-            <th>اسم المدرب</th>
-            <th>الجنسية / النادي</th>
-            <th>أسلوب اللعب الأساسي</th>
-            <th style="width:100px;">الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="managersTableBody">
-          <!-- Dynamic rows -->
-        </tbody>
-      </table>
-      <div class="players-table-empty" id="managersTableEmpty" style="display:none;">
-        <p>👔</p>
-        <p>لا يوجد مدربون مضافون بعد</p>
-        <p style="font-size:0.82rem;margin-top:6px;color:var(--text-tertiary)">اضغط على "إضافة مدرب" للبدء بإضافة مدربين وشرح تكتيكاتهم</p>
+    <!-- ── Subview 1: Managers List ── -->
+    <div id="subviewManagers" class="mgr-subview active">
+      <!-- Managers Action Bar -->
+      <div class="action-bar" style="margin-top:0;">
+        <h2 class="section-title-admin">قائمة المدربين</h2>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="search-input-wrapper" style="position:relative;">
+            <input type="text" id="mgrSearch" class="form-control" placeholder="بحث عن مدرب..." style="width:220px;padding-right:32px;font-size:0.88rem;">
+            <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.5;pointer-events:none;">🔍</span>
+          </div>
+          <button class="btn-primary" id="addManagerBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>إضافة مدرب</span>
+          </button>
+        </div>
       </div>
-    </div>
+
+      <!-- Managers Table -->
+      <div class="managers-table-wrap">
+        <table class="managers-table" id="managersTable">
+          <thead>
+            <tr>
+              <th style="width:70px;">الصورة</th>
+              <th>اسم المدرب</th>
+              <th>الجنسية / النادي</th>
+              <th>أسلوب اللعب الأساسي</th>
+              <th style="width:100px;">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="managersTableBody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+        <div class="players-table-empty" id="managersTableEmpty" style="display:none;">
+          <p>👔</p>
+          <p>لا يوجد مدربون مضافون بعد</p>
+          <p style="font-size:0.82rem;margin-top:6px;color:var(--text-tertiary)">اضغط على "إضافة مدرب" للبدء بإضافة مدربين وتكتيكاتهم</p>
+        </div>
+      </div>
+    </div> <!-- /subviewManagers -->
+
+    <!-- ── Subview 2: Player Playstyles ── -->
+    <div id="subviewPlayerStyles" class="mgr-subview" style="display:none;">
+      <!-- Player Styles Action Bar -->
+      <div class="action-bar" style="margin-top:0;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <h2 class="section-title-admin">أساليب لعب اللاعبين</h2>
+          <!-- Category Filter Pills -->
+          <div class="ps-cat-filters-admin" id="psAdminCatFilters" style="display:flex;gap:6px;">
+            <button type="button" class="btn-ps-cat-filter active" data-cat="all">الكل</button>
+            <button type="button" class="btn-ps-cat-filter" data-cat="FWD">FWD</button>
+            <button type="button" class="btn-ps-cat-filter" data-cat="MID">MID</button>
+            <button type="button" class="btn-ps-cat-filter" data-cat="DEF">DEF</button>
+            <button type="button" class="btn-ps-cat-filter" data-cat="GK">GK</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="search-input-wrapper" style="position:relative;">
+            <input type="text" id="psSearchInput" class="form-control" placeholder="بحث عن أسلوب لاعب..." style="width:220px;padding-right:32px;font-size:0.88rem;">
+            <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.5;pointer-events:none;">🔍</span>
+          </div>
+          <button class="btn-primary" id="addPlayerStyleBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>إضافة أسلوب لاعب</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Player Styles Table -->
+      <div class="managers-table-wrap">
+        <table class="managers-table" id="pStylesTable">
+          <thead>
+            <tr>
+              <th style="width:60px;">الأيقونة</th>
+              <th>الاسم بالإنجليزية</th>
+              <th>الاسم بالعربية</th>
+              <th style="width:90px;">الفئة</th>
+              <th>المراكز المفعلة</th>
+              <th style="width:100px;">الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="pStylesTableBody">
+            <!-- Injected by admin-managers.js -->
+          </tbody>
+        </table>
+        <div class="players-table-empty" id="pStylesTableEmpty" style="display:none;">
+          <p>🏃</p>
+          <p>لا توجد أساليب لعب للاعبين مضافة بعد</p>
+          <p style="font-size:0.82rem;margin-top:6px;color:var(--text-tertiary)">اضغط على "إضافة أسلوب لاعب" للبدء بإضافة أساليب اللاعبين وشرح تحركاتهم ومراكزهم</p>
+        </div>
+      </div>
+    </div> <!-- /subviewPlayerStyles -->
 
   </div> <!-- /panelManagers -->
 
@@ -1184,6 +1249,109 @@
       <div class="modal-footer">
         <button type="button" class="btn-outline" id="mgrDeleteCancelBtn">إلغاء</button>
         <button type="button" class="btn-danger" id="mgrDeleteConfirmBtn">تأكيد الحذف</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player Playstyle Modal (Add / Edit) -->
+  <div class="modal-overlay" id="psModalAdminOverlay">
+    <div class="modal modal-lg" id="psModalAdmin" style="max-width:700px;">
+      <div class="modal-header">
+        <div class="modal-header-with-badge">
+          <span class="modal-header-badge">🏃 Player Playstyle Hub</span>
+          <h3 class="modal-title" id="psAdminModalTitle">إضافة أسلوب لاعب جديد</h3>
+        </div>
+        <button class="modal-close" id="psModalAdminClose" aria-label="إغلاق">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="psAdminForm" autocomplete="off">
+        <div class="modal-body" style="padding:24px;">
+          <div class="mgr-form-grid">
+            <div class="form-group">
+              <label class="form-label" for="psNameEn">اسم الأسلوب بالإنجليزية <span style="color:var(--danger)">*</span></label>
+              <input type="text" id="psNameEn" class="form-control" placeholder="مثال: Goal Poacher أو Hole Player" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="psNameAr">اسم الأسلوب بالعربية <span style="color:var(--danger)">*</span></label>
+              <input type="text" id="psNameAr" class="form-control" placeholder="مثال: صائد الأهداف / مهاجم قناص" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="psCategory">فئة المركز الأساسية <span style="color:var(--danger)">*</span></label>
+              <select id="psCategory" class="form-control" required style="cursor:pointer;background:#151c2c;color:white;">
+                <option value="FWD">⚽ مهاجمون (FWD)</option>
+                <option value="MID">🎯 خط الوسط (MID)</option>
+                <option value="DEF">🛡️ خط الدفاع (DEF)</option>
+                <option value="GK">🧤 حراسة المرمى (GK)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="psIcon">الأيقونة التعبيرية (Emoji)</label>
+              <input type="text" id="psIcon" class="form-control" placeholder="مثال: ⚽ أو 💨 أو 🎯 أو 🛡️ أو 🧤" value="⚽">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="psActivePos">المراكز التي يتفعل بها الأسلوب <span style="color:var(--danger)">*</span></label>
+              <input type="text" id="psActivePos" class="form-control" placeholder="مثال: CF, SS (افصل بينها بفاصلة)" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="psInactivePos">المراكز التي لا يتفعل بها</label>
+              <input type="text" id="psInactivePos" class="form-control" placeholder="مثال: باقي المراكز أو LWF, RWF" value="باقي المراكز">
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label" for="psShortDesc">نبذة مختصرة تظهر على بطاقة الأسلوب <span style="color:var(--danger)">*</span></label>
+              <textarea id="psShortDesc" class="mgr-textarea" style="min-height:60px;" placeholder="اكتب جملة أو جملتين تشرح فكرة الأسلوب الأساسية..." required></textarea>
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label" for="psFullDesc">شرح تفصيلي كامل لتحركات اللاعب</label>
+              <textarea id="psFullDesc" class="mgr-textarea" style="min-height:85px;" placeholder="اشرح بالتفصيل كيف يتحرك اللاعب بدون كرة، طلب التمريرات البينية، الهبوط لاستلام الكرة، فتح المساحات للزملاء..."></textarea>
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label" for="psSynergy">التناغم والتوافق التكتيكي (Synergy)</label>
+              <textarea id="psSynergy" class="mgr-textarea" style="min-height:60px;" placeholder="مثال: ينسجم بقوة مع أسلوب Quick Counter ومع صناع اللعب Hole Player وصناع الفرص في الوسط..."></textarea>
+            </div>
+
+            <div class="form-group mgr-form-full">
+              <label class="form-label" for="psFamous">أشهر اللاعبين الذين يملكون هذا الأسلوب</label>
+              <input type="text" id="psFamous" class="form-control" placeholder="مثال: Erling Haaland, Kylian Mbappé, Romelu Lukaku (افصل بينهم بفاصلة)">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-outline" id="psModalAdminCancelBtn">إلغاء</button>
+          <button type="submit" class="btn-primary" id="psModalAdminSaveBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>حفظ أسلوب اللاعب</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Player Playstyle Delete Confirmation Modal -->
+  <div class="modal-overlay" id="psDeleteOverlay">
+    <div class="modal modal-sm" id="psDeleteModal">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color:var(--danger)">تأكيد حذف أسلوب اللاعب</h3>
+      </div>
+      <div class="modal-body" style="padding:24px;">
+        <p style="color:var(--text-secondary);font-size:0.95rem;line-height:1.6;">
+          هل أنت متأكد من رغبتك في حذف أسلوب اللاعب <strong id="psDeleteName" style="color:var(--text-primary)"></strong>؟
+          لا يمكن التراجع عن هذا الإجراء.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" id="psDeleteCancelBtn">إلغاء</button>
+        <button type="button" class="btn-danger" id="psDeleteConfirmBtn">تأكيد الحذف</button>
       </div>
     </div>
   </div>
