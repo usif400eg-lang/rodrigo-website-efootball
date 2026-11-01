@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RODRIGO — مجتمعنا وروابط السوشيال ميديا الرسمية</title>
+  <meta name="description" content="تابع حسابات وقنوات RODRIGO الرسمية على يوتيوب، تيك توك، تيليجرام، ديسكورد، وواتساب للحصول على أحدث الملفات وشروحات eFootball.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Social Page Specific Styles ── */
+    :root {
+      --social-yt: #ff0033;
+      --social-tt: #00f2fe;
+      --social-tg: #229ed9;
+      --social-dc: #5865f2;
+      --social-wa: #25d366;
+      --social-fb: #1877f2;
+      --social-ig: #e1306c;
+      --social-x:  #e0e0e0;
+    }
+
+    .social-hero {
+      position: relative;
+      z-index: 1;
+      padding: 140px 24px 60px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .social-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(108, 99, 255, 0.12);
+      border: 1px solid rgba(108, 99, 255, 0.35);
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #a89cff;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(108, 99, 255, 0.2);
+    }
+    .social-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .social-title .grad {
+      background: linear-gradient(135deg, #ff4d4d, #f59e0b, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .social-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 680px;
+      margin: 0 auto 30px;
+    }
+    .social-verified-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 999px;
+      color: #4ade80;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    /* ── Social Cards Grid ── */
+    .social-grid-section {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 24px 100px;
+    }
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 22px;
+    }
+    @media (max-width: 480px) {
+      .social-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .social-card {
+      position: relative;
+      background: rgba(14, 14, 22, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .social-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 100% 0%, var(--card-color-alpha, rgba(108,99,255,0.15)) 0%, transparent 70%);
+      opacity: 0.6;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .social-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--card-color, #6c63ff);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.55), 0 0 30px var(--card-color-alpha, rgba(108,99,255,0.25));
+    }
+    .social-card:hover::before {
+      opacity: 1;
+    }
+
+    .social-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .social-icon-box {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: var(--card-color-alpha, rgba(255,255,255,0.06));
+      border: 1.5px solid var(--card-color, #6c63ff);
+      color: var(--card-color, #fff);
+      box-shadow: 0 0 20px var(--card-color-alpha, rgba(108,99,255,0.25));
+      transition: transform 0.3s ease;
+    }
+    .social-card:hover .social-icon-box {
+      transform: scale(1.08) rotate(4deg);
+    }
+    .social-icon-box svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .social-header-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .social-platform-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--card-color, #a89cff);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .social-title-text {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .social-handle-text {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      direction: ltr;
+      display: inline-block;
+      text-align: right;
+    }
+
+    .social-card-body {
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+    .social-description {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .social-badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .social-card-footer {
+      position: relative;
+      z-index: 1;
+    }
+    .btn-social-visit {
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: var(--radius-md);
+      background: var(--card-color-alpha, rgba(255,255,255,0.06));
+      border: 1.5px solid var(--card-color, #6c63ff);
+      color: #fff;
+      font-family: var(--font-primary);
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-social-visit:hover {
+      background: var(--card-color, #6c63ff);
+      color: #fff;
+      box-shadow: 0 6px 20px var(--card-color-alpha, rgba(108,99,255,0.4));
+      transform: translateY(-2px);
+    }
+    .btn-social-visit svg {
+      transition: transform 0.2s ease;
+    }
+    .btn-social-visit:hover svg {
+      transform: translateX(-4px);
+    }
+
+    /* Empty & Loading States */
+    .social-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-xl);
+    }
+    .social-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient background effects -->
+  <div class="bg-effects">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">RODRIGO</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#home" class="nav-link">الرئيسية</a>
+        <a href="index.html#players" class="nav-link">تطوير اللاعبين</a>
+        <a href="social.html" class="nav-link active">السوشيال ميديا 🌐</a>
+        <a href="index.html#downloads" class="nav-link">التحميلات</a>
+        <a href="index.html#footer" class="nav-link">تواصل معنا</a>
+        <a href="admin.html" class="nav-admin-link">
+          <span>لوحة التحكم</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu-content">
+      <a href="index.html#home" class="mobile-link">Home</a>
+      <a href="index.html#players" class="mobile-link">🎮 Players</a>
+      <a href="social.html" class="mobile-link">🌐 السوشيال ميديا</a>
+      <a href="index.html#downloads" class="mobile-link">Downloads</a>
+      <a href="index.html#footer" class="mobile-link">Contact</a>
+      <a href="admin.html" class="mobile-link mobile-admin-link">⚡ لوحة التحكم (Admin)</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="social-hero">
+    <div class="social-badge">
+      <span>🌐</span>
+      <span>مجتمع RODRIGO الرسمي | Official Social Hub</span>
+    </div>
+
+    <h1 class="social-title">
+      كل قنواتنا وحساباتنا <br>
+      <span class="grad">في مكان واحد</span>
+    </h1>
+
+    <p class="social-desc">
+      انضم إلى مجتمع RODRIGO عبر مختلف منصات التواصل الاجتماعي للحصول على التحديثات الحصرية، ملفات الـ FPS وتسريع الأجهزة، شروحات وتطويرات eFootball، والبطولات والجوائز اليومية.
+    </p>
+
+    <div class="social-verified-pill">
+      <span>✓</span>
+      <span>جميع الروابط أدناه موثقة ورسمية 100% بإشراف المالك مباشرة</span>
+    </div>
+  </header>
+
+  <!-- Social Media Cards Grid -->
+  <section class="social-grid-section">
+    <div class="social-grid" id="socialGrid">
+      <!-- Injected dynamically by JavaScript & Firebase -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">RODRIGO</span>
+          </div>
+          <p class="footer-description">
+            مجتمع وملفات RODRIGO لتحسين وتطوير أداء الألعاب وeFootball على أعلى مستوى.
+          </p>
+        </div>
+        <div class="footer-links-group">
+          <h4>روابط سريعة</h4>
+          <a href="index.html#home">الرئيسية</a>
+          <a href="index.html#players">تطوير اللاعبين</a>
+          <a href="social.html">السوشيال ميديا 🌐</a>
+          <a href="index.html#downloads">تحميل الملفات</a>
+          <a href="admin.html">لوحة التحكم (Admin)</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>المجتمع</h4>
+          <a href="social.html">اليوتيوب</a>
+          <a href="social.html">التيليجرام</a>
+          <a href="social.html">التيك توك</a>
+          <a href="social.html">الديسكورد</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>معلومات</h4>
+          <a href="#">الشروط والأحكام</a>
+          <a href="#">سياسة الخصوصية</a>
+          <a href="owner.html" style="color:var(--text-tertiary);font-size:0.8rem;">بوابة المالك 👑</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 RODRIGO. جميع الحقوق محفوظة.</p>
+        <p class="footer-credit">Built with ⚡ for the community</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK (v10 compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    // ── Platform SVGs & Theme Config ──
+    const PLATFORM_CONFIG = {
+      YouTube: {
+        color: "#ff0033",
+        colorAlpha: "rgba(255, 0, 51, 0.15)",
+        btnText: "اشترك في القناة ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`
+      },
+      TikTok: {
+        color: "#00f2fe",
+        colorAlpha: "rgba(0, 242, 254, 0.15)",
+        btnText: "تابعنا على تيك توك ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.47 6.27 6.27 0 0 0 1.94-4.46V8.75a8.16 8.16 0 0 0 4.83 1.58V6.88a4.86 4.86 0 0 1-1-.19z"/></svg>`
+      },
+      Telegram: {
+        color: "#229ed9",
+        colorAlpha: "rgba(34, 158, 217, 0.15)",
+        btnText: "انضم للقناة ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>`
+      },
+      Discord: {
+        color: "#5865f2",
+        colorAlpha: "rgba(88, 101, 242, 0.15)",
+        btnText: "انضم للسيرفر ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`
+      },
+      WhatsApp: {
+        color: "#25d366",
+        colorAlpha: "rgba(37, 211, 102, 0.15)",
+        btnText: "انضم لمجتمع الواتساب ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.39-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24M8.53 7.33c-.16 0-.42.06-.64.3-.22.23-.85.83-.85 2.03 0 1.2 1.03 2.54 1.17 2.73.14.19 2.02 3.09 4.9 4.33.68.29 1.22.47 1.64.6.69.22 1.31.19 1.8.12.55-.08 1.68-.69 1.92-1.35.24-.66.24-1.22.17-1.34-.07-.12-.26-.19-.55-.33-.29-.14-1.68-.83-1.94-.93-.26-.1-.45-.15-.64.14-.19.29-.74.93-.9 1.12-.17.19-.34.22-.63.07-.29-.14-1.22-.45-2.33-1.44-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.59.13-.13.29-.34.43-.51.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.07-.14-.64-1.54-.87-2.11-.23-.56-.46-.48-.64-.49-.16-.01-.36-.01-.55-.01z"/></svg>`
+      },
+      Facebook: {
+        color: "#1877f2",
+        colorAlpha: "rgba(24, 119, 242, 0.15)",
+        btnText: "تابع صفحتنا على فيسبوك ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`
+      },
+      Instagram: {
+        color: "#e1306c",
+        colorAlpha: "rgba(225, 48, 108, 0.15)",
+        btnText: "تابعنا على انستغرام ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`
+      },
+      X: {
+        color: "#ffffff",
+        colorAlpha: "rgba(255, 255, 255, 0.15)",
+        btnText: "تابعنا على X ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`
+      },
+      Custom: {
+        color: "#6c63ff",
+        colorAlpha: "rgba(108, 99, 255, 0.15)",
+        btnText: "زيارة الرابط ↗",
+        icon: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`
+      }
+    };
+
+    // ── Default Fallback Links (If Firebase is empty) ──
+    const DEFAULT_SOCIALS = [
+      {
+        platform: "YouTube",
+        title: "قناة RODRIGO الرسمية",
+        handle: "@RODRIGO_GAMING",
+        url: "https://www.youtube.com",
+        description: "شروحات وتسريبات eFootball وتطويرات اللاعبين وبطولات المتابعين بجوائز قيمة.",
+        badge: "القناة الرسمية ⭐",
+        color: "#ff0033",
+        enabled: true
+      },
+      {
+        platform: "TikTok",
+        title: "حساب التيك توك",
+        handle: "@rodrigo.efootball",
+        url: "https://www.tiktok.com",
+        description: "لقطات كروية مهارية، أهداف استعراضية، وتحديثات ومقارنات سريعة يومياً.",
+        badge: "فيديوهات يومية 🔥",
+        color: "#00f2fe",
+        enabled: true
+      },
+      {
+        platform: "Telegram",
+        title: "قناة التيليجرام الرسمية",
+        handle: "t.me/rodrigo_efootball",
+        url: "https://t.me",
+        description: "تنزيل الملفات الحصرية مباشرة وبدون اختصار روابط، مع إشعارات الصيانة والبايدجات.",
+        badge: "تحميلات مباشرة ⚡",
+        color: "#229ed9",
+        enabled: true
+      },
+      {
+        platform: "Discord",
+        title: "سيرفر الديسكورد",
+        handle: "discord.gg/rodrigo",
+        url: "https://discord.com",
+        description: "رومات صوتية وتحديات 1v1 و2v2 بين أعضاء السيرفر وبطولات دورية أسبوعية.",
+        badge: "مجتمع اللاعبين 🎮",
+        color: "#5865f2",
+        enabled: true
+      },
+      {
+        platform: "WhatsApp",
+        title: "مجتمع الواتساب",
+        handle: "RODRIGO Community",
+        url: "https://whatsapp.com",
+        description: "إشعارات فورية بكل ملف جديد على الموقع ومواعيد الفعاليات والمسابقات.",
+        badge: "إشعارات سريعة 💬",
+        color: "#25d366",
+        enabled: true
+      },
+      {
+        platform: "Facebook",
+        title: "صفحة الفيسبوك",
+        handle: "RODRIGO Gaming",
+        url: "https://facebook.com",
+        description: "نقاشات تكتيكية وتحليلات لأحدث بطاقات نجوم الأسبوع والنسخ الأسطورية.",
+        badge: "تفاعل ونقاشات 👥",
+        color: "#1877f2",
+        enabled: true
+      }
+    ];
+
+    const socialGrid = document.getElementById("socialGrid");
+
+    function renderSocialCards(links) {
+      if (!socialGrid) return;
+      socialGrid.innerHTML = "";
+
+      const activeLinks = (links || []).filter(item => item.enabled !== false);
+
+      if (activeLinks.length === 0) {
+        socialGrid.innerHTML = `
+          <div class="social-empty">
+            <div class="social-empty-icon">🌐</div>
+            <h3 style="color:#fff;margin-bottom:8px;">لا توجد روابط مضافة حالياً</h3>
+            <p style="color:var(--text-secondary);font-size:0.9rem;">سيقوم المالك بإضافة روابط المنصات قريباً</p>
+          </div>
+        `;
+        return;
+      }
+
+      activeLinks.forEach(item => {
+        const platConf = PLATFORM_CONFIG[item.platform] || PLATFORM_CONFIG.Custom;
+        const color = item.color || platConf.color;
+        const colorAlpha = hexToRgba(color, 0.16);
+
+        const card = document.createElement("div");
+        card.className = "social-card";
+        card.style.setProperty("--card-color", color);
+        card.style.setProperty("--card-color-alpha", colorAlpha);
+
+        const iconSvg = platConf.icon;
+        const btnText = platConf.btnText || "زيارة الرابط ↗";
+        const badgeHtml = item.badge ? `<span class="social-badge-tag">${escapeHtml(item.badge)}</span>` : "";
+
+        card.innerHTML = `
+          <div>
+            <div class="social-card-top">
+              <div class="social-icon-box" style="--card-color:${color};--card-color-alpha:${colorAlpha};">
+                ${iconSvg}
+              </div>
+              <div class="social-header-info">
+                <div class="social-platform-label" style="color:${color};">
+                  <span>${escapeHtml(item.platform || "منصة")}</span>
+                  <span style="font-size:0.7rem;">●</span>
+                  <span>رسمي</span>
+                </div>
+                <h3 class="social-title-text" title="${escapeHtml(item.title || '')}">${escapeHtml(item.title || '')}</h3>
+                ${item.handle ? `<span class="social-handle-text">${escapeHtml(item.handle)}</span>` : ''}
+              </div>
+            </div>
+
+            <div class="social-card-body">
+              ${item.description ? `<p class="social-description">${escapeHtml(item.description)}</p>` : ''}
+              ${badgeHtml}
+            </div>
+          </div>
+
+          <div class="social-card-footer">
+            <a href="${escapeHtml(item.url || '#')}" target="_blank" rel="noopener noreferrer" class="btn-social-visit" style="--card-color:${color};--card-color-alpha:${colorAlpha};">
+              <span>${btnText}</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+        `;
+
+        socialGrid.appendChild(card);
+      });
+    }
+
+    function hexToRgba(hex, alpha) {
+      if (!hex || typeof hex !== 'string') return `rgba(108, 99, 255, ${alpha})`;
+      hex = hex.replace('#', '');
+      if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('');
+      }
+      if (hex.length !== 6) return `rgba(108, 99, 255, ${alpha})`;
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // ── Load Social Links (Firebase or Defaults) ──
+    function initSocialLinks() {
+      // Start with defaults immediately so there's never a delay
+      renderSocialCards(DEFAULT_SOCIALS);
+
+      if (typeof firebaseDb !== "undefined" && firebaseDb) {
+        try {
+          firebaseDb.ref("rodrigo_social_links").on("value", (snap) => {
+            const data = snap.val();
+            if (data && typeof data === "object") {
+              const liveList = Object.entries(data).map(([k, val]) => ({
+                _key: k,
+                ...val
+              }));
+              liveList.sort((a, b) => (Number(a.order) || 99) - (Number(b.order) || 99));
+              renderSocialCards(liveList);
+            } else {
+              renderSocialCards(DEFAULT_SOCIALS);
+            }
+          });
+        } catch (err) {
+          console.warn("Could not connect to Firebase social links:", err);
+        }
+      }
+    }
+
+    // Mobile menu toggle
+    const mobileBtn = document.getElementById("mobileMenuBtn");
+    const mobileOverlay = document.getElementById("mobileMenuOverlay");
+    mobileBtn && mobileBtn.addEventListener("click", () => {
+      mobileOverlay && mobileOverlay.classList.toggle("active");
+    });
+    mobileOverlay && mobileOverlay.addEventListener("click", (e) => {
+      if (e.target.classList.contains("mobile-link")) {
+        mobileOverlay.classList.remove("active");
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", initSocialLinks);
+  </script>
+</body>
+</html>

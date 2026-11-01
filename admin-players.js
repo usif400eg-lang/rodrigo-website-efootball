@@ -63,7 +63,7 @@ const playerDeleteCancelBtn    = document.getElementById("playerDeleteCancelBtn"
 const playerDeleteConfirmBtn   = document.getElementById("playerDeleteConfirmBtn");
 const deletePlayerNameEl       = document.getElementById("deletePlayerName");
 
-// ── Tab Switching (Files vs Players vs Managers) ──
+// ── Tab Switching (Files vs Players) ──
 window.switchAdminTab = function(tab) {
   document.querySelectorAll(".admin-nav-tab").forEach(btn => {
     btn.classList.remove("active");
@@ -83,12 +83,6 @@ window.switchAdminTab = function(tab) {
     if (tabEl) tabEl.classList.add("active");
     if (panelEl) panelEl.classList.add("active");
     if (!isSubscribedToPlayers) setupPlayersAdminSync();
-  } else if (tab === "managers") {
-    const tabEl = document.getElementById("tabManagers");
-    const panelEl = document.getElementById("panelManagers");
-    if (tabEl) tabEl.classList.add("active");
-    if (panelEl) panelEl.classList.add("active");
-    if (typeof initManagersPanel === "function") initManagersPanel();
   }
 };
 

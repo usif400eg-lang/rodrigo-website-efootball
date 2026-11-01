@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -37,6 +37,118 @@
     .toast-owner.removing { opacity: 0; }
     .pending-badge { display: inline-block; background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.4); color: #fbbf24; border-radius: var(--radius-full); padding: 2px 10px; font-size: 0.75rem; font-weight: 700; }
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+
+    /* ── Social Links Management Styles (Owner Only) ── */
+    .social-admin-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+    }
+    .social-admin-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .social-admin-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 900;
+      flex-shrink: 0;
+      color: #fff;
+    }
+    .social-admin-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .social-admin-topline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+    .social-admin-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: var(--text-primary);
+    }
+    .social-admin-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.06);
+      color: #fbbf24;
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+    .social-admin-url {
+      font-size: 0.8rem;
+      color: #60a5fa;
+      text-decoration: none;
+      direction: ltr;
+      display: inline-block;
+      max-width: 320px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .social-admin-url:hover {
+      text-decoration: underline;
+    }
+    .social-admin-desc {
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      margin-top: 3px;
+    }
+    .social-admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn-edit-sm {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-edit-sm:hover {
+      background: rgba(59, 130, 246, 0.3);
+      color: #fff;
+    }
+    .btn-status-toggle {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-status-toggle.active {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #86efac;
+    }
+    .btn-status-toggle.disabled {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body>
@@ -77,6 +189,10 @@
         <span>صفحة المالك — RODRIGO</span>
       </div>
       <div class="owner-topbar-right">
+        <a href="social.html" class="btn-outline btn-sm" target="_blank" style="border-color:rgba(108,99,255,0.4);color:#a89cff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+          <span>🌐</span>
+          <span>صفحة السوشيال ميديا ↗</span>
+        </a>
         <a href="admin.html" class="btn-outline btn-sm" target="_blank">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           <span>لوحة التحكم</span>
@@ -145,6 +261,108 @@
         </div>
       </div>
 
+      <!-- Social Media Links Management (Owner Only) -->
+      <div class="owner-section" id="ownerSocialSection">
+        <div class="section-header">
+          <div class="owner-section-title" style="margin-bottom:0">
+            <span style="font-size:1.3rem;">🌐</span>
+            <span>إدارة روابط السوشيال ميديا (Social Media)</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button type="button" class="btn-outline btn-sm" id="btnSeedSocials" onclick="seedDefaultSocials()" title="إضافة الحسابات الأساسية الافتراضية بنقرة واحدة">
+              <span>⚡</span>
+              <span>تعبئة الروابط الافتراضية</span>
+            </button>
+            <button type="button" class="btn-primary btn-sm" id="btnToggleSocialForm" onclick="toggleSocialForm()" style="background:linear-gradient(135deg,#6c63ff,#00d4ff);border:none;padding:8px 16px;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;">
+              <span id="socialFormToggleIcon">➕</span>
+              <span id="socialFormToggleText">إضافة رابط جديد</span>
+            </button>
+          </div>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin:8px 0 20px 0;line-height:1.6;">
+          هنا يمكنك التحكم الكامل بروابط كافة منصاتك (YouTube, TikTok, Telegram, Discord, Facebook, WhatsApp, إلخ). أي تعديل هنا يظهر مباشرة للزوار في صفحة السوشيال ميديا!
+        </p>
+
+        <!-- Add / Edit Social Form -->
+        <form class="add-admin-form" id="socialLinkForm" style="display:none;background:rgba(255,255,255,0.03);padding:22px;border-radius:var(--radius-md);border:1px solid rgba(108,99,255,0.3);margin-bottom:24px;">
+          <input type="hidden" id="socialEditKey" value="">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <h4 id="socialFormTitle" style="color:#a89cff;font-size:1rem;font-weight:800;margin:0;">إضافة رابط جديد</h4>
+            <span style="font-size:0.75rem;color:var(--text-tertiary);">مزامنة سحابية فورية ⚡</span>
+          </div>
+          
+          <div class="add-admin-row">
+            <div class="form-field">
+              <label>المنصة (Platform) *</label>
+              <select id="socialPlatform" style="width:100%;padding:12px 14px;background:#14141e;border:1.5px solid var(--border-subtle);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-primary);font-size:0.95rem;outline:none;cursor:pointer;" required onchange="handlePlatformChange()">
+                <option value="YouTube">YouTube (يوتيوب)</option>
+                <option value="TikTok">TikTok (تيك توك)</option>
+                <option value="Telegram">Telegram (تيليجرام)</option>
+                <option value="Discord">Discord (ديسكورد)</option>
+                <option value="WhatsApp">WhatsApp (واتساب)</option>
+                <option value="Facebook">Facebook (فيسبوك)</option>
+                <option value="Instagram">Instagram (انستغرام)</option>
+                <option value="X">X / Twitter (تويتر)</option>
+                <option value="Custom">منصة أخرى (Custom)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>اسم الحساب أو القناة *</label>
+              <input type="text" id="socialTitle" placeholder="مثال: قناة RODRIGO الرسمية" required>
+            </div>
+          </div>
+
+          <div class="add-admin-row">
+            <div class="form-field">
+              <label>اسم المستخدم أو المعرف (Handle)</label>
+              <input type="text" id="socialHandle" placeholder="مثال: @RODRIGO_GAMING">
+            </div>
+            <div class="form-field">
+              <label>رابط الحساب أو القناة (URL) *</label>
+              <input type="url" id="socialUrl" placeholder="https://..." required>
+            </div>
+          </div>
+
+          <div class="add-admin-row">
+            <div class="form-field">
+              <label>الوصف المختصر</label>
+              <input type="text" id="socialDesc" placeholder="مثال: شروحات وتسريبات يومية وبطولات">
+            </div>
+            <div class="form-field">
+              <label>شارة مميزة (Badge)</label>
+              <input type="text" id="socialBadge" placeholder="مثال: القناة الرسمية ⭐">
+            </div>
+          </div>
+
+          <div class="add-admin-row">
+            <div class="form-field">
+              <label>اللون الرئيسي للمنصة</label>
+              <input type="color" id="socialColor" value="#ff0033" style="height:48px;padding:4px;cursor:pointer;">
+            </div>
+            <div class="form-field">
+              <label>الترتيب في الصفحة</label>
+              <input type="number" id="socialOrder" value="1" min="1" max="99">
+            </div>
+          </div>
+
+          <p class="form-error" id="socialFormError"></p>
+          <p class="form-success" id="socialFormSuccess"></p>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:6px;">
+            <button type="button" class="btn-outline btn-sm" onclick="cancelSocialEdit()" style="padding:10px 20px;">إلغاء</button>
+            <button type="submit" class="btn-add-admin" id="btnSaveSocial" style="background:linear-gradient(135deg,#6c63ff,#00d4ff);padding:10px 26px;">
+              <span>💾</span>
+              <span id="btnSaveSocialText">حفظ الرابط</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Social Links Container -->
+        <div id="socialLinksList">
+          <div class="empty-state"><div class="empty-state-icon">⏳</div><div>جاري تحميل الروابط...</div></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -190,6 +408,7 @@
       ownerDashboard.style.display   = "block";
       listenPendingAdmins();
       listenApprovedAdmins();
+      listenSocialLinks();
     }
 
     function listenPendingAdmins() {
@@ -313,6 +532,280 @@
       d.textContent = str;
       return d.innerHTML;
     }
+
+    // ═══════════════════════════════════════════════
+    //   SOCIAL MEDIA LINKS MANAGEMENT (OWNER ONLY)
+    // ═══════════════════════════════════════════════
+    const SOCIAL_DB_PATH = "rodrigo_social_links";
+    let cachedSocialLinks = {};
+
+    const PLATFORM_DEFAULT_COLORS = {
+      YouTube: "#ff0033",
+      TikTok: "#00f2fe",
+      Telegram: "#229ed9",
+      Discord: "#5865f2",
+      WhatsApp: "#25d366",
+      Facebook: "#1877f2",
+      Instagram: "#e1306c",
+      X: "#ffffff",
+      Custom: "#6c63ff"
+    };
+
+    const PLATFORM_EMOJIS = {
+      YouTube: "▶️",
+      TikTok: "🎵",
+      Telegram: "✈️",
+      Discord: "💬",
+      WhatsApp: "🟢",
+      Facebook: "👥",
+      Instagram: "📸",
+      X: "✖️",
+      Custom: "🌐"
+    };
+
+    function listenSocialLinks() {
+      if (!firebaseDb) return;
+      firebaseDb.ref(SOCIAL_DB_PATH).on("value", function(snap) {
+        cachedSocialLinks = snap.val() || {};
+        renderSocialLinksList(cachedSocialLinks);
+      });
+    }
+
+    function renderSocialLinksList(data) {
+      var container = document.getElementById("socialLinksList");
+      if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🌐</div>
+            <div style="font-weight:700;color:var(--text-primary);margin-bottom:6px;">لا توجد روابط مضافة بعد في قاعدة البيانات</div>
+            <div style="font-size:0.84rem;color:var(--text-secondary);margin-bottom:14px;">اضغط على "تعبئة الروابط الافتراضية" أعلاه أو "إضافة رابط جديد" للبدء</div>
+            <button type="button" class="btn-outline btn-sm" onclick="seedDefaultSocials()">⚡ تعبئة الروابط الأساسية الآن</button>
+          </div>
+        `;
+        return;
+      }
+
+      var entries = Object.entries(data);
+      entries.sort(function(a, b) {
+        return (Number(a[1].order) || 99) - (Number(b[1].order) || 99);
+      });
+
+      container.innerHTML = entries.map(function(entry) {
+        var key = entry[0], item = entry[1];
+        var plat = item.platform || "Custom";
+        var emoji = PLATFORM_EMOJIS[plat] || "🌐";
+        var color = item.color || PLATFORM_DEFAULT_COLORS[plat] || "#6c63ff";
+        var isEnabled = item.enabled !== false;
+        var badgeHtml = item.badge ? `<span class="social-admin-badge">${escapeHtml(item.badge)}</span>` : '';
+
+        return `
+          <div class="social-admin-item">
+            <div class="social-admin-icon" style="background:${color}22;border:1.5px solid ${color};color:${color};">
+              ${emoji}
+            </div>
+            <div class="social-admin-info">
+              <div class="social-admin-topline">
+                <span class="social-admin-title">${escapeHtml(item.title || plat)}</span>
+                <span style="font-size:0.75rem;color:var(--text-tertiary);">(${escapeHtml(plat)})</span>
+                ${badgeHtml}
+                ${!isEnabled ? '<span style="font-size:0.7rem;background:rgba(239,68,68,0.15);color:#f87171;padding:2px 8px;border-radius:4px;font-weight:700;">مخفي</span>' : ''}
+              </div>
+              <div>
+                <a href="${escapeHtml(item.url || '#')}" target="_blank" rel="noopener" class="social-admin-url">🔗 ${escapeHtml(item.url || '')}</a>
+                ${item.handle ? `<span style="font-size:0.75rem;color:var(--text-tertiary);margin-right:10px;">(${escapeHtml(item.handle)})</span>` : ''}
+              </div>
+              ${item.description ? `<div class="social-admin-desc">${escapeHtml(item.description)}</div>` : ''}
+            </div>
+            <div class="social-admin-actions">
+              <button class="btn-status-toggle ${isEnabled ? 'active' : 'disabled'}" onclick="toggleSocialStatus('${key}', ${isEnabled})" title="${isEnabled ? 'إخفاء الرابط من الصفحة' : 'تفعيل وإظهار الرابط'}">
+                ${isEnabled ? '✓ نشط' : '✕ مخفي'}
+              </button>
+              <button class="btn-edit-sm" onclick="editSocialLink('${key}')">✏️ تعديل</button>
+              <button class="btn-danger-sm" onclick="deleteSocialLink('${key}', '${escapeHtml(item.title || plat)}')">حذف</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    window.toggleSocialForm = function() {
+      var form = document.getElementById("socialLinkForm");
+      var text = document.getElementById("socialFormToggleText");
+      var icon = document.getElementById("socialFormToggleIcon");
+      if (form.style.display === "none" || !form.style.display) {
+        form.style.display = "block";
+        text.textContent = "إخفاء النموذج";
+        icon.textContent = "✕";
+        document.getElementById("socialTitle").focus();
+      } else {
+        cancelSocialEdit();
+      }
+    };
+
+    window.cancelSocialEdit = function() {
+      var form = document.getElementById("socialLinkForm");
+      form.style.display = "none";
+      form.reset();
+      document.getElementById("socialEditKey").value = "";
+      document.getElementById("socialFormTitle").textContent = "إضافة رابط جديد";
+      document.getElementById("btnSaveSocialText").textContent = "حفظ الرابط";
+      document.getElementById("socialFormError").textContent = "";
+      document.getElementById("socialFormSuccess").textContent = "";
+      document.getElementById("socialFormToggleText").textContent = "إضافة رابط جديد";
+      document.getElementById("socialFormToggleIcon").textContent = "➕";
+      handlePlatformChange();
+    };
+
+    window.handlePlatformChange = function() {
+      var plat = document.getElementById("socialPlatform").value;
+      var colorInput = document.getElementById("socialColor");
+      if (PLATFORM_DEFAULT_COLORS[plat]) {
+        colorInput.value = PLATFORM_DEFAULT_COLORS[plat];
+      }
+    };
+
+    window.editSocialLink = function(key) {
+      var item = cachedSocialLinks[key];
+      if (!item) return;
+
+      var form = document.getElementById("socialLinkForm");
+      form.style.display = "block";
+      document.getElementById("socialFormToggleText").textContent = "إخفاء النموذج";
+      document.getElementById("socialFormToggleIcon").textContent = "✕";
+
+      document.getElementById("socialEditKey").value = key;
+      document.getElementById("socialPlatform").value = item.platform || "Custom";
+      document.getElementById("socialTitle").value = item.title || "";
+      document.getElementById("socialHandle").value = item.handle || "";
+      document.getElementById("socialUrl").value = item.url || "";
+      document.getElementById("socialDesc").value = item.description || "";
+      document.getElementById("socialBadge").value = item.badge || "";
+      document.getElementById("socialColor").value = item.color || PLATFORM_DEFAULT_COLORS[item.platform] || "#6c63ff";
+      document.getElementById("socialOrder").value = item.order || 1;
+
+      document.getElementById("socialFormTitle").textContent = "تعديل: " + (item.title || item.platform);
+      document.getElementById("btnSaveSocialText").textContent = "تحديث الرابط";
+      document.getElementById("socialFormError").textContent = "";
+      document.getElementById("socialFormSuccess").textContent = "";
+
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    window.deleteSocialLink = async function(key, title) {
+      if (!confirm("هل أنت متأكد من حذف رابط " + title + "؟")) return;
+      if (!firebaseDb) return;
+      try {
+        await firebaseDb.ref(SOCIAL_DB_PATH + "/" + key).remove();
+        showOwnerToast("تم حذف الرابط بنجاح ✓", "info");
+      } catch (err) {
+        showOwnerToast("خطأ أثناء الحذف", "error");
+      }
+    };
+
+    window.toggleSocialStatus = async function(key, currentEnabled) {
+      if (!firebaseDb) return;
+      try {
+        await firebaseDb.ref(SOCIAL_DB_PATH + "/" + key).update({
+          enabled: !currentEnabled,
+          updatedAt: Date.now()
+        });
+        showOwnerToast(currentEnabled ? "تم إخفاء الرابط" : "تم تفعيل الرابط", "success");
+      } catch (err) {
+        showOwnerToast("خطأ في تحديث الحالة", "error");
+      }
+    };
+
+    document.getElementById("socialLinkForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      var editKey = document.getElementById("socialEditKey").value.trim();
+      var platform = document.getElementById("socialPlatform").value;
+      var title = document.getElementById("socialTitle").value.trim();
+      var handle = document.getElementById("socialHandle").value.trim();
+      var url = document.getElementById("socialUrl").value.trim();
+      var description = document.getElementById("socialDesc").value.trim();
+      var badge = document.getElementById("socialBadge").value.trim();
+      var color = document.getElementById("socialColor").value;
+      var order = parseInt(document.getElementById("socialOrder").value) || 1;
+
+      var errEl = document.getElementById("socialFormError");
+      var sucEl = document.getElementById("socialFormSuccess");
+      var saveBtn = document.getElementById("btnSaveSocial");
+
+      errEl.textContent = "";
+      sucEl.textContent = "";
+
+      if (!title || !url) {
+        errEl.textContent = "يرجى كتابة اسم الحساب ورابط الـ URL";
+        return;
+      }
+      if (!firebaseDb) {
+        errEl.textContent = "غير متصل بـ Firebase";
+        return;
+      }
+
+      var payload = {
+        platform: platform,
+        title: title,
+        handle: handle,
+        url: url,
+        description: description,
+        badge: badge,
+        color: color,
+        order: order,
+        enabled: true,
+        updatedAt: Date.now()
+      };
+
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = "0.6";
+
+      try {
+        if (editKey) {
+          await firebaseDb.ref(SOCIAL_DB_PATH + "/" + editKey).update(payload);
+          showOwnerToast("تم تحديث الرابط بنجاح ✓", "success");
+        } else {
+          payload.createdAt = Date.now();
+          await firebaseDb.ref(SOCIAL_DB_PATH).push(payload);
+          showOwnerToast("تم إضافة الرابط بنجاح ✓", "success");
+        }
+        cancelSocialEdit();
+      } catch (err) {
+        errEl.textContent = "خطأ أثناء الحفظ: " + err.message;
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = "1";
+      }
+    });
+
+    window.seedDefaultSocials = async function() {
+      if (!firebaseDb) {
+        showOwnerToast("غير متصل بـ Firebase", "error");
+        return;
+      }
+      if (!confirm("هل تريد تعبئة الحسابات الأساسية الافتراضية (YouTube, TikTok, Telegram, Discord, WhatsApp, Facebook)؟ يمكنك تعديل روابطها في أي وقت.")) {
+        return;
+      }
+
+      var defaults = [
+        { platform: "YouTube", title: "قناة RODRIGO الرسمية", handle: "@RODRIGO_GAMING", url: "https://www.youtube.com", description: "شروحات وتسريبات eFootball وتطويرات اللاعبين وبطولات المتابعين", badge: "القناة الرسمية ⭐", color: "#ff0033", order: 1, enabled: true },
+        { platform: "TikTok", title: "حساب التيك توك", handle: "@rodrigo.efootball", url: "https://www.tiktok.com", description: "لقطات كروية مهارية، أهداف استعراضية، وتحديثات ومقارنات سريعة يومياً", badge: "فيديوهات يومية 🔥", color: "#00f2fe", order: 2, enabled: true },
+        { platform: "Telegram", title: "قناة التيليجرام الرسمية", handle: "t.me/rodrigo_efootball", url: "https://t.me", description: "تنزيل الملفات الحصرية مباشرة وبدون اختصار روابط، مع إشعارات الصيانة والبايدجات", badge: "تحميلات مباشرة ⚡", color: "#229ed9", order: 3, enabled: true },
+        { platform: "Discord", title: "سيرفر الديسكورد", handle: "discord.gg/rodrigo", url: "https://discord.com", description: "رومات صوتية وتحديات 1v1 و2v2 بين أعضاء السيرفر وبطولات دورية أسبوعية", badge: "مجتمع اللاعبين 🎮", color: "#5865f2", order: 4, enabled: true },
+        { platform: "WhatsApp", title: "مجتمع الواتساب", handle: "RODRIGO Community", url: "https://whatsapp.com", description: "إشعارات فورية بكل ملف جديد على الموقع ومواعيد الفعاليات والمسابقات", badge: "إشعارات سريعة 💬", color: "#25d366", order: 5, enabled: true },
+        { platform: "Facebook", title: "صفحة الفيسبوك", handle: "RODRIGO Gaming", url: "https://facebook.com", description: "نقاشات تكتيكية وتحليلات لأحدث بطاقات نجوم الأسبوع والنسخ الأسطورية", badge: "تفاعل ونقاشات 👥", color: "#1877f2", order: 6, enabled: true }
+      ];
+
+      try {
+        for (var item of defaults) {
+          item.createdAt = Date.now();
+          item.updatedAt = Date.now();
+          await firebaseDb.ref(SOCIAL_DB_PATH).push(item);
+        }
+        showOwnerToast("تمت تعبئة الروابط الأساسية بنجاح ✓", "success");
+      } catch (err) {
+        showOwnerToast("خطأ أثناء تعبئة الروابط: " + err.message, "error");
+      }
+    };
   </script>
 </body>
 </html>
