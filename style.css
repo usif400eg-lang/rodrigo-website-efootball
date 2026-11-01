@@ -329,19 +329,25 @@ button {
 
 /* Mobile Overlay */
 .mobile-menu-overlay {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   inset: 0;
-  background: rgba(10, 10, 15, 0.95);
+  background: rgba(10, 10, 15, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  z-index: 999;
+  z-index: 9999;
   opacity: 0;
-  transition: opacity var(--transition-normal);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
 }
 
 .mobile-menu-overlay.active {
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .mobile-menu-content {
@@ -1260,8 +1266,13 @@ button {
     display: flex;
   }
 
-  .mobile-menu-overlay {
-    display: block;
+  .scroll-top {
+    bottom: 20px;
+    left: 16px;
+    right: auto;
+    width: 38px;
+    height: 38px;
+    z-index: 80;
   }
 
   .hero-title {
